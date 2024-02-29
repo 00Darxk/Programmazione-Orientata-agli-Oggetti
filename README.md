@@ -2,7 +2,7 @@
 Appunti tratti dal corso di Programmazione Orientata agli Oggetti, Anno Accademico 2023/24, Dipartimento di Ingegneria Civile, Informatica e delle Tecnologie Aeronautiche, Università degli Studi "Roma Tre". 
 
 ## Contenuti
- - [Appunti](Programmazione-Orientata-agli-Oggetti.pdf) delle lezioni, tenute l'anno accademico 2023/24 dal Professore Andrea D'Ariano e dalla Professoressa Marcella Samà. 
+ - [Appunti](Programmazione-Orientata-agli-Oggetti.pdf) delle lezioni, tenute l'anno accademico 2023/24 dal Professore Valter Crescenzi. 
     
  
 ## Materiale Aggiuntivo
