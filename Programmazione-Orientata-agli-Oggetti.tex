@@ -13,7 +13,7 @@
 \usepackage{bookmark}
 \usepackage{fancyhdr}
 \usepackage{romanbarpagenumber}
-%\usepackage{minted}
+\usepackage{minted}
 %\usepackage{subfig}
 \usepackage[italian]{babel}
 %\usepackage{float}
@@ -120,6 +120,86 @@ Una grande differenza tra i due linguaggi consiste nella diversa diagnostica a t
 di errore forniscono informazioni molto utili per la sua risoluzione. 
 Gli errori a tempo di compilazione sono altrettanto efficaci in Java quanto in C, ma  la differenza principale consiste negli errori a tempo di esecuzione tra i due linguaggi, 
 poiché in C, in molte piattaforme, viene fornito un errore estremamente generico, in base alla versione di C, del compilatore, e da altre condizioni. 
+
+\subsection{Paradigma Orientato agli Oggetti}
+
+Il paradigma procedurale, usato nel linguaggio C, separa in maniera netta tra il codice e le operazioni, ovvero la memoria e ed il processore, seguendo l'architettura 
+definita da von Neumann. Anche se rappresenta il modo più naturale per scrivere programmi, nell'industria è stato ampiamente superato a favore del paradigma orientato agli 
+oggetti. 
+Questo paradigma segue la filosofia secondo cui le operazioni e lo stato sono connesse tra di loro, accomunate utilizzando ``oggetti''. Si è quindi rimossa la divisione imposta 
+sui vecchi linguaggi di programmazione, che seguono l'architettura reale di un calcolatore. Per cui un problema è più facilmente modellabile se viene diviso in una pluralità 
+di oggetti e classi di oggetti, contenenti lo stato e le operazione eseguibili su quell'oggetto. Questi oggetti si scambiano informazioni tra di loro, invocando particolari 
+comandi; in questo modo gli oggetti conoscono ed interagiscono con altri esemplari, anche dello stesso tipo, o classe. Per conoscersi, questi oggetti contengono riferimenti 
+agli altri oggetti. 
+
+Questo modo di interpretare un problema è vicino al nostro modo di pensare, il che aiuta nella creazione di programmi, utilizzando linguaggi di programmazione che seguono 
+questo paradigma. Utilizzando un linguaggio come C, progettato per il paradigma procedurale, è possibile programmare seguendo il paradigma orientato agli oggetti, ma non essendo 
+stato creato con questo scopo, la realizzazione di programmi è notevolmente più complesso. 
+
+
+L'esecuzione di un programma è uno scambio di messaggi tra questi oggetti connessi tra di loro tramite riferimenti interni, creando una rete di oggetti, modificando lo stato 
+degli oggetti coinvolti nelle operazioni. Si può rappresentare la rete di oggetti tramite un diagramma di oggetti, indicati come rettangoli contenenti diversi campi, ed 
+eventuali riferimenti ad altri oggetti, rappresentati come archi orientati verso altri oggetti. 
+
+Ogni oggetto contiene lo stato, un comportamento, le operazioni che offre, ed un identità, per differenziare diversi esemplari della stessa classe di oggetti. Si è dimostrato 
+nel tempo come questo paradigma permette di scrivere e mantenere il codice molto più efficiente rispetto ad altri paradigmi. 
+Gli oggetti vengono definiti tramite classi, rappresentate come file diversi del programma, contenenti lo stato, e la definizione dei metodi. Ogni oggetto creato da una classe 
+possiede un'identità unica, e presenta lo stesso stato e le operazioni della classe di appartenenza. Le classi sono quindi delle istruzioni di montaggio, o fabbriche che 
+producono oggetti. 
+
+
+Per studiare questo paradigma, si utilizzeranno esempi di forme geometriche, come studio di caso più semplice e limitato, ed uno studio di caso più esteso, mirato al 
+refactoring, chiamato ``diadia''. 
+
+
+In Java ogni file contenente classi deve essere salvato con lo stesso nome della classe contenente, con estensione ``.java''. Le operazioni di oggetti in Java si indicano 
+come metodi, invece di funzioni come nel linguaggio C, poiché rappresentano operazioni nel contesto di una classe, mentre le funzioni possono operare al di fuori di una classe. 
+
+
+Si considera un esempio semplice di una classe chiamata \verb|Punto|, che rappresenta un punto in un piano di coordinate cartesiane bidimensionali:
+\begin{minted}{java}
+public class Punto{
+    // stato dell'oggetto
+    private int x;
+    private int y;
+
+    // metodi propri della classe
+    public void setX(int posX){
+        this.x = posX;
+    }
+    public void setY(int posY){
+        this.y = posY;
+    }
+    public int getX(){
+        return x;
+    }
+    public int getY(){
+        return y;
+    }
+}
+\end{minted}
+Le variabili della classe \verb|Punto| \verb|x| e \verb|y|, vengono chiamate variabili d'istanza. La creazione di un oggetto di una classe si ottiene tramite l'operatore \verb|new|, 
+secondo la seguente sintassi:
+\begin{minted}{java}
+// creazione ed assegnazione di un nuovo oggetto Punto tramite riferimento
+Punto origine = new Punto();
+\end{minted}
+Questa riga di codice invoca un costruttore tramite l'operatore \verb|new|, restituisce un riferimento ad un oggetto del tipo \verb|Punto| appena creato, e viene conservato 
+con un'assegnazione ad una variabile locale, in questo caso chiamato \verb|origine|. 
+
+Tramite questo riferimenti è possibile accedere ai metodi, ed eventualmente allo stato dell'oggetto, tramite la notazione puntata, che segue la sintassi 
+\verb|<riferimento-oggetto>.<metodo>(<parametri-attuali>);|:  
+\begin{minted}{java}
+origine.setX(0); // assegna lo stato alla variabile x
+origine.setY(0); // assegna lo stato alla variabile y
+\end{minted}
+Questa notazione è molto efficace nell'esprimere la vicinanza tra i dati e le operazioni, per cui viene ampiamente usata in tutti i linguaggi OO (Orientati agli Oggetti). 
+Ogni nuovo oggetto creato viene salvato in memoria, ed è possibile creare nuovi oggetti fino all'esaurimento della memoria virtuale. 
+Questa classe viene quindi contenuta in un file \verb|Punto.java|. 
+
+Per compilare un codice bisogna rendere il compilatore in grado di poter leggere il codice 
+
+
 
 
 
