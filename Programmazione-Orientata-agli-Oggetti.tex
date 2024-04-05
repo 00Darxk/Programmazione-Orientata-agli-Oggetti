@@ -61,6 +61,12 @@ Università degli Studi ``Roma Tre"}}
 
 \pagenumbering{arabic}
 
+
+
+%% TODO: fix order of contents / merge (sub)section
+
+
+
 \section{Introduzione al Linguaggio Java}
 
 % FdI, ASD 
@@ -155,6 +161,7 @@ refactoring, chiamato ``diadia''.
 In Java ogni file contenente classi deve essere salvato con lo stesso nome della classe contenente, con estensione ``.java''. Le operazioni di oggetti in Java si indicano 
 come metodi, invece di funzioni come nel linguaggio C, poiché rappresentano operazioni nel contesto di una classe, mentre le funzioni possono operare al di fuori di una classe. 
 
+\subsection{Oggetti e Riferimenti}
 
 Si considera un esempio semplice di una classe chiamata \verb|Punto|, che rappresenta un punto in un piano di coordinate cartesiane bidimensionali:
 \begin{minted}{java}
@@ -197,10 +204,302 @@ Questa notazione è molto efficace nell'esprimere la vicinanza tra i dati e le o
 Ogni nuovo oggetto creato viene salvato in memoria, ed è possibile creare nuovi oggetti fino all'esaurimento della memoria virtuale. 
 Questa classe viene quindi contenuta in un file \verb|Punto.java|. 
 
-Per compilare un codice bisogna rendere il compilatore in grado di poter leggere il codice 
+%% ? Per compilare un codice bisogna rendere il compilatore in grado di poter leggere il codice ... ?
+
+Una variabile contenente un riferimento ad un oggetto contiene una sequenza di caratteri che rappresenta l'indirizzo in memoria virtuale dell'oggetto, anche se rappresenta una 
+semplificazione, è utile per analizzare il suo comportamento. Mentre per accedere ai valori contenuti, ed assegnare valori alle variabili interne all'oggetto, bisogna utilizzare 
+metodi ``getter'' e ``setter'', descritti nella classe dell'oggetto. 
+
+Utilizzando due riferimenti allo stesso oggetto per effettuare azioni sullo stesso oggetto si chiama effetto collaterale. 
+
+Quando viene chiamato un metodo passando una variabile, viene passato per valore. 
+
+In Java il riferimento nullo è un unicamente il letterale di tipo riferimento all'oggetto \verb|null|. Ogni riferimento ad oggetto dichiarato, senza essere inizializzato 
+viene assegnato al riferimento nullo. Indica l'assenza di un riferimento reale ad un oggetto esistente, al contrario del riferimento nullo in C, non corrisponde all'intero $0$. 
+Invocando un metodo su un riferimento ad un oggetto nullo si verifica un errore, a tempo di esecuzione, si indica in Java come eccezione: ``runtime-exception''; in questo caso: 
+\verb|NullPointerException|. 
+
+%% !! ppt.
+
+\subsection{Gestione della Memoria}
+
+In Java la creazione di oggetti, e quindi la loro allocazione in memoria, avviene tramite l'operatore \verb|new|. Questo operatore richiede la specifica della classe di cui si 
+vuole creare una nuova istanza, e richiede uno dei costruttori della classe. 
+Un costruttore è un metodo che presenta esattamente lo stesso nome della classe e non restituisce niente, e generalmente inizializza tutte le variabili di istanza della classe. 
+
+\begin{minted}{java}
+public class Punto{
+    private int x;
+    private int y;
+    // costruttore "no-args" della classe "Punto"
+    public Punto(){
+        this.x = 0;
+        this.y = 0;
+    }
+}
+\end{minted}
+Questo tipo di costruttori non prendono parametri, ma è possibile definire costruttori che accettano degli input. Ogni classe presenta sempre almeno un costruttore, e 
+costruisce lo stato iniziale dell'oggetto, per cui è possibile inizializzare l'oggetto ad un certo stato fornito alla chiamata del costruttore:
+\begin{minted}{java}
+public class Punto{
+    private int x;
+    private int y;
+    // costruttore della classe "Punto"
+    public Punto(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
+}
+\end{minted}
+
+Al termine dell'esecuzione del costruttore, l'oggetto non è stato completamente inizializzato %% ??
+
+
+Poiché una classe può contenere più di un costruttore, questi vengono distinti in base agli argomenti che prendono. 
+Se invece non viene dichiarato alcune costruttore all'interno di una classe, è possibile creare un nuovo oggetto usando la stessa terminologia, e tutti i campi numerici 
+vengono inizializzati a zero, i riferimenti a null, e le stringhe alla stringa vuota. Per cui il compilatore crea automaticamente un compilatore "no-args" con le inizializzazioni 
+di default, ma se viene dichiarato un costruttore con parametri all'interno di una classe, e si prova a creare un oggetto della classe usando un costruttore ``no-args'' il 
+compilatore produce un errore. Quindi il compilatore genera un costruttore implicito solamente se non è dichiarato alcun costruttore dentro una classe. 
+
+%% !! ppt. Stack e Heap cartacei
+
+Poiché gli oggetti si passano come riferimenti, l'operatore \verb|==| confronta solamente i riferimenti all'oggetto, e bisogna utilizzare un altro metodo per poter 
+confrontare i valori interni degli oggetti tra di loro.  
+Per determinare l'equivalenza tra due oggetti distinti si usa il metodo \verb|equals()|, viene offerto sempre da tutte le classi, se invece non viene espresso esplicitamente 
+ha la stessa semantica dell'operatore \verb|==| sui riferimenti. 
+Poiché è un metodo interno ad una classe, in generale non è un metodo simmetrico: \verb|a.equals(b)| $\neq$ \verb|b.equals(a)|. 
+
+La deallocazione della memoria avviene automaticamente da un metodo chiamato Garbage Collector, per cui non è necessario utilizzare esplicitamente una funzione \verb|free()| 
+come in C. Se questo Garbage Collector si accorge che degli oggetti rimangono appesi, li libera dalla memoria. 
+
+\subsection{Costruttori, Stringhe e Array}
+
+%% overloading
+L'overloading è una caratteristica di un linguaggio di programmazione, come Java, che permette di definire più procedure con lo stesso nome, ospitati all'interno della stessa 
+classe. Questi metodi, diversi, si distinguono solamente per la lista dei parametri formali, per il numero, per il tipo di uno o più, oppure per il loro ordine. 
+
+%% ex. di metodi sovraccaricati
+\begin{minted}{java}
+public class Sommatore{
+    public int add(int a, int b){
+        return a + b;
+    }
+    public int add(int a, int b, in c){
+        return a + b + c;
+    }        
+    public double add(int a, double b){
+        return a + b;
+    }
+    public double add(double a, int b){
+        return a + b;
+    }
+}
+\end{minted}
+
+Nel linguaggio C, questo non è possibile. Se c'è una corrispondenza perfetta tra i parametri passati al metodo, non si riscontrano problemi, invece se non è presente 
+una corrispondenza perfetta tra i tipi passati al metodo, viene eseguito un algoritmo di risoluzione, prima di fermare la compilazione che cerca di capire se è possibile 
+effettuare la chiamata tramite semplici conversioni di tipo, oppure conversioni di tipo più ``conservative''. La promozioni di tipo può essere implicita alla chiamata di un 
+metodo, per cui potrebbe essere complesso determinare quale metodo è stato chiamato. 
+
+Alla chiamata di un metodo sovraccaricato è il compilatore a scegliere quale dei metodi da applicare, la scelta è definitiva e viene scritta nell'eseguibile \verb|.class|. 
+Versioni sovraccariche di un metodo potrebbero differire anche per il metodo di ritorno, ma il tipo di ritorno non può essere usato per distinguere due metodi. 
+
+L'overloading è presente anche sull'operatore \verb|+|, applicandolo su diversi dati, tramite somme algebriche di interi, numerali a virgola mobile; inoltre viene usato per 
+concatenare le stringhe. In C++ ed in Scala è possibile sovraccaricare gli altri operatori, mentre non è possibile in Java, dove l'unico operatore sovraccarico è \verb|+|, 
+nella maniera descritta. 
+
+Costruttori definiti ripetendo codice, vengono sconsigliati, anche per i metodi sovraccaricati, per cui si tende ad eleggere un costruttore al ruolo di costruttore ``primario'', 
+il più generico possibile. In seguito gli altri costruttori vengono definiti in base a questo costruttore, invocando questo costruttore, con il metodo \verb|this()|, 
+specificando i parametri che si vuole modificare rispetto al costruttore primario. 
+
+%% ex della classe rettangolo 
+
+\begin{minted}{java}
+public class Rettangolo{
+    private int altezza;
+    private int base;
+    private Punto vertice;
+
+    public Rettangolo(Punto v, int b, int h){
+        this.vertice = v;
+        this.base = b;
+        this.altezza = h;
+    }
+
+    public Rettangolo(int b, int h){
+        this(new Punto(0,0), b, h);
+    }
+
+    public Rettangolo(){
+        this(new Punto(0,0), 0, 0);
+    }
+}   
+\end{minted}
 
 
 
+%% la classe string
+In Java esiste la classe \verb|String| per poter rappresentare sequenze di caratteri immutabili, rappresenta un riferimento ad un oggetto istanza della classe \verb|String|. 
+Per rendere il linguaggio più semplice questa classe possiede dei letterali appositi, ed è l'unico oggetto che può essere creato senza una \verb|new| esplicita. L'operatore 
+\verb|==| su due stringhe verifica l'uguaglianza dei riferimenti, per cui per valutare l'equivalenza di contenuto tra due stringhe bisogna utilizzare il metodo \verb|equals()|. 
+
+Poiché rappresenta una sequenza di caratteri immutabili, per modificare o aggiornare una stringa è necessario creare una nuova stringa, altrimenti è possibile concatenare due 
+stringhe utilizzando l'operatore \verb|+|, che rappresenta un nuovo oggetto stringa, sovrascritto sulla variabile utilizzata per memorizzarla. 
+Per ottenere la lunghezza di una stringa si utilizza il metodo \verb|.length()|, per ottenere il carattere ad una determinata posizione si utilizza il carattere \verb|.charAt(int i)|. 
+Il metodo \verb|.indexOf(char a)| fornisce la posizione di un carattere o il primo carattere di una sottostringa, per cui è un metodo sovraccarico, altrimenti restituisce $-1$. 
+Per aggiornare una stringa si utilizza il metodo \verb|.replace(Stringa s1, Stringa s2)|, che restituisce un nuovo oggetto dove è stata la sottostringa \verb|s1| con la 
+sottostringa \verb|s2|.  
+
+
+
+Se viene eseguito il metodo \verb|println()| su un riferimento stampa il valore del riferimento, non il riferimento stesso. Definendo il metodo \verb|toString()| è possibile 
+specificare cosa si vuole visualizzato quando viene chiamato il metodo di stampa a schermo. Un oggetto che possiede questo metodo può essere concatenato con una stringa, 
+questo concatena la stringa con la string restituita dal metodo \verb|toString()|. 
+Se non viene definito questo metodo, il suo comportamento standard implicito stampa l'indirizzo di memoria dell'oggetto, come per il metodo \verb|equals()|. 
+
+
+
+Un array è una struttura dati che memorizza dati omogenei, per dichiarare un array si inserisce accanto al tipo oppure al nome della variabile \verb|[]|, si preferisce la prima 
+per leggibilità. Sono oggetti per cui devono essere dichiarati con il metodo \verb|new|. Le operazioni di accesso e modifica di un array sono le medesime del linguaggio C, 
+per ottenere la lunghezza di un array si utilizza il metodo \verb|.length()|. Da Java 5 è stato introdotto un modo per poter iterare su un array, senza gestire 
+esplicitamente l'indice di iterazione \verb|for(<tipo> <nome-variabile> : <nome-array>)|, in questo modo la variabile \verb|<nome-variabile>| itera su ogni elemento dell'array 
+\verb|<nome-array>| dello stesso tipo \verb|<tipo>|. 
+
+\clearpage
+
+\section{Qualità del Codice}
+
+\subsection{Librerie}
+
+Come ogni linguaggio di programmazione, relativamente, recente, Java contiene numerose librerie specializzate per risolvere diversi problemi. Per cui è necessario utilizzare in 
+maniera efficace ed efficiente queste librerie, composte da classi. Bisogna quindi conoscere per nome le classi più importanti di queste librerie, e sapere come cercare ed usare 
+altre classi. 
+Non è necessario conoscere l'implementazione di una classe, ma solo l'interfaccia o API fornito. Queste informazioni vengono fornite tramite la documentazione associata ad ogni 
+libreria, in formato HTML \verb|javadoc|, accessibili tramite un browser, oppure integrate all'interno dell'IDE. 
+Per ogni classe viene fornito il suo nome, una descrizione generale della classe, dello scopo dei suoi costruttori e metodi, e valori di ritorno per i suoi costruttori e metodi. 
+Non sono presenti invece tutti i campi e metodi privati, poiché non sono accessibili dall'esterno, né il suo codice, non necessario per il suo utilizzo. 
+
+In caso si voglia creare una nuova classe, bisogna documentarla allo stesso modo delle classi fornite dalle librerie, per permettere il loro utilizzo, senza conoscere in 
+dettaglio la sua implementazione. La documentazione di una classe dovrebbe includere il nome, un commento che descrive la caratteristiche generali e lo scopo della classe, la versione, 
+il nome dei metodi e dei costruttori, una descrizione del suo scopo, i parametri di ritorno e passati al costruttore o metodo. 
+La documentazione può essere generata automaticamente tramite un'utility chiamata \verb|javadoc|, contenuta in Eclipse, i marcatori utilizzati per definire i comandi si trovano 
+esclusivamente all'interno  di un commento generato del genere \verb|/** <comandi> */|:
+\begin{minted}{java}
+/**
+ * Nome-classe: breve descrizione della classe ed il suo scopo
+ * 
+ * @author      autore della classe
+ * @see         riferimento ad altre classi
+ * @version     versione corrente della classe
+ */  
+\end{minted}
+
+I commenti per un metodo o un costruttore vengono inseriti prima subito prima del metodo o costruttore stesso. 
+\begin{minted}{java}
+/**
+ * Commento che descrive scopo e caratteristiche del metodo o costruttore
+ * 
+ * @param nome-parametro    breve descrizione
+ * @return                  valore di ritorno
+ */
+\end{minted}
+
+La classi vengono raggruppate in \verb|package|, per mantenere insieme classi concettualmente e logicamente correlate. Permette di creare spazi di nomi per evitare conflitti, 
+in oltre permette di definire domini di protezione. 
+Una classe può accedere a tutte le classi presenti nello stesso \verb|package|, altrimenti per accedere a classi pubbliche di un altro pacchetto si può utilizzare il nome completo, 
+anteponendo il nome del pacchetto, oppure importando la classe ed utilizzando direttamente il nome della classe. Le classi devono dichiarare la propria appartenenza ad un 
+pacchetto tramite la dichiarazione \verb|package <nome-package>|, all'inizio del file. Una classe può appartenere a più di un pacchetto. Ogni pacchetto deve avere un nome univoco, 
+di solito il nome comprende il nome del dominio Internet dell'organizzazione in ordine inverso. Una classe può essere usata al di fuori del pacchetto solamente se viene dichiarata 
+pubblica, tramite un modificatore d'accesso \verb|pubblic|, se viene omesso questo modificatore, è accessibile solamente alle classi interne allo stesso pacchetto.
+
+Il nome di un pacchetto possiede una struttura gerarchica, questa struttura deve avere una corrispondenza diretta nel file system. 
+
+\subsection{Coesione e Accoppiamento}
+
+Il software evolve continuamente, viene modificato in continuazione, per estensioni, correzioni, mantenimento, etc., e se il costo di questa evoluzione è troppo elevato, il 
+software viene gettato e viene implementato da zero. Questa evoluzione viene effettuata in tempi diversi da molte persone. 
+Se il codice è di cattiva qualità, la sua manutenzione ha un costo relativamente alto. La qualità del codice dipende da due fattori importanti, la coesione e l'accoppiamento. 
+L'accoppiamento tra due o più unità di un programma rappresenta l'impossibilità di modificare una sola unità senza l'eventuale modifica di altre unità accoppiate ad essa. 
+Per cui si vuole evitare l'accoppiamento, per limitare il più possibile la modifica di ulteriori unità, poiché aumenterebbe esponenzialmente i costi di una singola modifica. 
+Un sintomo del forte accoppiamento è la duplicazione del codice all'interno di un progetto. Un basso accoppiamento permette di capire il codice di una classe senza leggere 
+i dettagli di tutte le altri a lei accoppiata, e quindi anche la modifica, senza modificare ulteriori unità. 
+
+La coesione si riferisce al numero e all'eterogeneità dei compiti di cui una singola classe è responsabile. Se ogni unità è responsabile di un singolo compito, allora possiede 
+un'elevata coesione. La coesione si applica alle classi, ai metodi ed anche ai pacchetti. Un'alta coesione permette di definire moduli aventi uno scopo preciso ed un compito ben 
+definito. Questo favorisce la comprensione dei compiti di una classe, l'utilizzo di nomi appropriati, ed il riuso di classi e di metodi, rendendo la manutenzione, meno costosa. 
+Alta coesione e basso accoppiamento rappresentano due facce della stessa medaglia. %% wording
+
+
+Per cui quando viene progettato il codice è utile pensare a quali cambiamenti futuri potranno essere richiesti, e come verrà usata la classe. 
+%% ppt.
+
+
+La manutenzione del codice spesso richiede l'aggiunta di nuovo codice, questo eventualmente degrada il codice nella sua totalità, aumentando l'accoppiamento e diminuendo la 
+coesione, portando ad un'eventuale riorganizzazione del codice. Questa operazione viene chiamata ``refactoring'', senza modificare la funzionalità del codice. Per mantenere 
+la correttezza del codice viene associato a dei test che stabiliscono i criteri di correttezza del codice, usati per valutare la correttezza di implementazioni interne diverse. 
+
+
+In generale un metodo è troppo lungo se è responsabile di più di un compito logico, mentre una classe è troppo lunga se comprende più di un concetto. 
+
+
+\subsection{Tecniche di Testing}
+
+In generale i primi errori in un programma sono errori di sintassi, indicati dal compilatore in modo preciso e completo, anche se le specifiche di un messaggio di errore 
+dipendono dal compilatore utilizzato, successivamente possono presentarsi errori logici o ``bug'', su cui il compilatore non è in grado di fornire indicazioni. 
+Alcuni errori logici non si presentano immediatamente, per la complessità del software, altri possono essere individuati a tempo di esecuzione, e la macchina virtuale 
+fornisce informazioni precise sulla natura dell'errore, la maggior parte delle volte si tratta di un \verb|NullPointerException|. 
+
+Un programma rappresenta una singola descrizione statica associata a molteplici possibili esecuzioni dinamiche. Il compilatore è in grado di individuare errori a livello statico, 
+a tempo di scrittura o compilazione, e non è in grado di individuare possibili errori dovuti all'esecuzione e l'evoluzione del programma. 
+I bug sono quindi errori che si presentano durante l'evoluzione dinamica del programma, che il compilatore non è in grado di prevedere. Il costo delle operazioni di debugging, 
+rappresenta il costo principale di ogni moderno progetto di software, ed è interamente a carico del programmatore. 
+
+La correzione di un bug dipende da due grandezze, la dimensione del contesto, ovvero il numero di linee di codice in cui il bug si può annidare. Inoltre dipende dal tempo 
+necessario al bug per manifestarsi, rappresenta una misura temporale tra la causa del bug ed il rilevamento dei suoi effetti. 
+
+
+Per rilevare i malfunzionamenti di un software vengono utilizzati delle tipologie di test, in tre fasi sequenziali:
+\begin{itemize}
+    \item Mettere il sistema in uno stato iniziale noto;
+    \item Iniziare a sollecitare il sistema;
+    \item Controllare lo stato del sistema e confrontarlo con lo stato atteso. 
+\end{itemize}
+
+Se i test sono progettati e mantenuti, allora permettono di individuare tempestivamente i bug all'interno del software, restringendo le cause del singolo bug. Se il test ha 
+successo si ha una garanzia sul comportamento dinamico del codice, altrimenti fornisce informazioni sulla presenza di un bug. 
+Ad ogni modifica è necessario ripetere un'operazione di testing, per identificare eventuali bug, inseriti durante la manutenzione del codice, in questo modo è possibile 
+ricercare localmente l'errore, in maniera molto economica. Inoltre utilizzando questo processo è possibile prevenire la regressione, localizzando l'errore nel codice appena 
+aggiunto al programma. 
+
+
+Per automatizzare questo processo si realizza, accanto al codice di produzione, il codice di test. Una possibile soluzione inizializza tutti i casi da testare sul codice 
+di produzione, inserendo, ad ogni chiamata, il valore atteso confrontandolo con il valore ottenuto. 
+I test devono essere automatici, efficienti ed isolati, per mantenere la località degli errori, inoltre devono essere separati dal codice applicativo ed eseguibili e 
+verificabili separatamente. 
+Esistono vari strumenti per assistere il programmatore nel testing, in particolare l'unit-testing, in Java il più note ed utilizzato framework è ``JUnit'', integrato 
+all'interno di Eclipse. 
+Per ogni classe creata si crea una classe parallela dedicata al testing, contenente una batteria di test, ognuno un metodo differente per testare diversi casi, preceduto 
+dall'annotazione \verb|@Test|, contenente un'asserzione sul risultato aspettato tramite il metodo \verb|assertEquals()|. 
+
+Tutte le classi di test hanno la stessa struttura, si inseriscono nello stesso pacchetto della classe che devono testare, e vengono chiamate rispettando la convenzione 
+\verb|test<nome-classe>|, anche se non è più necessario utilizzare questa notazione, semplicemente tramite l'annotazione \verb|@Test|, anche se viene favorito il suo 
+utilizzo. I risultati attesti sono documentati tramite asserzioni esplicite, non mediante stampe, se l'asserzione è vera il test è andato a buon fine, altrimenti è 
+presente un errore nella sezione di codice testato. Sono possibili altre asserzioni fornite da JUnit, sovraccariche e facilmente intercambiabili, per cui è sempre 
+favorito utilizzare la versione più pertinente. 
+
+Una variante di \verb|assertEquals()|, prevede una stringa, da stampare per fornire informazioni sul risultato del test.  
+
+%% TODO uso + implementazione di JUnit su Eclipse
+
+Per facilitare la scrittura di tutti i metodi di test, è comodo utilizzare degli oggetti predisposti per l'utilizzo da parte di tutti i test-case operazione chiamata 
+Fixture. JUnit permette di confinare in un unico metodo \verb|setUp()| la creazione di tutti gli stati noti a priori tramite l'annotazione \verb|@BeforeEach|. 
+In questo modo i test diventano estremamente semplici. 
+La lunghezza ottimale di un singolo test-case consiste di una singola riga di codice, rappresentata dall'asserzione. Per favorire la semplicità dei test si può 
+fattorizzare il codice di creazione della fixture. 
+L'uso di test minimali favorisce la leggibilità e la ricerca di errori, ed è sempre conveniente partire da test minimali per individuare i bug minori, per poi 
+aumentare la complessità dei test ed individuare bug sempre più complessi. 
+
+In generale è buona norma scrivere i test prima ancora di aver scritto il programma, una tecnica chiamata ``test-driven-develompent''. 
 
 
 
