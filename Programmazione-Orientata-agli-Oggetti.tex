@@ -501,6 +501,65 @@ aumentare la complessità dei test ed individuare bug sempre più complessi.
 
 In generale è buona norma scrivere i test prima ancora di aver scritto il programma, una tecnica chiamata ``test-driven-develompent''. 
 
+\clearpage
+
+\section{Interfacce e Polimorfismo}
+
+\subsection{Upcasting e Downcasting}
+
+In Java i riferimenti sono tipati, ovvero specificano il tipo dell'oggetto referenziato, quindi attraverso un riferimento possono essere eseguiti tutti i metodi offerti dalla 
+classe dell'oggetto. In generale nei linguaggi orientati agli oggetti esiste più di un modo per poter creare un tipo, in Java oltre al costrutto \verb|class| esiste il 
+costrutto \verb|interface|, utilizzato per creare un nuovo tipo. 
+Questo costrutto specifica un tipo in termini dei metodi che può offrire, specificando solamente la segnatura ed il tipo di ritorno, per cui non è presente alcun dettaglio 
+implementativo, come le variabili, costruttori ed il corpo dei metodi. Una classe può implementare una o più \verb|interface| tramite il costrutto \verb|implements <nome-interface>|, 
+e deve contenere tutti i metodi interni contenuti dall'\verb|interface|, ma può contenete non solo questi metodi. 
+
+Una classe che implementa un'\verb|interface| è un suo sottotipo, mentre l'\verb|interface| è un supertipo, una sua generalizzazione. 
+In Java vale il principio di sostituzione, di Liskov, il quale afferma che un sottotipo può essere usato al posto di un suo supertipo. 
+
+
+Per il principio di sostituzione, un riferimento ad un sottotipo può essere assegnato ad un riferimento ad un suo supertipo. La promozione di un tipo ad un suo supertipo viene 
+chiamato ``upcasting''. 
+Il collegamento tra l'assegnatura e l'implementazione di un \verb|interface| non è nota a tempo di compilazione, per cui si chiama ``late binding''. 
+Quindi si può differenziare tra il tipo statico, definito a tempo di compilazione, ed il tipo dinamico, ciò che viene utilizzato a tempo di esecuzione. Il compilatore 
+permette di applicare solo i metodi del tipo statico, poiché essendo legato solamente a tempo di esecuzione, il compilatore non permette di utilizzare i metodi del tipo 
+dinamico. 
+
+L'overloading dei metodi avviene a tempo di compilazione, quindi staticamente, ma in questo modo non tiene conto dei metodi dei tipi dinamici. 
+
+%% TODO ppt. 8/4%
+% 12/4: verifica polimorfismo
+
+Le invocazioni polimorfe si risolvono a tempo di esecuzione sulla base del tipo dinamico da parte della macchina virtuale, l'unica componente in grado di avere informazioni 
+sul tipo dinamico. Mentre l'overloading di un metodo viene risolto a tempo di compilazione dal compilatore, sulla base del tipo statico dei parametri passati al metodo. 
+
+\subsection{Estensioni di Interface e Classi}
+
+Date due interfacce diverse, aventi gli stessi metodi, anche se concettualmente sembrerebbero uguali, non è possibile referenziare un oggetto che implementa una delle due interfacce 
+con un oggetto che implementa l'altra, poiché il linguaggio è staticamente tipato. Per risolvere questo problema è viene fornita la parola chiave \verb|extends <nome-interfaccia>| per 
+specificare che un'interfaccia è sottotipo di un'altra interfaccia, aggiungendo dei metodi non presenti nella prima interfaccia. A tempo di compilazione è quindi possibile 
+referenziare due oggetti che implementano queste due interfacce diverse, applicando il principio di sostituzione. 
+
+Attraverso quest'estensione è possibile quindi definire nuovi tipi a partire da tipi già esistenti. 
+
+
+Oltre alle interfacce, è possibile estendere le classi, ma questo è un meccanismo più complesso, poiché entrambe le classi, supertipo e sottotipo, contengono metodi con un corpo, 
+a differenza delle interfacce. La classe di partenza viene chiamata superclasse, o classe base o genitore. La classe definita per estensione da questa, viene chiamata classe estesa, 
+derivata, sottoclasse o figlia. 
+La classe derivata ``eredita'' tutto quello che offre la classe di partenza. Tramite l'annotazione \verb|@Override| è possibile modificare un metodo con corpo della superclasse, 
+all'interno della classe derivata. 
+Per indicare la definizione di una classe come estensione di una classe si usa la stessa parola chiave \verb|extends <nome-classe>|. Queste classi derivata possono dichiarare 
+metodi e membri aggiuntivi, e modificare tramite annotazioni metodi preesistenti. La classe base viene considerata un supertipo della classe estesa. Poiché rappresenta una classe 
+esterna, non può accedere a parametri privati, interni alla classe base. Per accedere a queste variabili è possibile utilizzare i metodi getter e setter offerti dalla classe b
+base, applicati sulla classe derivata. 
+Come per le interfacce, non è possibile invocare i metodi privati, di una classe estesa, applicato sulla sua superclasse. 
+Il meccanismo di modifica un metodo presente nella classe base si chiama ``overriding'', tramite annotazioni, come descritto precedentemente. Ma bisogna considerare che non 
+può accedere a parti private della superclasse. 
+
+%% TODO 15/4: ppt. 
+
+
+
 
 
 
