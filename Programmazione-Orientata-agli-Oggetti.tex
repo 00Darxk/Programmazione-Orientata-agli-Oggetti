@@ -558,9 +558,46 @@ può accedere a parti private della superclasse.
 
 %% TODO 15/4: ppt. 
 
+Per creare un'istanza della sottoclasse è necessario invocare la superclasse corrispondente. Il costruttore di una classe estesa deve quindi inizializzare i propri campi, ed i 
+campi propri della superclasse, ma un metodo di una sottoclasse non può accedere a parti private della sua superclasse. In java questo viene risolto delegando questo metodo, 
+effettuando una chiamata al costruttore della sua superclasse, per inizializzare le sue parti private. Ciò si effettua tramite la parola chiave \verb|super(<parametri>)|, 
+passando i parametri formali che diventano parametri attuali del costruttore della sua superclasse. Questa invocazione deve essere l'unica e sola nel costruttore, e deve 
+essere presente alla prima riga del costruttore della sottoclasse. Questo poiché è necessario creare la superclasse prima di poter creare la sua sottoclasse, si è quindi vincolati 
+quest'ordine sintattico. 
+
+Se la superclasse non ha costruttori, il compilatore ne crea uno automaticamente senza argomenti, quindi è possibile che aggiungendo un costruttore della superclasse, si 
+genera un errore di compilazione su un costruttore della sua sottoclasse, poiché utilizza il costruttore creato automaticamente dal compilatore ``no-arg''. 
+
+\subsection{Classe Object}
+
+Ogni oggetto Java direttamente o indirettamente deve essere un sottotipo della classe \verb|Object|, chiamato anche la radice della gerarchia dei tipi Java.
+Tutte le classi estendono automaticamente questa classe predefinita, contiene quindi alcuni metodi disponibili ad ogni classe. 
+Alcuni di questi metodi sono \verb|toString()| e \verb|equals(Object o)|, tutte le classi ereditano questa implementazione, oltre la loro segnatura, possono quindi ridefinire 
+l'implementazione, rispettando la segnatura. Il metodo \verb|toString()| di default stampa l'indirizzo di memoria dell'oggetto su cui viene applicato il metodo. 
+Quasi sempre quindi conviene ridefinire questi metodi sulla base dello specificità della classe definita. 
+Essendo tutte le classi estensioni di questa classe predefinita, ogni costruttore contiene implicitamente una chiamata al costruttore alla classe \verb|Object|. 
+Generalmente quando si ridefinisce un metodo fornito dalla classe \verb|Object| bisogna effettuare un downcast al tipo della classe necessaria nel metodo. 
+
+%% TODO 17/4 estensione studio di caso
+
+La parola chiave \verb|super| è in grado di effettuare una chiamata ad un metodo presente nella superclasse, all'interno di una classe avente lo stesso nome nella 
+sottoclasse. Impedendo di avere un invocazione ricorsiva dello stesso metodo fino all'esaurimento dello stack. 
 
 
+In Java esiste un altro modificatore di accesso di livello intermedio tra \verb|public| e \verb|private|, chiamato \verb|protected|, permette ad una superclasse aventi 
+membri protetti di essere visibili a tutte le sue sottoclassi, indipendentemente dai pacchetti di appartenenza. 
+In generale questo modificatore di accesso viene evitato per applicazioni semplici, come lo studio di caso trattato in questo corso, poiché rappresenta uno studio 
+introduttivo. Infatti contraddice implicitamente il principio dell'``information hiding''. 
+L'utilizzo più opportuno è nella progettazione di framework, librerie che permettono l'estensione da parte degli utilizzatori. 
 
+Il livello di visibilità ottenuto senza inserire un modificatore di accesso viene chiamato anche \verb|package-private|. Questo livello di visibilità è il meno permissivo 
+dopo il modificatore \verb|private|. 
+
+%% TODO matrice dei livelli di accesso
+
+In ordine di visibilità si ha quindi in ordine decrescente \verb|public|, \verb|protected|, \verb|package-private| e \verb|private|. 
+
+%% TODO metodi sovrascritti
 
 
 
