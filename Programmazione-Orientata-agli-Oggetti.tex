@@ -568,7 +568,7 @@ quest'ordine sintattico.
 Se la superclasse non ha costruttori, il compilatore ne crea uno automaticamente senza argomenti, quindi è possibile che aggiungendo un costruttore della superclasse, si 
 genera un errore di compilazione su un costruttore della sua sottoclasse, poiché utilizza il costruttore creato automaticamente dal compilatore ``no-arg''. 
 
-\subsection{Classe Object}
+\subsection{Classe Object e Overriding}
 
 Ogni oggetto Java direttamente o indirettamente deve essere un sottotipo della classe \verb|Object|, chiamato anche la radice della gerarchia dei tipi Java.
 Tutte le classi estendono automaticamente questa classe predefinita, contiene quindi alcuni metodi disponibili ad ogni classe. 
@@ -599,6 +599,37 @@ In ordine di visibilità si ha quindi in ordine decrescente \verb|public|, \verb
 
 %% TODO metodi sovrascritti
 
+Sovrascrivendo un metodo è possibile modificare la sua visibilità, rendendolo più visibile, ma non è possibile diminuire la visibilità di uno metodo da una sottoclasse. 
+
+
+Il metodo di una sottoclasse può modificare un metodo, ereditato dalla superclasse, di identica segnatura ma di tipo restituito più generale. Questa caratteristica si chiama 
+covarianza. 
+Mentre si può effettuare un procedimento analogo con parametri polimorfi, dove bisogna posizionare nel supertipo il parametro più specifico mentre nel sottotipo il parametro 
+più generico. Questa caratteristica si chiama controvarianza. 
+Per cui il parametro passato è controvariante, mentre il parametro restituito è covariante; scendendo nella gerarchia dei tipi, i parametro passati devono essere sempre 
+più generali, mentre i parametri restituiti sempre più specifici. 
+
+Poiché in Java due metodi aventi lo stesso tipo rappresentano un sovraccarico, quindi questo tipo di overload viene risolto a tempo statico, ma secondo il paradigma orientato 
+agli oggetti questo rappresenta una sovrascrittura, nonostante siano due metodi che prendono due parametri distinti polimorfi. Quindi utilizzando la parola chiave \verb|@Override| 
+viene generato un eccezione a tempo di compilazione. 
+
+In Java la gerarchia delle classi ha una radice definita, la radice di Object è quindi \verb|java.lang.Object|, e rappresenta la radice predefinita della gerarchia delle classi. 
+Al contrario di altri linguaggi di programmazione in Java, al contrario di C++, non è possibile avere una derivazione multipla tra classi, una class può estendere al più una 
+sola altra classe, e può avere zero o più sottoclassi. 
+%% TODO problema del fro/go/sauro
+In Scala questo problema viene risolto creando un'ordine totale, tramite un processo di linearizzazione della gerarchia in base a quale tipo viene prima all'interno. 
+Se un membro è definito in entrambi le classi base, la classe estesa da queste due mischia le due implementazioni. Quando le due classi non presentano membri che 
+si sovrappongono tra di loro è possibile unire le due classi poiché non si presentano conflitti. 
+
+In Java invece è possibile effettuare una derivazione multipla tra interfacce, la stessa classe \verb|String| implementa tre interfacce. Questo è possibile poiché non è 
+possibile mischiare il corpo dei metodi forniti dalle interfacce, poiché vengono implementati all'interno della classe che le estende. 
+La gerarchia dei tipi non è più lineare, poiché comprende anche le interfacce, che possono estendere zero o più interfacce, mentre le classi possono implementare zero o più 
+interfacce. 
+La gerarchia delle classi è lineare, mentre la gerarchia delle interfacce non è lineare. In Java 8 vennero introdotti i metodi default, che permettono una derivazione multipla 
+ristretta, per poter estendere librerie senza perdere la retrocompatibilità. 
+
+
+La scelta dei corretti tipi da definire in un programma è un delicato esercizio di modellazione. Nella creazione dei tipi occorre considerare anche gli aspetti dinamici. 
 
 
 \end{document}
