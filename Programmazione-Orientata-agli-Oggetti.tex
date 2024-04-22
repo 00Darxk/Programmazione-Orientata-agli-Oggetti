@@ -632,4 +632,68 @@ ristretta, per poter estendere librerie senza perdere la retrocompatibilità.
 La scelta dei corretti tipi da definire in un programma è un delicato esercizio di modellazione. Nella creazione dei tipi occorre considerare anche gli aspetti dinamici. 
 
 
+Il sovraccarico di un metodo viene risolto a tempo di compilazione in Java, sulla base dei tipi statici, ma è possibile ottenere un effetto simile ad un sovraccarico sulla base 
+di tipi dinamici, utilizzando una chiamata polimorfa ed il late-binding. 
+
+% barba-trucco  ovverriding for overloading
+Si considera una gerarchia di tipi, avente come radice una interfaccia vuota non modificabile, e si considera un metodo che vuole essere implementato sull'interfaccia. 
+Si potrebbe creare quindi una classe contenente metodi sovraccarichi per quante sono le classi che implementano tale interfaccia. Ma questo è possibile solamente quando si 
+coincide il tipo statico con il tipo dinamico delle variabili locali delle classi, passati ai metodi sovraccarichi. Altrimenti non sarebbe possibile utilizzare questa tecnica, 
+spesso invece non è nota il tipo dinamico del parametro passato al metodo. 
+Per risolvere questo problema quindi bisogna trovare un modo per passare un tipo generico a questo metodo, basandosi solamente sul tipo statico. Si vuole risolvere il metodo 
+sovraccarico sulla base del tipo dinamico.  
+
+In generale è sconsigliato determinare il tipo dinamico di un oggetto tramite il codice, poiché il polimorfismo deve chiamare il metodo corretto in base al tipo dinamico, per 
+cui in questo caso non si considera questa tecnica. 
+
+Il vantaggio delle chiamate polimorfe è che permettono di scegliere quale metodo da invocare sulla base del tipo dinamico, per cui modificando la definizione di codice della 
+libreria che implementa l'interfaccia vuota, per ospitare un metodo che accetta una classe, contenente metodi sovraccarichi per ogni sottoclasse dell'interfaccia. 
+In seguito si inserisce in ogni sottoclasse un'implementazione di questo metodo come override che invoca questo metodo sovraccarico, passando sé stesso con la parola chiave 
+\verb|this|, tipo statico il tipo della classe o il suo sottotipo. In questo modo la chiamata polimorfa sovrascritta in una sottoclasse generica dell'interfaccia iniziale 
+invoca un metodo dove il tipo statico corrisponde al tipo dinamico. 
+
+%% TODO esempio pratico (forme_geometriche) / ppt. 
+
+Questa tecnica si chiama ``dispatching''. 
+
+\clearpage
+
+\section{Generics}
+
+I generics sono uno strumento per scrivere classi e metodi parametriche rispetto ad un tipo. Più che progettare classi generiche, si vuole utilizzare classi generiche, la loro 
+progettazione va oltre gli obiettivi del corso. Per classe generica si intende un tipo che dipende da un altro tipo. In questo corso si useranno classi generiche relative 
+alla gestione di collezioni di oggetti, in particolare con il pacchetto \verb|java.util|. 
+
+Senza utilizzare classi generiche per poter realizzare tipi parametrici, consiste nello sfruttare il polimorfismo, utilizzando la classe \verb|Object| ed utilizzando il 
+principio di sostituzione per poter ottenere l'effetto desiderato, essendo la radice della gerarchia delle classi. Prima di Java 5, questo era l'unico metodo di programmazione 
+fornita da Java, utilizzando downcast sparsi nel codice. Questo controllo lasco dei tipi potrebbe portare ad errori a tempo di esecuzione. 
+Questo rappresenta solamente un'approssimazione del tipo desiderato. 
+
+
+Introdotti in Java 5, i generics sono uno strumento per scrivere classi ed interfacce il cui tipo diventa parametrico rispetto ad uno o più tipi. Il tipo generico dipende 
+da un tipo chiamato formale, che deve essere istanziato affinché funzioni correttamente. I tipi formali in generale vengono chiamati con singole lettere maiuscole, 
+per indicare che una classe è un generics si utilizza la notazione accanto al tipo del nome della classe \verb|< >|, che racchiude il nome del tipo formale. 
+Questo tipo viene usato come una dichiarazione di tipo, quindi può essere usato all'interno della classe come instanziamento di tipo. Solo quando viene creato il tipo 
+bisogna assegnare un tipo al tipo formale, se non vengono forniti tutti i tipi formali il codice non compila. 
+
+Quando si uas una classe generica, bisogna istanziarne completamente i tipi fornendo i tipi attuali di tutti i tipi formali di cui fa uso, solo in questo modo può essere 
+utilizzata come un tipo. 
+
+Il concetto tra parametro attuale parametro formale è simile alla relazione tra tipo formale e tipo attuale. 
+
+Essendo Java un linguaggio ibrido sono presenti informazioni, non rappresentate come oggetti, per cui non è possibile utilizzare questi tipi come tipi formali di una classe 
+generica. Non è possibile istanziare i tipi di una classe, di una interfaccia o di un metodo generico con tipi primitivi. Per risolvere questo problema è possibile 
+rappresentare i tipi primitivi mediante le classi ``wrapper''. Per ogni tipo primitivo esiste una corrispondente classe wrapper che consente di esprimerlo tramite oggetto, 
+immutabile, costruendoci un oggetto attorno. 
+
+Le classi wrapper sono definite nel pacchetto \verb|jav.lang|, per cui non è necessario importarle, esplicitamente. Per ovviare a questa eccessiva verbosità, da 
+Java 4, la gestione degli oggetti wrapper venne semplificata tramite tecniche di ``boxing'' e ``unboxing''. Che permettono di effettuare dichiarazioni, inizializzazioni e 
+conversioni dirette tra tipi primitivi ad oggetti wrapper. 
+
+
+
+
+
+
+
 \end{document}
