@@ -691,7 +691,127 @@ Java 4, la gestione degli oggetti wrapper venne semplificata tramite tecniche di
 conversioni dirette tra tipi primitivi ad oggetti wrapper. 
 
 
+%% TODO 24/4: wildcard ppt. 
 
+
+La sintassi di questa wildcard viene rappresentata da \verb|?|, per indicare che si può accettare un parametro di tipo \verb|T| o sottotipo di \verb|T| si usa quindi la 
+segnatura \verb|<? extends T>|. 
+Il compilatore decide a tempo di compilazione il tipo attuale dei tipi formali della classe generica. Questo uso uso di wildcard rappresenta un ``limite'' superiore 
+rispetto alla gerarchia dei tipi, per definire quali tipi sono accettabili dalla classe. 
+
+Delle classi non generiche possono ospitare metodi statici generici, inserendo il tipo formale subito prima del tipo restituito. Questo metodo può essere evocato 
+come per le classi generiche solo se il tipo formale è perfettamente definito. 
+
+Analogamente si può indicare un limite superiore tramite la segnatura \verb|<? super T>|, in questo modo si può accettare un parametro di tipo \verb|T| o di un suo 
+supertipo. 
+
+Per determinare quale tipo attuale rappresenta il tipo formale si considera la regola PECS, %% TODO
+
+I tipi generici si usano per lavorare con le collezioni, presenti in \verb|java.util.Collection|. 
+Quando non è strettamente necessario dare un nome al tipo formale si utilizza la sintassi \verb|<?>|. 
+
+
+\subsection{Collezioni}
+
+Il linguaggio offre delle librerie native, utilizzate per implementare collezioni come liste, mappe, tabelle di hash, etc. 
+Tutti queste collezioni appartengono al ``Collection Framework''. 
+
+
+Molte applicazioni richiedono di gestire collezioni di oggetti, gli array, usati dall'inizio del corso sono un strumento di basso livello. La dimensione di una collezione 
+generalmente non è nota a priori, e gli array non permettono di variare la sua dimensione, per cui è possibile sia necessario creare un array di dimensione maggiore, per 
+evitare un overflow. 
+
+Inizialmente venne introdotto in Java 2, ma venne esteso in Java 5, con l'introduzione dei Generics, introdotti appunto per generalizzare il loro uso nelle collezioni 
+preesistenti. 
+Viene contenuto nel pacchetto \verb|java.util|, contiene collezioni non specialistiche, tra le più utilizzate in assoluto. 
+
+Il Java Collection Framework (JCF), contiene implementazioni interfacce, come le liste e le mappe. Collezioni utilizzate in tutti i linguaggi di programmazione moderni, 
+generiche, dipendenti le liste da un tipo formale, mentre le mappe, dizionari, array associativi dipendono da due tipi formali, una chiave ed il valore. 
+Altre interfacce permettono di enumerare la collezione indipendentemente dal tipo della stessa. 
+
+L'interfaccia \verb|Collection<E>| dichiara una generica collezione, generalizzata sia su \verb|List<E>| che su \verb|Set<E>|. Nelle liste gli elementi sono salvati sequenzialmente 
+e possiedono una posizione, senza gestire i duplicati; mentre negli insiemi, non ammettono duplicati e gli elementi non possiedono una posizione. 
+
+Dentro questa interfaccia sono presenti quindi tutti i metodi utili da applicare a collezioni di elementi, che essi siano liste o insiemi. Questi metodi effettuano operazioni 
+come l'aggiunta e la rimozione di elemento, verificare la dimensione o se è vuota, aggiungere tutti gli elementi ad un'altra collezione, ed ottenere un iteratore con cui 
+è possibile scandire la collezione. 
+
+
+L'interfaccia \verb|Set<E>| estende \verb|Collection<E>|, è una collezione che non può contenere duplicati. Questa collezione offre tutti e soli i metodi dell'interfaccia 
+\verb|Collection|. 
+Poiché non ammettono duplicati, è necessario definire un criterio di equivalenza tra due elementi dell'insieme, in modo da utilizzarlo come criterio per rifiutare aggiunte 
+all'insieme. 
+
+L'interfaccia \verb|List<E>| estende \verb|Collection<E>| corrisponde ad una sequenza ordinata di elementi. Ogni elemento può quindi essere identificato dalla sua posizione. 
+
+L'interfaccia \verb|Map<K,V>| offre le operazioni di una mappa, o dizionario; è una collezione di coppie chiave-valore. 
+
+La classe \verb|java.util.Collections|, offre un vasto insieme di metodi statici generici, %% TODO
+
+
+I metodi offerti dall'interfaccia \verb|Collection<E>| vengono usati per una collezione generica, permettono di svolgere tre categorie di operazione:
+\begin{itemize}
+    \item Manipolazione di base;
+    \item Bulk;
+    \item Conversione di/ad un array. 
+\end{itemize}
+
+Tutti i metodi che producono un effetto scontato, o non producono alcun effetto collaterale vengono implementati utilizzando il tipo \verb|Object| per il tipo passato. 
+Mentre metodi che necessitano di un tipo specifico, altrimenti si provocano effetti indesiderati, vengono tipati utilizzando il tipo specifico per il tipo passato, come per il 
+tipo \verb|add|.
+Il metodo \verb|add| restituisce un booleano, vero se e solo se l'aggiunta ha generato una modifica della collezione. 
+
+
+I metodi con la variante di suffisso \verb|All| permettono di effettuare addizioni rimozioni a ``lotto''. Hanno una segnatura strettamente collegata ai metodi basici, 
+prendono come parametro il tipo \verb|Collections<?>|. Tutti questi i metodi sono lascamente tipati, eccetto \verb|addAll|, che richiede una collezione di tipo \verb|<E>| o di 
+un suo sottotipo. 
+
+La conversione ad un array viene tipata come un array di oggetti \verb|Object[]|, mentre è possibile effettuare la stessa ad un metodo parametrico \verb|toArray(T[] a)|, che 
+prende un array dichiarato esternamente da riempire, e ne prende il tipo. 
+Uno dei motivi per la presenza di questi metodi, consiste nella creazione di questo pacchetto precedentemente ai Generics in Java 5. Inoltre la seconda versione, che costringe di 
+specificare il tipo, permette al compilatore di effettuare un'analisi statica dei tipi più stretta, senza che sia il compilatore a cercare il tipo dalla collezione, poiché 
+per motivi di retrocompatibilità non è possibile realizzare array generici in Java, appunto per l'introduzione tardiva dei Generics. Poiché i Generics vengono utilizzati a 
+tempo di compilazione, e non è possibile identificare a tempo di esecuzione quale metodo o classe sia generica o meno. 
+
+Per utilizzare il secondo tipo per generare un array generico, si può passare come parametro un array lungo zero, in modo da passare il tipo, ed è il metodo a creare un array 
+dello stesso tipo, di lunghezza sufficiente per ospitare tutta la collezione. 
+
+\subsection{Iteratori}
+
+Storicamente ogni collezione diversa richiedeva un modo diverso per scandire la collezione, per ogni collezione si generava un modo di enumerare gli elementi della collezione. 
+Il codice per enumerare gli elementi dipendeva fortemente dalla collezione stesa. Gli iteratori rappresentano uno stesso modo per poter enumerare elementi di collezioni diverse 
+tra di loro. 
+Si è quindi oggettificato il concetto di enumerazione di una collezione, indipendentemente dal tipo della collezione ospitante di questi elementi. Gli iteratori 
+sono creati invocando il metodo \verb|iterator()| sulla collezione. 
+
+In pratica è un cursore che scandisce la collezione sottostante ricordando la sua posizione nella scansione. Una posizione lecita si trova subito prima o subito dopo di un 
+elemento della collezione su cui si sta iterando, non si trova mai sopra un elemento. 
+
+I metodi verificano se l'elemento corrente ha un successivo, ed il metodo che restituisce il riferimento a quest'elemento con \verb|hasNext()| ed \verb|next()|. 
+Rappresenta un'enumerazione con stato, poiché deve salvare il suo stato attuale. Se si arriva alla fine della collezione, chiamando il metodo \verb|next()| viene 
+sollevata un'eccezione. 
+
+% per imparare il comportamento di iteratore tramite test di iteratori. 
+
+Da Java 7 in poi, data una variabile che può ospitare una collezione rispetto ad una classe formale, nella dichiarazione della collezione si può omettere il tipo formale, e 
+lasciare \verb|<>| vuoto. 
+
+%% TODO esercizio iterazione, scansione di list con for-each
+
+
+Un iteratore per effettuare il suo lavoro deve conservare un rifermento alla collezione che lo ha creato su cui vuole iterare, successivamente alla sua creazione. 
+La presenza di un metodo \verb|remove()| rende più evidente la natura di questo legame. Rimuove l'ultimo elemento restituito dalla chiamata \verb|next()|, l'ultimo 
+elemento restituito dalla collezione. Viene introdotto questo metodo per permettere all'iteratore di conoscere lo stato della collezione dopo la rimozione, poiché è 
+passata attraverso l'iteratore. 
+Ovviamente chiamate successive a questo metodo senza ulteriori chiamate a \verb|next()| producono un errore. Invece se viene chiamato il metodo \verb|remove()| sulla 
+collezione, il comportamento dell'iteratore non è scontato. 
+Alcuni iteratori conservano la collezione precedente, altri si aggiornano, altri ancora forniscono un errore. 
+La documentazione dell'interfaccia specifica che il suo comportamento non è specificato se la collezione viene modificata quando l'iteratore sta ancora iterando sulla collezione. 
+Generalmente applica la strategia del ``fail fast'', ed alla prima chiamata al metodo dell'iteratore dopo una modifica alla collezione solleva un'eccezione \verb|ComponentModificationException|
+Per verificare se la collezione è stata cambiata, la collezione genetrice crea un oggetto che salva la versione corrente della collezione, aggiornata ad ogni modifica 
+della collezione. Questo oggetto viene quindi controllato dall'iteratore per verificare che la collezione non è stata modificata. 
+Nella documentazione viene sconsigliato l'affidamento su questo oggetto, poiché conserva la versione in un intero, che può contenere al massimo quattro miliardi di modifiche 
+alla collezione, prima di effettuare un overflow, e ritornare al valore iniziale. 
 
 
 
