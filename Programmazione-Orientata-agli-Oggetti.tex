@@ -813,6 +813,86 @@ della collezione. Questo oggetto viene quindi controllato dall'iteratore per ver
 Nella documentazione viene sconsigliato l'affidamento su questo oggetto, poiché conserva la versione in un intero, che può contenere al massimo quattro miliardi di modifiche 
 alla collezione, prima di effettuare un overflow, e ritornare al valore iniziale. 
 
+\subsection{Liste}
+
+Le liste sono strutture dati astratte, con agginunta in coda, tramite il metodo \verb|add()|. Gli elementi vengono salvati sequenzialmente, e vengono indicizzati a partire
+da zero, come per gli array. Si può accedere ad un elemento specifico per indice, e cercare l'indice tramite metodi presenti. 
+
+Il package \verb|java.util| offre due implementazioni dell'interfaccia \verb|List<E>|:
+\begin{itemize}
+    \item \verb|ArrayList<E>|;
+    \item \verb|LinkedList<E>|.
+\end{itemize}
+Gli \verb|ArrayList<E>| hanno un'aggiunta molto efficiente per indice, ma avendo una lunghezza fissa, quando l'array è pieno, bisogna creare un array nuovo di grandezza 
+superiore. 
+Per cui le sue prestazioni sono strettamente dipendenti dalla dimensione attuale del numero dei dati salvati. 
+
+
+In generale la rappresentazione \verb|LinkedList<E>|, di liste concatenate, ad una o due sentinelle, permettono una dimensione variabile, ma gli accessi 
+avvengono sequenzialmente, per cui hanno un tempo lineare, al contrario degli \verb|ArrayList<E>|, in tempo costante eccetto il trabocco. 
+
+
+I costruttori di queste due implementazioni sono sovraccarichi. Entrambi hanno un costruttore vuoto, ed un costruttore che prende come parametro una collezione di un sottotipo 
+del tipo formale \verb|E|: \verb|Collections<? extends E>|, permettendo di convertire un'intera collezione in una lista. Viene inserito il sottotipo poiché le collezioni 
+non sono covarianti con il tipo della stessa. 
+
+
+Per \verb|LinkedList| sono presenti dei metodi per accesso in testa e coda, poiché avviene in tempo costante, tramite riferimenti alla testa ed alla coda. 
+
+
+Nella classe \verb|Collections| sono presenti vari metodi efficienti per ordinare la lista, per effettuare una ricerca binaria, cercare il massimo o minimo nella lista. 
+Queste operazioni sono possibili solamente se esiste una relazione d'ordine tra gli elementi presenti nella collezione. 
+Quest'operazione viene affidata all'apposita interfaccia \verb|java.lang.Comparable<E>|, naturale o interno, oppure ad una classe esterna agli oggetti contenuti tramite 
+l'interfaccia \verb|java.util.Comparator<T>|. 
+La prima interfaccia consiste nell'unico metodo \verb|public int compareTo(T that)|, e restituisce un valore minore maggiore o uguale a zero a seconda che l'oggetto 
+\verb|this| su cui viene applicato il metodo sia rispettivamente minore, maggiore o uguale al riferimento all'oggetto ricevuto come parametro. 
+
+Molte librerie standard già implementano quest'interfaccia, adottando una semantica scontata. Viene eventualmente delegato quindi ad una di queste implementazioni, quando si vuole 
+implementare l'interfaccia su un altra classe. 
+
+\subsubsection{Ordinamento Interno}
+
+Il metodo per ordinare le liste corrisponde al metodo statico \verb|Collections.sort()|, in due versioni sovraccariche corrispondente ai due metodi per determinare un 
+criterio di ordinamento. La segnatura per l'ordinamento naturale corrisponde a:
+\begin{minted}{java}
+    public static <T extends Comparable<? super T>> void sort(List<T> list)
+\end{minted}
+Affinché qualcosa sia ordinabile, deve implementare un criterio di ordinamento. Questo criterio di ordinamento deve essere in grado di ordinare un tipo o un suo supertipo. 
+
+Per ottenere un minimo o un massimo da una lista \verb|List<T>|, i cui elementi implementano l'interfaccia \verb|Comparable<T>|, può essere calcolato mediante i metodi offerti 
+da \verb|Collections|:
+\begin{minted}{java}
+public static <T extends Object & Comparable<? Super T>> T min/max(Collections<? extends T> c)
+\end{minted}
+Per gli stessi motivi del precedente metodo. Semplificato in:
+\begin{minted}{java}
+    public static <T extends Comparable<? Super T>> T min/max(Collections<? extends T> c)
+\end{minted}
+Questo metodo non compila, se i metodi statici non risultano avere i metodi necessari per comparare, a tempo di compilazione, e quindi rappresenta un'enorme vantaggio 
+di Java. L'analisi dei tipi è uno strumento in grado di individuare errori anche a tempo di compilazione. 
+
+Se si ha una gerarchia dei tipi, è possibile implementare l'interfaccia \verb|Comparable<T>| solamente su un unico tipo, poiché a tempo di compilazione vengono utilizzati, e 
+rimpiazzati con tipi attuali a tempo di esecuzione, per la necessità di mantenere la retrocompatibilità di Java. Per questo un'unica gerarchia può avere un'unica 
+implementazione di un'interfaccia. Si rifiuta di considerare due instanziamenti dello stesso tipo generico con due tipi attuali diversi, poiché nel file \verb|.class| si avrebbero 
+due \verb|Comparable| che riferiscono a due tipi diversi, creando confusione. 
+Per lo stesso motivo non è possibile generare un array generico in Java. 
+
+Per questi motivi si preferisce mantenere un ordinamento naturale per tipi semplici, e si evita di utilizzarlo su una gerarchia per non ``sprecare'' il suo utilizzo. Per cui 
+risulta ben motivato l'utilizzo di classi esterne per implementare l'ordinamento. 
+
+\subsubsection{Ordinamento Esterno}
+
+L'ordinamento esterno viene consiste nell'utilizzo dell'interfaccia \verb|java.util.Comparator<T>|, composta da un'unico metodo:
+\begin{minted}{java}
+public int compare(T o1, T o2)
+\end{minted}
+Che deve restituire un valore minore, maggiore o uguale, a seconda se l'oggetto riferito da \verb|o1| sia minore, maggiore o uguale all'oggetto riferito da \verb|o2|. 
+
+In \verb|Collections| esistono metodi per il calcolo del massimo e del minimo, secondo l'ordinamento esterno:
+\begin{minted}{java}
+static <T> T min/max(Collections<? extends T> c, Comparator <? super T> comp)
+\end{minted}
+
 
 
 
