@@ -893,6 +893,77 @@ In \verb|Collections| esistono metodi per il calcolo del massimo e del minimo, s
 static <T> T min/max(Collections<? extends T> c, Comparator <? super T> comp)
 \end{minted}
 
+\subsection{Insieme}
+%% TODO 6/5
+L'interfaccia \verb|Set<E>| rappresenta un insieme, le due classi più famosi che lo implementano sono \verb|HashSet<E>| e \verb|TreeSet<E>|, un insieme ``ordinato''. 
+
+Gli insiemi sono collezioni che non contengono duplicati. Offre tutti e soli i metodi dell'interfaccia \verb|Collection<E>| con la restrizione che le classi che la 
+implementano non contengono duplicati. 
+Per poter riconoscere duplicati, bisogna definire un criterio di equivalenza tra gli elementi, basato sul dominio di utilizzo. 
+Per stabilire il criterio di equivalenza si può utilizzare il metodo \verb|equals()|, ed anche il metodo \verb|hashCode()|, per la classe \verb|HashSet<E>|. 
+Questi due metodi gemelli sono entrambi necessari per verificare ed evitare la presenza di duplicati nell'insieme. 
+
+Nel caso di \verb|TreeSet<E>|, ed in generale di insiemi ordinati, è necessario un criterio di ordinamento, naturale tramite \verb|Comparable<E>|, oppure passando al 
+momento della costruzione un oggetto \verb|Comparator<E>| esterno. 
+
+\subsubsection{HashSet}
+
+Una funzione hash è una funzione che calcola un numero intero, detto codice hash, a partire da un oggetto, in grado di verificare se due oggetti sono diversi o uguali, 
+poiché due oggetti aventi lo stesso codice hash saranno certamente equivalenti, mentre molto probabilmente due oggetti non equivalenti possiedono codici hash diversi. 
+Quando due oggetti non equivalenti hanno lo stesso codice hash, è necessario interrogare il metodo \verb|equals()|, questo fenomeno si chiama collisione; in generale 
+si prediligono funzioni di hash che minimizzano le collisioni. 
+
+Una tavola hash rappresenta un array, dove ogni elemento occupa una posizione corrispondente al suo codice hash, quando viene raggiunta la dimensione massima dell'array, 
+viene copiato in una array di lunghezza doppia. 
+Per risolvere il problema delle collisioni viene realizzato come un array di liste di conflitto, dove ogni elemento rappresenta una lista a tutti gli elementi ospitati 
+nella tabella di hash aventi lo stesso codice di hash. 
+
+Se la funzione è bene definita, le operazioni di appartenenza, rimozione ed inserimento avvengono in tempo costante. 
+
+Le implementazioni degli insiemi e delle mappe si basano interamente sulle tavole hash. 
+Quando si vuole implementare un \verb|HashSet<E>|, tutti gli oggetti della collezione, di tipo formale \verb|E|, devono avere sia il metodo \verb|hashCode()| che il metodo 
+\verb|equals()|. 
+Se non vengono definiti, vengono ereditati da \verb|java.lang.Object|, in cui il codice di hash corrisponde all'indirizzo di memoria dell'oggetto, ed il metodo \verb|equals()| 
+confronta gli indirizzi di memoria. 
+
+Il metodo \verb|equals()| definito deve rispettare le proprietà riflessiva, transitiva e transitiva, inoltre deve restituire falso quando gli viene passato un riferimento nullo, 
+mentre quando confronta lo stesso oggetto, deve restituire vero. L'unica asimmetria consiste nel chiamare il metodo su un riferimento nullo, genera infatti una 
+\verb|NullPointerException|. Una volta definito questo metodo, il metodo \verb|hashCode()| insiste sugli stessi campi del metodo precedente. 
+L'equivalenza di un metodo primitivo, non viene delegata al metodo \verb|equals()| come per i metodi non primitivi, ma viene verificato tramite la sintassi \verb|==|, questa 
+rappresenta una piccola ineleganza del linguaggio Java, nella sua gestione dei metodi primitivi. 
+
+Appena viene aggiunto un nuovo elemento alla collezione, questa chiama li metodo \verb|hashCode()| per verificare se non è presente alcun numero di stesso codice hash, 
+altrimenti invoca il metodo \verb|equals()| su ogni elemento della lista di collisione. 
+Questi due metodi sono assolutamente indipendenti l'uno dall'altro, e permettono facilmente di realizzare implementazioni molto efficienti. 
+Per ottenere implementazioni più efficienti, i calcoli effettuati dal metodo \verb|hashCode()| devono essere molto meno onerosi del metodo \verb|equals()|, poiché il primo 
+metodo viene invocato sempre, mentre il secondo solo in caso di collisioni. 
+
+Se non venisse implementato il metodo \verb|hashCode()|, si eredita quello definito da \verb|java.lang.Object|. 
+
+%% TODO 
+
+\subsubsection{TreeSet}
+
+L'implementazione più popolare degli alberi ordinati, viene realizzato tramite alberi ordinati, attraverso i metodi di ordinamento naturali ed esterni, definiti precedentemente 
+per le liste ordinate. 
+
+Tutto quello trattato sulle liste vale allo stesso metodo per gli insiemi ordinati. 
+Garantisce che gli elementi siano posizionati secondo un dato ordinamento. 
+Se gli elementi non implementano \verb|Comparable<E>|, o non viene passato in fase di costruzione un oggetto \verb|Comparator<E>|, si può sollevare un errore a tempo di 
+esecuzione. 
+Vengono implementati tramite alberi di ricerca binari, per uci è necessario che gli elementi possano essere confrontati ed ordinati. Per motivi di retrocompatibilità, 
+è possibile realizzare un \verb|TreeSet| di oggetti non ordinabili, ma alla prima occasione, a tempo di occasione, verrà sollevato un eccezione, poiché gli elementi non possono 
+essere ordinati. 
+
+%% TODO
+
+Se viene definito un criterio di ordinamento, implicitamente viene definito un criterio di equivalenza. Si definiscono i metodi di ordinamento in accordo con i metodi 
+\verb|hashCode()| e \verb|equals()|. 
+%% Il principio di sostituzione è valido se
+
+
+
+
 
 
 
