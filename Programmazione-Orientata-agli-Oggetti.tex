@@ -705,7 +705,7 @@ come per le classi generiche solo se il tipo formale è perfettamente definito.
 Analogamente si può indicare un limite superiore tramite la segnatura \verb|<? super T>|, in questo modo si può accettare un parametro di tipo \verb|T| o di un suo 
 supertipo. 
 
-Per determinare quale tipo attuale rappresenta il tipo formale si considera la regola PECS, %% TODO
+Per determinare quale tipo attuale rappresenta il tipo formale si considera la regola PECS, %% TODO convenzione PECS
 
 I tipi generici si usano per lavorare con le collezioni, presenti in \verb|java.util.Collection|. 
 Quando non è strettamente necessario dare un nome al tipo formale si utilizza la sintassi \verb|<?>|. 
@@ -746,7 +746,7 @@ L'interfaccia \verb|List<E>| estende \verb|Collection<E>| corrisponde ad una seq
 
 L'interfaccia \verb|Map<K,V>| offre le operazioni di una mappa, o dizionario; è una collezione di coppie chiave-valore. 
 
-La classe \verb|java.util.Collections|, offre un vasto insieme di metodi statici generici, %% TODO
+La classe \verb|java.util.Collections|, offre un vasto insieme di metodi statici generici, %% TODO metodi offerti dalla classe Collections
 
 
 I metodi offerti dall'interfaccia \verb|Collection<E>| vengono usati per una collezione generica, permettono di svolgere tre categorie di operazione:
@@ -894,7 +894,9 @@ static <T> T min/max(Collections<? extends T> c, Comparator <? super T> comp)
 \end{minted}
 
 \subsection{Insieme}
-%% TODO 6/5
+
+%% TODO 6/5: Insiemi
+
 L'interfaccia \verb|Set<E>| rappresenta un insieme, le due classi più famosi che lo implementano sono \verb|HashSet<E>| e \verb|TreeSet<E>|, un insieme ``ordinato''. 
 
 Gli insiemi sono collezioni che non contengono duplicati. Offre tutti e soli i metodi dell'interfaccia \verb|Collection<E>| con la restrizione che le classi che la 
@@ -938,9 +940,9 @@ Questi due metodi sono assolutamente indipendenti l'uno dall'altro, e permettono
 Per ottenere implementazioni più efficienti, i calcoli effettuati dal metodo \verb|hashCode()| devono essere molto meno onerosi del metodo \verb|equals()|, poiché il primo 
 metodo viene invocato sempre, mentre il secondo solo in caso di collisioni. 
 
-Se non venisse implementato il metodo \verb|hashCode()|, si eredita quello definito da \verb|java.lang.Object|. 
+Se non venisse implementato il metodo \verb|hashCode()|, si erediterebbe quello definito da \verb|java.lang.Object|. 
 
-%% TODO 
+%% TODO ppt. sui metodi hashCode e equals
 
 \subsubsection{TreeSet}
 
@@ -955,14 +957,43 @@ Vengono implementati tramite alberi di ricerca binari, per uci è necessario che
 è possibile realizzare un \verb|TreeSet| di oggetti non ordinabili, ma alla prima occasione, a tempo di occasione, verrà sollevato un eccezione, poiché gli elementi non possono 
 essere ordinati. 
 
-%% TODO
+%% TODO caratteristiche TreeSet
 
 Se viene definito un criterio di ordinamento, implicitamente viene definito un criterio di equivalenza. Si definiscono i metodi di ordinamento in accordo con i metodi 
 \verb|hashCode()| e \verb|equals()|. 
 %% Il principio di sostituzione è valido se
 
+%% TODO 8/5: Mappe
 
+Da Java 6 in poi furono introdotte nuove implementazioni di un insieme, specializzata di \verb|SortedSet<E>|, l'interfaccia \verb|NavigableSet<E>|, contenente i metodi per poter 
+accedere all'elemento in cima o in coda all'insieme, e per poter accedere agli elementi in ordine invertito. 
+\verb|TreeSet<E>| infatti implementa entrambe queste interfacce. Per la retrocompatibilità è stato necessario inserire un metodo sovraccarico \verb|headSet| che restituisce 
+un \verb|SortedSet<E>|, con una segnatura asimmetrica rispetto all'originale \verb|headSet()|, poiché restituisce un \verb|NavigableSet<E>| e richiede un valore booleano per 
+definire il criterio di uguaglianza. 
 
+\subsection{Mappe}
+
+Una mappa o dizionario o array associativo rappresenta un insieme di elementi formati da coppie di due tipi formali \verb|<K,V>|, dove \verb|K| rappresenta la chiave ``Key'', 
+e \verb|V| rappresenta il valore ``Value'', dove gli accessi sono particolarmente efficienti se vengono effettuati per chiave. 
+
+Ad ogni chiave può essere associato un unico valore. 
+
+I metodi base per accedere, aggiungere e rimuovere elementi sono \verb|put()| che richiede una chiave ed un valore di tipo \verb|K| e \verb|V| rispettivamente, oppure 
+aggiorna il vecchio valore e lo restituisce, se la chiave era già usata. 
+Il metodo \verb|get()| richiede un oggetto di tipo \verb|Object|, per cui è lascamente tipato, sia per mantenere la retrocompatibilità sia per offrire una risposta istantanea 
+in caso il tipo non corrisponda al tipo formale \verb|V|. 
+
+%% TODO metodi di base ppt. 
+
+I metodi bulk oltre a \verb|putAll()| e \verb|clear()| usati per aggiungere o eliminare tutte le coppie in una mappa, mentre per ottenere un insieme delle chiavi, si utilizza 
+\verb|keySet()|, poiché tutte le chiavi sono uniche nell'intera mappa; mentre se si vuole restituire l'insieme di valori, questi possono essere duplicati quindi il tipo 
+di ritorno è lascamente tipato come una qualsiasi collezione del tipo formale \verb|V|, offerto dal tipo \verb|values()|. 
+
+Le mappe e gli insiemi si basano su concetti molto simili, infatti in realtà l'implementazione di \verb|HashSet<K>| si basa su un'istanza di \verb|HashMap<K,?>|. 
+%% TODO ppt. 
+
+Per definire il criterio di equivalenza sulle chiavi 
+%% TODO implementazioni criterio di equivalenza chiavi in HashMap
 
 
 
