@@ -995,7 +995,66 @@ Le mappe e gli insiemi si basano su concetti molto simili, infatti in realtà l'
 Per definire il criterio di equivalenza sulle chiavi 
 %% TODO implementazioni criterio di equivalenza chiavi in HashMap
 
+\clearpage
 
+\section{Introspezione}
+
+In Java esiste una classe \verb|java.lang.Class<T>|, classe di tipo classe. Questa classe viene usata tramite introspezione. 
+In questo modo è possibile scrivere metodi \verb|equals()| ed \verb|HashCode()| tra oggetti di una gerarchia di tipi. 
+
+La riflessione o introspezione è una particolare caratteristica del linguaggio Java, raramente presente in linguaggi antecedenti, ormai diffusa sui linguaggi moderni. 
+Permette di scrivere codice ed analizzare o modificare il codice compilato, nello stesso linguaggio. Un'esempio è appunto l'IDE Eclipse, scritto in Java per programmare in 
+Java, approfitta quindi di un massiccio uso dell'introspezione. 
+JUnit è un altro programma che utilizza la riflessione per individuare nel progetto per conoscere tutti i metodi annotati tramite \verb|@Test|, e le classi. Prima delle 
+riflessioni, il runner di JUnit richiedeva tutti i nomi dei metodi e considerava come test tutti i metodi preceduti dal termine ``test''. 
+
+
+La classe \verb|Class<<T>| di tipo generico \verb|T| viene generata ogni volta che viene definito il tipo \verb|T| da un programma Java, per descriverne il suo tipo, e quindi 
+descrive anche il contenuto del corrispondente file \verb|.class|. 
+Quest'istanza permette di utilizzare i metodi per poter analizzare la classe \verb|T|. 
+Questa classe è un oggetto garantito, esisterà sempre e solo un unico oggetto associato ad una classe, creato automaticamente a livello della JVM, anche a livello di sicurezza, 
+per cui non è gestibile dal programmatore. 
+
+
+Tutti i tipi possiedono una variabile statica pubblica chiamata \verb|class|, corrispondente all'oggetto di tipo \verb|java.lang.Class|. 
+Questo oggetto può essere usato per ottenere le proprietà del tipo \verb|T|. 
+
+
+La riflessione viene applicata nello sviluppo di programmi con funzionalità complesse, applicativi e framework per rendere più efficiente la scrittura del codice, tramite 
+annotazioni ed introspezione. 
+Inoltre risulta molto efficace anche per applicazioni più semplici, permette di realizzare oggetti tramite il nome salvato su un oggetto di tipo \verb|String|, 
+creando il tipo dell'oggetto a tempo dinamico. Viene utilizzato il metodo \verb|newIstance()|, presente nel file di tipo \verb|Class| per creare un sottotipo di un 
+oggetto a tempo dinamico: 
+\begin{minted}{java}
+    Class<tipoDiObj> classeDiObj = tipoDiObj.class;
+    superTipoDiObj nomeObj = classeDiObj.newIstanze(); 
+\end{minted}
+In questo modo si crea un oggetto senza invocare il costruttore, assegnando ad una variabile una nuova istanza di un suo sottotipo. 
+
+Un altro metodo di questo oggetto è il metodo \verb|forName()| che prende una stringa, e permette di caricare una classe fornendo il suo nome tipato all'interno di una stringa, 
+e restituisce un riferimento ad un oggetto \verb|Class<?>|, su cui può essere applicato il metodo \verb|newIstanza()| per creare un'istanza di una classe, se la macchina virtuale 
+è in grado di identificare nel build path il file \verb|.class| associato a questa classe che si vuole istanziare, altrimenti solleva un'eccezione, poiché non viene specificato il 
+tipo attuale restituito con \verb|Class<?>|. 
+
+%% TODO ex ^ 
+
+Altrimenti a tempo di compilazione viene sollevato un'avvertenza ``Unchecked Cast Warning''. 
+
+%% TODO analisi studio di caso 
+
+Ora non è più necessario utilizzare un costruttore vuoto quando viene istanziato un nuovo oggetto utilizzando introspezione, ma per Java 7 viene utilizzato sempre un 
+costruttore vuoto. 
+Per cui se il codice è scritto considera che a tempo di esecuzione sia presente il tipo giusto, è possibile utilizzare la sintassi \verb|throws Exception|, per ignorare 
+le avvertenze sollevate a tempo di compilazione. 
+Se invece il nome della classe è sbagliato, o la classe non esiste, l'API di questi due metodi considera una serie di possibili eccezioni. 
+
+
+
+
+La definizione di un criterio di equivalenza è complicato quando appartengono ad una gerarchia di tipi. Per risolvere questo problema viene utilizzata la riflessione 
+per codificare semplicemente controlli sul tipo dinamico di un oggetto. 
+
+%% TODO studio di caso criterio di equivalenza
 
 
 \end{document}
