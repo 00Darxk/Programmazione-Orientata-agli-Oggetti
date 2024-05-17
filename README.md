@@ -8,7 +8,7 @@ Appunti tratti dal corso di Programmazione Orientata agli Oggetti, Anno Accademi
 ## Materiale Aggiuntivo
  - [Gruppo Google del Corso](https://groups.google.com/g/roma3poo);
  - [Sito del Corso](https://sites.google.com/view/rm3-poo/home);
- - [IDE](https://www.eclipse.org/downloads/packages/release/2022-03/r/eclipse-ide-java-developers) utilizzato durante il corso;
+ - [Eclipse](https://www.eclipse.org/downloads/packages/release/2022-03/r/eclipse-ide-java-developers), IDE utilizzato durante il corso;
  - [Notion](https://certain-sweater-2c3.notion.site/Programmazione-orientata-ad-oggetti-b9acbe726a6d4212868c6a409dd6bc40?pvs=25) relativo al corso di Programmazione Orientata agli Oggetti.  
 ##
 

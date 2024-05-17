@@ -1,7 +1,6 @@
 \documentclass{article}
 
 \usepackage{cancel}
-%\usepackage{tikz}
 \usepackage{amsmath}
 \usepackage[includehead,nomarginpar]{geometry}
 \usepackage{graphicx}
@@ -14,9 +13,7 @@
 \usepackage{fancyhdr}
 \usepackage{romanbarpagenumber}
 \usepackage{minted}
-%\usepackage{subfig}
 \usepackage[italian]{babel}
-%\usepackage{float}
 \allowdisplaybreaks
 
 \setlength{\headheight}{12.0pt}
@@ -48,7 +45,6 @@ Università degli Studi ``Roma Tre"}}
 
 \clearpage
 
-
 \pagestyle{fancy}
 \fancyhead{}\fancyfoot{}
 \fancyhead[C]{\textit{Programmazione Orientata agli Oggetti - Università degli Studi ``Roma Tre"}}
@@ -61,23 +57,13 @@ Università degli Studi ``Roma Tre"}}
 
 \pagenumbering{arabic}
 
-
-
 %% TODO: fix order of contents / merge (sub)section
-
+%% TODO programma ppt. -> README
+%% TODO testi di riferimento
 
 
 \section{Introduzione al Linguaggio Java}
 
-% FdI, ASD 
-%% valutare la qualità del codice !!!
-%% programma ppt. README 
-% "testi di riferimento" ppt.
-
-%% ppt. strumenti da installare 
-% diagramma di flusso del corso sui ppt. 
-
-%% storia
 Java venne introdotto nel 1995, progettato per programmare dispositivi embedded, ma velocemente si utilizzò per scopi diversi da quelli descritti dai suoi 
 creatori. Il team di Java sviluppò un sistema di embedded per i browser, le applet, delle piccole applicazioni che potevano essere eseguite all'interno 
 del browser. Questo fu uno dei primi motivi per il successo di Java, un'altro aspetto importante per la diffusione di Java fu la sua caratteristica di 
@@ -87,49 +73,53 @@ cui operano tutti i dispositivi Android.
 
 Java è stato ideato con la capacità di mantenere la retro-compatibilità, nonostante le spinte di innovazione tecnologica che il linguaggio ha sostenuto 
 negli anni. Nonostante la sua età Java è uno dei linguaggi di programmazione più usati dalle aziende. 
-La diffusione più importante di Java si ebbe tra il '95 ed il '98. %% ppt. 
+La diffusione più importante di Java si ebbe tra il '95 ed il '98. 
 
 
-Java fu il primo progetto industriale che introdusse un nuovo concetto di portabilità su scala industriale, un processore virtuale, poiché non viene progettato per un 
-calcolatore fisico, ma la piattaforma Java Virtual Machine (JVM), per cui uno stesso programma Java può essere eseguito su tutte le piattaforme senza dover ricompilare 
+Java fu il primo progetto industriale che introdusse un nuovo concetto di portabilità, un processore virtuale, poiché non viene progettato per un 
+calcolatore fisico, ma la piattaforma ``Java Virtual Machine'', JVM. Uno stesso programma Java può essere eseguito su tutte le piattaforme senza dover ricompilare 
 nuovamente il codice per quella specifica piattaforma. Questa rappresenta una rivoluzione in ambito industriale, il codice oggetto Java ``bytecode'' prodotto dalla 
-compilazione, come un file di estensione \verb|.class|. Questo bytecode può quindi essere eseguito da qualsiasi piattaforma che dispone di un'implementazione della 
+compilazione, come un file di estensione \verb|.class|, può quindi essere eseguito da qualsiasi piattaforma che dispone di un'implementazione della 
 JVM. Invece programmi creati da un linguaggio più vecchio come C, producono un codice oggetto che presenta istruzioni macchina uniche alla piattaforma in cui è stato 
 compilato. Astraendo il processore fisico si è reso possibile la creazione di programmi che non devono essere ricompilati per ogni piattaforma su cui deve essere eseguito. 
 
 Gli applet realizzati tramite Java, venivano eseguiti dalla JVM, e permise la creazione di primi siti web, rivoluzionando il paradigma di programmazione dell'epoca. 
-La sintassi e la semantica del linguaggio sono descritte in un documento noto come Java Language Specification, per risolvere eventuali ambiguità. Inoltre fu uno dei primi 
+La sintassi e la semantica del linguaggio sono descritte in un documento noto come ``Java Language Specification'' o JLS, per risolvere eventuali ambiguità. Inoltre fu uno dei primi 
 linguaggi ad aver introdotto librerie incluse insieme al compilatore, sulla piattaforma Java. 
 
 \subsection{Rapporto con il Linguaggio C}
 
-Il linguaggio C viene descritto come un linguaggio ad un medio livello di programmazione, di alto livello rispetto all'assembly, e permette di realizzare programmi ad alte 
-prestazioni, utilizzato per scrivere sistemi operativi. Java invece venne introdotto in un ambiente diverso rispetto al linguaggio C, per cui si indica come un linguaggio 
-di alto livello di astrazione, non è un linguaggio che cerca le migliori prestazioni, ma cerca di creare programmi semplici e portabili. Nel periodo in cui venne introdotto 
-Java l'andamento delle prestazioni dei calcolatori permise di realizzare linguaggi che non avessero come scopo principale il risparmiare risorse del sistema. Il linguaggio 
-C++ permette di avere prestazioni simili al linguaggio C, ma introducendo paradigmi realizzati in Java. Ma si preferisce per realizzare programmi ad alte prestazioni il 
-C, rispetto al C++, poiché fornisce troppe scelte, complicando l'implementazione e l'uso del linguaggio. 
+Il linguaggio C viene descritto come un linguaggio di programmazione di medio livello, di alto livello rispetto all'assembly, e permette di realizzare programmi ad alte 
+prestazioni, utilizzato quindi per scrivere sistemi operativi. Java invece venne introdotto in un ambiente diverso rispetto al linguaggio C, molto più evoluto dove le prestazioni non 
+rappresentavano l'unico criterio di valutazione, grazie all'aumento delle prestazioni dei calcolatori. Questo permise di realizzare linguaggi, ad alto livello di astrazione, che non avessero 
+come scopo principale il risparmiare risorse del sistema.
+Non è un linguaggio che cerca le migliori prestazioni, ma cerca di creare programmi semplici e portabili. Il linguaggio 
+C++ permette di avere prestazioni simili al linguaggio C, ma introducendo paradigmi introdotti in Java. Ma si preferisce per realizzare programmi ad alte prestazioni il 
+C, rispetto al C++, poiché rimane un linguaggio molto complesso, complicando l'implementazione e l'uso del linguaggio. 
 
 
 
-In Java una dichiarazione di una variabile comprende la sua inizializzazione ad un valore nullo. Le dichiarazioni e assegnazioni in Java si ottengono mediante la stessa 
+In Java una dichiarazione di una variabile comprende la sua inizializzazione ad un valore nullo, al contrario di C. Le dichiarazioni e assegnazioni in Java si ottengono mediante la stessa 
 sintassi del linguaggio C. Si introduce un tipo \verb|boolean| utilizzato per rappresentare i due possibili valori booleani \verb|true| e \verb|false|. Le descrizioni di 
 tutti i tipi utilizzati in Java vengono definite nel JLS. Entrambi sono due linguaggi staticamente tipati, ovvero a tempo di compilazione deve essere noto il tipo di ogni 
 dato utilizzato nel programma. 
 Java introduce il tipo \verb|String| utilizzato per rappresentare stringhe, non è un dato primitivo, e permette l'uso molto più semplice delle stringhe rispetto a C. Rappresenta 
-un tipo particolare di classe, in appoggio al compilatore per favorire la loro gestione da parte del compilatore. Le stringhe vengono inizializzate a letterali stringhe, 
+un tipo particolare di classe, appoggiato dal compilatore per migliorare le sue prestazioni. Le stringhe vengono inizializzate a letterali stringhe, 
 contenuti tra due doppi apici \verb|"  "|. Da Java 13 è possibile scrivere stringhe letterali multi-linea, utilizzando tripli doppi apici \verb|"""   """|. 
+L'uso molto più semplificato delle stringhe in Java rispetto a C rappresenta uno dei motivi principali per cui è stato possibile convertire molti programmatori dall'uso di C a Java dopo la 
+sua introduzione. 
 
 La sintassi di controlli di flusso è esattamente la stessa del linguaggio C, ma le condizioni sono diverse a causa del tipo booleano. 
 
-Una grande differenza tra i due linguaggi consiste nella diversa diagnostica a tempo di compilazione e di esecuzione degli errori, poiché in Java i gli errori ed i messaggi 
+Una grande differenza tra i due linguaggi consiste nella diversa diagnostica a tempo di compilazione e di esecuzione degli errori, poiché in Java gli errori ed i messaggi 
 di errore forniscono informazioni molto utili per la sua risoluzione. 
 Gli errori a tempo di compilazione sono altrettanto efficaci in Java quanto in C, ma  la differenza principale consiste negli errori a tempo di esecuzione tra i due linguaggi, 
-poiché in C, in molte piattaforme, viene fornito un errore estremamente generico, in base alla versione di C, del compilatore, e da altre condizioni. 
+poiché in C, su molte piattaforme, viene fornito un errore estremamente generico, in base alla versione di C, del compilatore, e da altre condizioni. 
+Mentre in Java esistono numerosi errori, chiamati eccezioni per definire ogni possibile tipo di errore. 
 
 \subsection{Paradigma Orientato agli Oggetti}
 
-Il paradigma procedurale, usato nel linguaggio C, separa in maniera netta tra il codice e le operazioni, ovvero la memoria e ed il processore, seguendo l'architettura 
+Il paradigma procedurale, usato nel linguaggio C, separa in maniera netta il codice e le operazioni, ovvero la memoria e ed il processore, seguendo l'architettura 
 definita da von Neumann. Anche se rappresenta il modo più naturale per scrivere programmi, nell'industria è stato ampiamente superato a favore del paradigma orientato agli 
 oggetti. 
 Questo paradigma segue la filosofia secondo cui le operazioni e lo stato sono connesse tra di loro, accomunate utilizzando ``oggetti''. Si è quindi rimossa la divisione imposta 
@@ -138,16 +128,16 @@ di oggetti e classi di oggetti, contenenti lo stato e le operazione eseguibili s
 comandi; in questo modo gli oggetti conoscono ed interagiscono con altri esemplari, anche dello stesso tipo, o classe. Per conoscersi, questi oggetti contengono riferimenti 
 agli altri oggetti. 
 
-Questo modo di interpretare un problema è vicino al nostro modo di pensare, il che aiuta nella creazione di programmi, utilizzando linguaggi di programmazione che seguono 
-questo paradigma. Utilizzando un linguaggio come C, progettato per il paradigma procedurale, è possibile programmare seguendo il paradigma orientato agli oggetti, ma non essendo 
-stato creato con questo scopo, la realizzazione di programmi è notevolmente più complesso. 
+Questo modo di interpretare un problema è vicino al nostro modo di pensare, il che aiuta nella creazione di programmi utilizzando linguaggi orientati agli oggetti. 
+Utilizzando un linguaggio come C, progettato per il paradigma procedurale, è possibile programmare seguendo il paradigma orientato agli oggetti, ma non essendo 
+stato creato con questo scopo, la realizzazione di programmi utilizzando questo paradigma è notevolmente più complesso. 
 
 
 L'esecuzione di un programma è uno scambio di messaggi tra questi oggetti connessi tra di loro tramite riferimenti interni, creando una rete di oggetti, modificando lo stato 
 degli oggetti coinvolti nelle operazioni. Si può rappresentare la rete di oggetti tramite un diagramma di oggetti, indicati come rettangoli contenenti diversi campi, ed 
-eventuali riferimenti ad altri oggetti, rappresentati come archi orientati verso altri oggetti. 
+eventuali riferimenti ad altri oggetti, rappresentati come archi orientati, diretti verso altri oggetti.  
 
-Ogni oggetto contiene lo stato, un comportamento, le operazioni che offre, ed un identità, per differenziare diversi esemplari della stessa classe di oggetti. Si è dimostrato 
+Ogni oggetto contiene lo stato, un comportamento, le operazioni che offre ed un identità, per differenziare diversi esemplari della stessa classe di oggetti. Si è dimostrato 
 nel tempo come questo paradigma permette di scrivere e mantenere il codice molto più efficiente rispetto ad altri paradigmi. 
 Gli oggetti vengono definiti tramite classi, rappresentate come file diversi del programma, contenenti lo stato, e la definizione dei metodi. Ogni oggetto creato da una classe 
 possiede un'identità unica, e presenta lo stesso stato e le operazioni della classe di appartenenza. Le classi sono quindi delle istruzioni di montaggio, o fabbriche che 
@@ -158,10 +148,27 @@ Per studiare questo paradigma, si utilizzeranno esempi di forme geometriche, com
 refactoring, chiamato ``diadia''. 
 
 
-In Java ogni file contenente classi deve essere salvato con lo stesso nome della classe contenente, con estensione ``.java''. Le operazioni di oggetti in Java si indicano 
-come metodi, invece di funzioni come nel linguaggio C, poiché rappresentano operazioni nel contesto di una classe, mentre le funzioni possono operare al di fuori di una classe. 
+In Java ogni file contenente classi deve essere salvato con lo stesso nome della classe contenente, in un file di estensione ``.java''. Le operazioni di oggetti in Java si chiamano 
+metodi, invece di funzioni come nel linguaggio C, poiché rappresentano operazioni nel contesto di una classe, mentre le funzioni possono operare al di fuori di una classe. 
 
 \subsection{Oggetti e Riferimenti}
+
+Ogni classe viene definita utilizzando la parola chiave \verb|class| seguito dal nome della classe, il corpo di questa contiene le definizioni dei metodi e delle variabili di istanza 
+della stessa, che memorizzano le informazioni dello stato di un oggetto di questo tipo. Nella definizione della classe viene usato il modificatore di visibilità \verb|public|, analogamente 
+ai metodi ed alle variabili di istanza:
+\begin{minted}{java}
+    public class <nomeClasse> {
+        // definizioni delle variabili e dei metodi
+    }
+\end{minted} 
+Per cui ogni definizione utilizza un modificatore di visibilità seguendo la sintassi: modificatore di visibilità, tipo, nome della variabile o metodo o classe. Questo 
+modificatore di visibilità verrà trattato più approfonditamente in una sezione successiva, ma in generale descrive se una certa variabile, metodo o classe è visibile 
+all'esterno del file stesso dove viene dichiarata. 
+
+Per iniziare l'esecuzione di un programma viene eseguito il metodo \verb|main()|, ereditato da C, invocato sempre per primo dalla JVM, da cui quindi parte l'esecuzione di ogni altro metodo 
+utilizzato nell'esecuzione. Quindi eccetto questo metodo, per ogni altra invocazione di un metodo esiste sempre un metodo invocante ed un metodo invocato. 
+
+
 
 Si considera un esempio semplice di una classe chiamata \verb|Punto|, che rappresenta un punto in un piano di coordinate cartesiane bidimensionali:
 \begin{minted}{java}
@@ -192,10 +199,10 @@ secondo la seguente sintassi:
 Punto origine = new Punto();
 \end{minted}
 Questa riga di codice invoca un costruttore tramite l'operatore \verb|new|, restituisce un riferimento ad un oggetto del tipo \verb|Punto| appena creato, e viene conservato 
-con un'assegnazione ad una variabile locale, in questo caso chiamato \verb|origine|. 
+con un'assegnazione ad una variabile locale, in questo caso chiamata \verb|origine|. 
 
 Tramite questo riferimenti è possibile accedere ai metodi, ed eventualmente allo stato dell'oggetto, tramite la notazione puntata, che segue la sintassi 
-\verb|<riferimento-oggetto>.<metodo>(<parametri-attuali>);|:  
+\verb|<rif-obj>.<metodo>(<par-attuali>);|:  
 \begin{minted}{java}
 origine.setX(0); // assegna lo stato alla variabile x
 origine.setY(0); // assegna lo stato alla variabile y
@@ -204,13 +211,11 @@ Questa notazione è molto efficace nell'esprimere la vicinanza tra i dati e le o
 Ogni nuovo oggetto creato viene salvato in memoria, ed è possibile creare nuovi oggetti fino all'esaurimento della memoria virtuale. 
 Questa classe viene quindi contenuta in un file \verb|Punto.java|. 
 
-%% ? Per compilare un codice bisogna rendere il compilatore in grado di poter leggere il codice ... ?
+
 
 Una variabile contenente un riferimento ad un oggetto contiene una sequenza di caratteri che rappresenta l'indirizzo in memoria virtuale dell'oggetto, anche se rappresenta una 
 semplificazione, è utile per analizzare il suo comportamento. Mentre per accedere ai valori contenuti, ed assegnare valori alle variabili interne all'oggetto, bisogna utilizzare 
-metodi ``getter'' e ``setter'', descritti nella classe dell'oggetto. 
-
-Utilizzando due riferimenti allo stesso oggetto per effettuare azioni sullo stesso oggetto si chiama effetto collaterale. 
+metodi ``getter'' e ``setter'', descritti nella classe dell'oggetto, poiché le variabili di istanza sono accessibili solamente all'interno della classe. 
 
 Quando viene chiamato un metodo passando una variabile, viene passato per valore. 
 
@@ -219,13 +224,20 @@ viene assegnato al riferimento nullo. Indica l'assenza di un riferimento reale a
 Invocando un metodo su un riferimento ad un oggetto nullo si verifica un errore, a tempo di esecuzione, si indica in Java come eccezione: ``runtime-exception''; in questo caso: 
 \verb|NullPointerException|. 
 
-%% !! ppt.
+Nel corpo dei metodi, se il nome di un parametro formale coincide al nome di una variabile di istanza, il primo ha precedenza, lo offusca. Si verifica l'effetto di ``shadowing'', per cui 
+vengono effettuate operazioni non sulla variabile di istanza, ma sul parametro formale. Per identificare le variabile di istanza si utilizza la parola chiave \verb|this|, in notazione 
+puntata seguita dal nome della variabile di interesse. In questo modo si possono utilizzare come nomi di parametri formali gli stessi nomi di una variabile di istanza, senza 
+problemi. 
+La parola chiave \verb|this| rappresenta infatti un riferimento all'oggetto corrente, anche se viene usato per accedere alle variabili di istanza, può essere omesso in assenza di ambiguità 
+con i parametri formali. Viene comunque favorito il suo utilizzo per aumentare la leggibilità del codice ed evitare eventuali fenomeni di shadowing. 
+Può essere inoltre utilizzato per invocare metodi propri della classe, all'interno di altri metodi della stessa. 
 
 \subsection{Gestione della Memoria}
 
 In Java la creazione di oggetti, e quindi la loro allocazione in memoria, avviene tramite l'operatore \verb|new|. Questo operatore richiede la specifica della classe di cui si 
 vuole creare una nuova istanza, e richiede uno dei costruttori della classe. 
-Un costruttore è un metodo che presenta esattamente lo stesso nome della classe e non restituisce niente, e generalmente inizializza tutte le variabili di istanza della classe. 
+Un costruttore è un metodo che presenta esattamente lo stesso nome della classe e non restituisce niente, e generalmente inizializza tutte le variabili di istanza della classe, ma non 
+sono dei metodi per cui non devono specificare il tipo del valore restituito, neanche utilizzando \verb|void|.  
 
 \begin{minted}{java}
 public class Punto{
@@ -252,52 +264,69 @@ public class Punto{
 }
 \end{minted}
 
-Al termine dell'esecuzione del costruttore, l'oggetto non è stato completamente inizializzato %% ??
-
+L'oggetto è stato creato, e lo stato inizializzato, solamente al termine dell'esecuzione del costruttore, durante la sua esecuzione lo stato dell'oggetto è inconsistente.  
 
 Poiché una classe può contenere più di un costruttore, questi vengono distinti in base agli argomenti che prendono. 
 Se invece non viene dichiarato alcune costruttore all'interno di una classe, è possibile creare un nuovo oggetto usando la stessa terminologia, e tutti i campi numerici 
-vengono inizializzati a zero, i riferimenti a null, e le stringhe alla stringa vuota. Per cui il compilatore crea automaticamente un compilatore "no-args" con le inizializzazioni 
-di default, ma se viene dichiarato un costruttore con parametri all'interno di una classe, e si prova a creare un oggetto della classe usando un costruttore ``no-args'' il 
+vengono inizializzati a zero, i riferimenti a null, e le stringhe alla stringa vuota. Per cui il compilatore crea automaticamente un compilatore ``no-args'' con le inizializzazioni 
+di default, ma se viene dichiarato un costruttore con parametri all'interno di una classe, e si prova a creare un oggetto della classe usando un costruttore no-args il 
 compilatore produce un errore. Quindi il compilatore genera un costruttore implicito solamente se non è dichiarato alcun costruttore dentro una classe. 
+Spesso si definiscono diversi costruttore per inizializzare uno oggetto della stessa classe in diversi stati noti. 
 
-%% !! ppt. Stack e Heap cartacei
+Durante l'esecuzione la JVM ha accesso a due aree di memoria, lo ``Stack'' e l'``Heap''. Lo stack contiene le informazioni necessarie all'esecuzione dei metodi, lo stato dell'esecuzione e le 
+variabili locali ed il loro valore. Mentre l'heap contiene gli oggetti creati tramite l'operatore \verb|new|. 
+All'inizio viene assegnato lo stack alla JVM, viene utilizzata per conservare ciò che è necessario a mantenere lo stato dell'esecuzione, è una struttura dati che implementa la disciplina 
+LIFO, gestita dalla JVM, per memorizzare i metodi ed i Record Di Attivazione, o RDA, di questi, cominciando dal metodo \verb|main()|. 
+Ogni volta che termina l'esecuzione di un metodo, viene rimosso dallo stack, gestito in modo automatico e trasparente rispetto dalla JVM. Dopo essere stato rimosso un metodo dallo stack, 
+le variabili locali ed i suoi parametri non sono più utilizzabili. 
 
+L'RDA contiene i parametri attuali, il riferimento all'oggetto corrente, i parametri locali, il valore restituito, ed il riferimento al metodo invocante. Contiene inoltre tutti gli 
+identificatori delle variabili, più facile da ricordare rispetto all'indirizzo della variabile stessa. 
+Il primo record di attivazione è sempre il metodo \verb|main()|. 
+
+Poiché lo stack è di dimensione limitata, e generalmente piccola rispetto all'heap, per cui non può contenere troppi RDA, ed è possibile esaurire lo spazio, sollevando un'eccezione: 
+\verb|StackOverflowException|. 
+
+
+L'heap contiene tutti gli oggetti dichiarati con \verb|new|, la sua dimensione quindi varia a tempo di esecuzione per accomodare tutti questi oggetti ed il loro stato. Viene assegnata 
+dalla JVM, dove gli oggetti vengono allocati in ordine sparso, quindi non rispettano alcuna disciplina FIFO o LIFO. L'operatore \verb|new| è quindi molto simile all'operatore \verb|malloc| in C, 
+l'unica differenza è che il primo invoca un costruttore. 
+
+Dati due riferimenti allo stesso oggetto, utilizzando uno dei due è possibile applicare modifiche all'oggetto, visibili anche dall'altro riferimento, questo fenomeno si chiama ``Side-Effect'', 
+o effetto collaterale. 
 Poiché gli oggetti si passano come riferimenti, l'operatore \verb|==| confronta solamente i riferimenti all'oggetto, e bisogna utilizzare un altro metodo per poter 
 confrontare i valori interni degli oggetti tra di loro.  
 Per determinare l'equivalenza tra due oggetti distinti si usa il metodo \verb|equals()|, viene offerto sempre da tutte le classi, se invece non viene espresso esplicitamente 
 ha la stessa semantica dell'operatore \verb|==| sui riferimenti. 
 Poiché è un metodo interno ad una classe, in generale non è un metodo simmetrico: \verb|a.equals(b)| $\neq$ \verb|b.equals(a)|. 
+Questo metodo identifica l'equivalenza tra due oggetti distinti. 
 
 La deallocazione della memoria avviene automaticamente da un metodo chiamato Garbage Collector, per cui non è necessario utilizzare esplicitamente una funzione \verb|free()| 
 come in C. Se questo Garbage Collector si accorge che degli oggetti rimangono appesi, li libera dalla memoria. 
 
-\subsection{Costruttori, Stringhe e Array}
+Il garbage collector analizza la catena di riferimenti degli oggetti per determinare se un dato oggetto è in uso, oppure non è più raggiungibile tramite una sequenza di riferimenti che 
+parte dallo stato dell'esecuzione corrente. 
 
-%% overloading
-L'overloading è una caratteristica di un linguaggio di programmazione, come Java, che permette di definire più procedure con lo stesso nome, ospitati all'interno della stessa 
-classe. Questi metodi, diversi, si distinguono solamente per la lista dei parametri formali, per il numero, per il tipo di uno o più, oppure per il loro ordine. 
+\subsection{Overloading, Stringhe e Array}
 
-%% ex. di metodi sovraccaricati
+L'``Overloading'' è una caratteristica di un linguaggio di programmazione, come Java, che permette di definire più procedure con lo stesso nome, ospitati all'interno della stessa 
+classe. Questi metodi, diversi, si distinguono solamente per il tipo, il numero di uno o più parametri formali, oppure per il loro ordine. Invece non è possibile distinguere due metodi 
+solamente per il tipo di ritorno, in generale il tipo restituito non appartiene alla segnatura di un metodo. 
+
 \begin{minted}{java}
 public class Sommatore{
-    public int add(int a, int b){
-        return a + b;
-    }
-    public int add(int a, int b, in c){
-        return a + b + c;
-    }        
-    public double add(int a, double b){
-        return a + b;
-    }
-    public double add(double a, int b){
-        return a + b;
-    }
+    public int add(int a, int b) { return a + b; }
+
+    public int add(int a, int b, int c) { return a + b + c; }
+
+    public double add(int a, double b) { return a + b; }
+
+    public double add(double a, int b) { return a + b; }
 }
 \end{minted}
 
 Nel linguaggio C, questo non è possibile. Se c'è una corrispondenza perfetta tra i parametri passati al metodo, non si riscontrano problemi, invece se non è presente 
-una corrispondenza perfetta tra i tipi passati al metodo, viene eseguito un algoritmo di risoluzione, prima di fermare la compilazione che cerca di capire se è possibile 
+una corrispondenza perfetta tra i tipi passati al metodo, viene invocato un algoritmo di risoluzione, prima di fermare la compilazione che cerca di capire se è possibile 
 effettuare la chiamata tramite semplici conversioni di tipo, oppure conversioni di tipo più ``conservative''. La promozioni di tipo può essere implicita alla chiamata di un 
 metodo, per cui potrebbe essere complesso determinare quale metodo è stato chiamato. 
 
@@ -305,14 +334,12 @@ Alla chiamata di un metodo sovraccaricato è il compilatore a scegliere quale de
 Versioni sovraccariche di un metodo potrebbero differire anche per il metodo di ritorno, ma il tipo di ritorno non può essere usato per distinguere due metodi. 
 
 L'overloading è presente anche sull'operatore \verb|+|, applicandolo su diversi dati, tramite somme algebriche di interi, numerali a virgola mobile; inoltre viene usato per 
-concatenare le stringhe. In C++ ed in Scala è possibile sovraccaricare gli altri operatori, mentre non è possibile in Java, dove l'unico operatore sovraccarico è \verb|+|, 
+concatenare stringhe tra di loro. In C++ ed in Scala è possibile sovraccaricare gli altri operatori, mentre non è possibile in Java, dove l'unico operatore sovraccarico è \verb|+|, 
 nella maniera descritta. 
 
-Costruttori definiti ripetendo codice, vengono sconsigliati, anche per i metodi sovraccaricati, per cui si tende ad eleggere un costruttore al ruolo di costruttore ``primario'', 
-il più generico possibile. In seguito gli altri costruttori vengono definiti in base a questo costruttore, invocando questo costruttore, con il metodo \verb|this()|, 
+Costruttori definiti ripetendo codice vengono sconsigliati, anche per i metodi sovraccaricati, per cui si tende ad eleggere un costruttore al ruolo di costruttore ``primario'', 
+il più generico possibile, per evitare la duplicazione del codice. In seguito gli altri costruttori vengono definiti in base a questo costruttore, invocandolo, con il metodo \verb|this()|, 
 specificando i parametri che si vuole modificare rispetto al costruttore primario. 
-
-%% ex della classe rettangolo 
 
 \begin{minted}{java}
 public class Rettangolo{
@@ -326,30 +353,28 @@ public class Rettangolo{
         this.altezza = h;
     }
 
-    public Rettangolo(int b, int h){
-        this(new Punto(0,0), b, h);
-    }
+    public Rettangolo(int b, int h) { this(new Punto(0,0), b, h); }
 
-    public Rettangolo(){
-        this(new Punto(0,0), 0, 0);
-    }
+    public Rettangolo() { this(new Punto(0,0), 0, 0); }
 }   
 \end{minted}
 
+L'overloading viene risolto a tempo di compilazione, dal compilatore, che applica una scelta definitiva, ed inserisce il metodo scelto nei file \verb|.class| generati. Per cui quest'analisi 
+dipende solamente dai tipi statici dei parametri attuali, nell'invocazione del metodo, a tempo statico. 
 
 
-%% la classe string
-In Java esiste la classe \verb|String| per poter rappresentare sequenze di caratteri immutabili, rappresenta un riferimento ad un oggetto istanza della classe \verb|String|. 
+
+In Java esiste la classe \verb|String| per poter rappresentare sequenze di caratteri immutabili, rappresenta un riferimento ad un oggetto istanza della classe \verb|String|, può contenere 
+caratteri di Unicode 2.1, la versione di Unicode a 16 bit, capace di memorizzare la maggior parte dei simboli e caratteri alfabetici moderni ed ideogrammi.  
 Per rendere il linguaggio più semplice questa classe possiede dei letterali appositi, ed è l'unico oggetto che può essere creato senza una \verb|new| esplicita. L'operatore 
 \verb|==| su due stringhe verifica l'uguaglianza dei riferimenti, per cui per valutare l'equivalenza di contenuto tra due stringhe bisogna utilizzare il metodo \verb|equals()|. 
 
-Poiché rappresenta una sequenza di caratteri immutabili, per modificare o aggiornare una stringa è necessario creare una nuova stringa, altrimenti è possibile concatenare due 
+Poiché rappresenta una sequenza di caratteri immutabili, per modificare o aggiornare una stringa è necessario crearne una nuova stringa, altrimenti è possibile concatenare due 
 stringhe utilizzando l'operatore \verb|+|, che rappresenta un nuovo oggetto stringa, sovrascritto sulla variabile utilizzata per memorizzarla. 
 Per ottenere la lunghezza di una stringa si utilizza il metodo \verb|.length()|, per ottenere il carattere ad una determinata posizione si utilizza il carattere \verb|.charAt(int i)|. 
-Il metodo \verb|.indexOf(char a)| fornisce la posizione di un carattere o il primo carattere di una sottostringa, per cui è un metodo sovraccarico, altrimenti restituisce $-1$. 
+Il metodo \verb|.indexOf(char a)| fornisce la posizione di un carattere o il primo carattere di una sottostringa, per cui è un metodo sovraccarico, altrimenti restituisce -1. 
 Per aggiornare una stringa si utilizza il metodo \verb|.replace(Stringa s1, Stringa s2)|, che restituisce un nuovo oggetto dove è stata la sottostringa \verb|s1| con la 
 sottostringa \verb|s2|.  
-
 
 
 Se viene eseguito il metodo \verb|println()| su un riferimento stampa il valore del riferimento, non il riferimento stesso. Definendo il metodo \verb|toString()| è possibile 
@@ -361,9 +386,17 @@ Se non viene definito questo metodo, il suo comportamento standard implicito sta
 
 Un array è una struttura dati che memorizza dati omogenei, per dichiarare un array si inserisce accanto al tipo oppure al nome della variabile \verb|[]|, si preferisce la prima 
 per leggibilità. Sono oggetti per cui devono essere dichiarati con il metodo \verb|new|. Le operazioni di accesso e modifica di un array sono le medesime del linguaggio C, 
-per ottenere la lunghezza di un array si utilizza il metodo \verb|.length()|. Da Java 5 è stato introdotto un modo per poter iterare su un array, senza gestire 
-esplicitamente l'indice di iterazione \verb|for(<tipo> <nome-variabile> : <nome-array>)|, in questo modo la variabile \verb|<nome-variabile>| itera su ogni elemento dell'array 
-\verb|<nome-array>| dello stesso tipo \verb|<tipo>|. 
+per ottenere la lunghezza di un array si utilizza il metodo \verb|.length()|. Da Java 5 è stato introdotto un modo per poter iterare su un array chiamato ``for-each'', senza gestire 
+esplicitamente l'indice di iterazione: 
+\begin{minted}{java}
+    for(<tipo> <nome-variabile> : <nome-array>)
+\end{minted}
+In questo modo la variabile \verb|<nome-variabile>| itera su ogni elemento dell'array \verb|<nome-array>| dello stesso tipo \verb|<tipo>|. 
+
+
+Per realizzare una costante si può utilizzare la parola chiave \verb|final|, per convenzione gli identificatori di una costante si scrivono in maiuscolo. Per i tipi primitivi 
+rende costante la variabile, per gli oggetti rende costante il riferimento, ma non il suo contenuto. 
+Invece per realizzare una variabile condivisa su tutti gli oggetti della stessa classe si utilizza la parola chiave \verb|static|. 
 
 \clearpage
 
@@ -371,7 +404,7 @@ esplicitamente l'indice di iterazione \verb|for(<tipo> <nome-variabile> : <nome-
 
 \subsection{Librerie}
 
-Come ogni linguaggio di programmazione, relativamente, recente, Java contiene numerose librerie specializzate per risolvere diversi problemi. Per cui è necessario utilizzare in 
+Come ogni linguaggio di programmazione, relativamente recente, Java contiene numerose librerie specializzate per risolvere diversi problemi. Per cui è necessario utilizzare in 
 maniera efficace ed efficiente queste librerie, composte da classi. Bisogna quindi conoscere per nome le classi più importanti di queste librerie, e sapere come cercare ed usare 
 altre classi. 
 Non è necessario conoscere l'implementazione di una classe, ma solo l'interfaccia o API fornito. Queste informazioni vengono fornite tramite la documentazione associata ad ogni 
@@ -410,7 +443,7 @@ Una classe può accedere a tutte le classi presenti nello stesso \verb|package|,
 anteponendo il nome del pacchetto, oppure importando la classe ed utilizzando direttamente il nome della classe. Le classi devono dichiarare la propria appartenenza ad un 
 pacchetto tramite la dichiarazione \verb|package <nome-package>|, all'inizio del file. Una classe può appartenere a più di un pacchetto. Ogni pacchetto deve avere un nome univoco, 
 di solito il nome comprende il nome del dominio Internet dell'organizzazione in ordine inverso. Una classe può essere usata al di fuori del pacchetto solamente se viene dichiarata 
-pubblica, tramite un modificatore d'accesso \verb|pubblic|, se viene omesso questo modificatore, è accessibile solamente alle classi interne allo stesso pacchetto.
+pubblica, tramite un modificatore d'accesso \verb|public|, se viene omesso questo modificatore, è accessibile solamente alle classi interne allo stesso pacchetto.
 
 Il nome di un pacchetto possiede una struttura gerarchica, questa struttura deve avere una corrispondenza diretta nel file system. 
 
@@ -426,28 +459,31 @@ i dettagli di tutte le altri a lei accoppiata, e quindi anche la modifica, senza
 
 La coesione si riferisce al numero e all'eterogeneità dei compiti di cui una singola classe è responsabile. Se ogni unità è responsabile di un singolo compito, allora possiede 
 un'elevata coesione. La coesione si applica alle classi, ai metodi ed anche ai pacchetti. Un'alta coesione permette di definire moduli aventi uno scopo preciso ed un compito ben 
-definito. Questo favorisce la comprensione dei compiti di una classe, l'utilizzo di nomi appropriati, ed il riuso di classi e di metodi, rendendo la manutenzione, meno costosa. 
-Alta coesione e basso accoppiamento rappresentano due facce della stessa medaglia. %% wording
-
+definito. Questo favorisce la comprensione dei compiti di una classe, l'utilizzo di nomi appropriati, ed il riuso di classi e di metodi, rendendo la manutenzione meno costosa. 
+Alta coesione e basso accoppiamento rappresentano due caratteristiche dello stesso concetto. 
+Un'alta coesione di una classe si ottiene mantenendo lo scarso accoppiamento rispetto alle altre classi, analogamente lo scarso accoppiamento di una classe verso altre si ottiene tramite 
+un'alta coesione. 
 
 Per cui quando viene progettato il codice è utile pensare a quali cambiamenti futuri potranno essere richiesti, e come verrà usata la classe. 
-%% ppt.
 
+Quando si vuole modificare il codice, avere basso accoppiamento ed alta coesione, porta a modificare un numero ristretto di classi, per cui si mira a dover modificare il minor numero possibile 
+di classi. 
+
+Viene distinta la qualità esterna ed interna di un codice, sulla base degli utilizzatori del codice, esterna, in base ai suoi requisiti, e degli sviluppatori del codice, interna, per 
+valutar la manutenibilità del codice.  
 
 La manutenzione del codice spesso richiede l'aggiunta di nuovo codice, questo eventualmente degrada il codice nella sua totalità, aumentando l'accoppiamento e diminuendo la 
 coesione, portando ad un'eventuale riorganizzazione del codice. Questa operazione viene chiamata ``refactoring'', senza modificare la funzionalità del codice. Per mantenere 
-la correttezza del codice viene associato a dei test che stabiliscono i criteri di correttezza del codice, usati per valutare la correttezza di implementazioni interne diverse. 
-
+la correttezza del codice viene associato a dei test che stabiliscono i suoi criteri di correttezza, usati per valutare la correttezza di implementazioni interne diverse. 
 
 In generale un metodo è troppo lungo se è responsabile di più di un compito logico, mentre una classe è troppo lunga se comprende più di un concetto. 
-
 
 \subsection{Tecniche di Testing}
 
 In generale i primi errori in un programma sono errori di sintassi, indicati dal compilatore in modo preciso e completo, anche se le specifiche di un messaggio di errore 
 dipendono dal compilatore utilizzato, successivamente possono presentarsi errori logici o ``bug'', su cui il compilatore non è in grado di fornire indicazioni. 
 Alcuni errori logici non si presentano immediatamente, per la complessità del software, altri possono essere individuati a tempo di esecuzione, e la macchina virtuale 
-fornisce informazioni precise sulla natura dell'errore, la maggior parte delle volte si tratta di un \verb|NullPointerException|. 
+fornisce informazioni precise sulla natura dell'errore, la maggior parte delle volte si tratta di un'eccezione del tipo \verb|NullPointerException|. 
 
 Un programma rappresenta una singola descrizione statica associata a molteplici possibili esecuzioni dinamiche. Il compilatore è in grado di individuare errori a livello statico, 
 a tempo di scrittura o compilazione, e non è in grado di individuare possibili errori dovuti all'esecuzione e l'evoluzione del programma. 
@@ -479,7 +515,8 @@ verificabili separatamente.
 Esistono vari strumenti per assistere il programmatore nel testing, in particolare l'unit-testing, in Java il più note ed utilizzato framework è ``JUnit'', integrato 
 all'interno di Eclipse. 
 Per ogni classe creata si crea una classe parallela dedicata al testing, contenente una batteria di test, ognuno un metodo differente per testare diversi casi, preceduto 
-dall'annotazione \verb|@Test|, contenente un'asserzione sul risultato aspettato tramite il metodo \verb|assertEquals()|. 
+dall'annotazione \verb|@Test|, contenente un'asserzione sul risultato aspettato tramite il metodo \verb|assertEquals()|, e prende come parametri i due oggetti da confrontare tipati 
+\verb|Object|. 
 
 Tutte le classi di test hanno la stessa struttura, si inseriscono nello stesso pacchetto della classe che devono testare, e vengono chiamate rispettando la convenzione 
 \verb|test<nome-classe>|, anche se non è più necessario utilizzare questa notazione, semplicemente tramite l'annotazione \verb|@Test|, anche se viene favorito il suo 
@@ -487,25 +524,35 @@ utilizzo. I risultati attesti sono documentati tramite asserzioni esplicite, non
 presente un errore nella sezione di codice testato. Sono possibili altre asserzioni fornite da JUnit, sovraccariche e facilmente intercambiabili, per cui è sempre 
 favorito utilizzare la versione più pertinente. 
 
-Una variante di \verb|assertEquals()|, prevede una stringa, da stampare per fornire informazioni sul risultato del test.  
+Una variante di \verb|assertEquals()|, prevede una stringa, da stampare per fornire informazioni sul risultato del test solo in caso di fallimento, oltre ai due riferimenti ad oggetti da 
+comparare. 
 
-%% TODO uso + implementazione di JUnit su Eclipse
+Per compilare i test bisogna includere le librerie della versione di JUnit utilizzata nel classpath del progetto. JUnit è così popolare che viene incluso ed è fortemente integrato 
+negli IDE moderni, come Eclipse. Questi favoriscono la creazione e l'uso dei test. In Eclipse un test eseguito può essere identificato da barre colorate, verde se il test ha avuto successo, 
+rosso se il test è fallito sollevando un'eccezione o blu se il test ha fallito l'asserzione. 
+Per favorire l'utilizzo dei test è possibile collocare le classi test in una cartella sorgente parallela a \verb|src| nella struttura delle classi. In questo modo si crea una copia del codice 
+di produzione, adibita esclusivamente alla gestione delle classi di test. 
 
 Per facilitare la scrittura di tutti i metodi di test, è comodo utilizzare degli oggetti predisposti per l'utilizzo da parte di tutti i test-case operazione chiamata 
 Fixture. JUnit permette di confinare in un unico metodo \verb|setUp()| la creazione di tutti gli stati noti a priori tramite l'annotazione \verb|@BeforeEach|. 
 In questo modo i test diventano estremamente semplici. 
+In generale per non aumentare l'accoppiamento delle classi di test, è consigliabile includere nel metodo \verb|setUp| la creazione di oggetti utilizzati da almeno due test-case distinti. 
+Altrimenti è preferibile mantenere la creazione di oggetti nel singolo test, per mantenere il test isolato, e diminuire l'accoppiamento nella classe. 
+
 La lunghezza ottimale di un singolo test-case consiste di una singola riga di codice, rappresentata dall'asserzione. Per favorire la semplicità dei test si può 
 fattorizzare il codice di creazione della fixture. 
 L'uso di test minimali favorisce la leggibilità e la ricerca di errori, ed è sempre conveniente partire da test minimali per individuare i bug minori, per poi 
 aumentare la complessità dei test ed individuare bug sempre più complessi. 
 
 In generale è buona norma scrivere i test prima ancora di aver scritto il programma, una tecnica chiamata ``test-driven-develompent''. 
+Inoltre è sempre conveniente scrivere esattamente cosa verifica il test nel suo nome, per evitare di creare confusione, e per facilitare ancora di più il suo utilizzo, evitando di controllare 
+il suo corpo in caso di fallimento del test. 
 
 \clearpage
 
-\section{Interfacce e Polimorfismo}
+\section{Polimorfismo}
 
-\subsection{Upcasting e Downcasting}
+\subsection{Interfacce}
 
 In Java i riferimenti sono tipati, ovvero specificano il tipo dell'oggetto referenziato, quindi attraverso un riferimento possono essere eseguiti tutti i metodi offerti dalla 
 classe dell'oggetto. In generale nei linguaggi orientati agli oggetti esiste più di un modo per poter creare un tipo, in Java oltre al costrutto \verb|class| esiste il 
@@ -513,50 +560,61 @@ costrutto \verb|interface|, utilizzato per creare un nuovo tipo.
 Questo costrutto specifica un tipo in termini dei metodi che può offrire, specificando solamente la segnatura ed il tipo di ritorno, per cui non è presente alcun dettaglio 
 implementativo, come le variabili, costruttori ed il corpo dei metodi. Una classe può implementare una o più \verb|interface| tramite il costrutto \verb|implements <nome-interface>|, 
 e deve contenere tutti i metodi interni contenuti dall'\verb|interface|, ma può contenete non solo questi metodi. 
+Una singola classe può implementare più di un'interfaccia, può assumere quindi più di un singolo ruolo, associato ad ogni singola interfaccia. 
 
-Una classe che implementa un'\verb|interface| è un suo sottotipo, mentre l'\verb|interface| è un supertipo, una sua generalizzazione. 
-In Java vale il principio di sostituzione, di Liskov, il quale afferma che un sottotipo può essere usato al posto di un suo supertipo. 
+
+Una classe che implementa un'interfaccia è un suo sottotipo, mentre l'interfaccia è un supertipo, una sua generalizzazione. 
+In Java vale il principio di sostituzione di Liskov, il quale afferma che un sottotipo può essere usato al posto di un suo supertipo. 
 
 
 Per il principio di sostituzione, un riferimento ad un sottotipo può essere assegnato ad un riferimento ad un suo supertipo. La promozione di un tipo ad un suo supertipo viene 
-chiamato ``upcasting''. 
-Il collegamento tra l'assegnatura e l'implementazione di un \verb|interface| non è nota a tempo di compilazione, per cui si chiama ``late binding''. 
+chiamata ``upcasting''. 
+Il collegamento tra l'assegnatura e l'implementazione di un'interfaccia non è nota a tempo di compilazione, per cui si chiama ``late binding''. 
 Quindi si può differenziare tra il tipo statico, definito a tempo di compilazione, ed il tipo dinamico, ciò che viene utilizzato a tempo di esecuzione. Il compilatore 
 permette di applicare solo i metodi del tipo statico, poiché essendo legato solamente a tempo di esecuzione, il compilatore non permette di utilizzare i metodi del tipo 
 dinamico. 
+Per cui avendo un riferimento tipato staticamente ad un'interfaccia, il metodo da eseguire non è noto a tempo di compilazione, è il suo tipo dinamico che determina il metodo che verrà 
+eseguito. Questo tipo di comportamento viene chiamato polimorfo, poiché sono possibili diverse forme o comportamenti diversi per tutti i suoi sottotipi. 
 
 L'overloading dei metodi avviene a tempo di compilazione, quindi staticamente, ma in questo modo non tiene conto dei metodi dei tipi dinamici. 
+Il tipo di dichiarato di una variabile è il suo tipo statico, mentre il tipo dell'oggetto referenziato è il suo tipo dinamico. Il compilatore in generale non conosce non può neanche prevedere 
+i tipi dinamici. 
 
-%% TODO ppt. 8/4%
-% 12/4: verifica polimorfismo
+Per cui per utilizzare i metodi forniti da un certo tipo, può essere necessario effettuare un ``downcast'', da un supertipo ad un suo sottotipo per permettere al compilatore di utilizzare 
+i metodi offerti da questa classe. In questo modo si forniscono informazioni al compilatore ``forzando'' un certo tipo statico. Ma questa operazione eseguita a tempo statico non necessariamente 
+è lecita, ovvero non è possibile controllare a tempo statico che il sottotipo assegnato sia un tipo valido. La macchina virtuale controlla quindi a tempo di esecuzione che questa operazione 
+sia lecita e possibile. Altrimenti viene sollevata l'eccezione \verb|ClassCastException|. 
 
-Le invocazioni polimorfe si risolvono a tempo di esecuzione sulla base del tipo dinamico da parte della macchina virtuale, l'unica componente in grado di avere informazioni 
-sul tipo dinamico. Mentre l'overloading di un metodo viene risolto a tempo di compilazione dal compilatore, sulla base del tipo statico dei parametri passati al metodo. 
 
-\subsection{Estensioni di Interface e Classi}
+Le invocazioni polimorfe si risolvono a tempo di esecuzione sulla base del tipo dinamico da parte della macchina virtuale, mentre il sovraccarico di un metodo viene risolto a tempo di 
+compilazione dal compilatore, sulla base del tipo statico dei parametri passati al metodo. 
 
-Date due interfacce diverse, aventi gli stessi metodi, anche se concettualmente sembrerebbero uguali, non è possibile referenziare un oggetto che implementa una delle due interfacce 
-con un oggetto che implementa l'altra, poiché il linguaggio è staticamente tipato. Per risolvere questo problema è viene fornita la parola chiave \verb|extends <nome-interfaccia>| per 
-specificare che un'interfaccia è sottotipo di un'altra interfaccia, aggiungendo dei metodi non presenti nella prima interfaccia. A tempo di compilazione è quindi possibile 
+\subsection{Estensioni e Overriding}
+
+Date due interfacce diverse, aventi gli stessi metodi, anche se concettualmente sembrerebbero uguali, non è possibile contenere un riferimento ad un oggetto che ne implementa una, in un 
+tipo che ne implementa l'altra. Per risolvere questo problema viene fornita la parola chiave \verb|extends <nome-interfaccia>| per ``estendere'' un'interfaccia e quindi 
+specificare un rapporto di supertipo e sottotipo tra le due, aggiungendo dei metodi non presenti nella prima interfaccia. A tempo di compilazione è quindi possibile 
 referenziare due oggetti che implementano queste due interfacce diverse, applicando il principio di sostituzione. 
-
 Attraverso quest'estensione è possibile quindi definire nuovi tipi a partire da tipi già esistenti. 
 
 
 Oltre alle interfacce, è possibile estendere le classi, ma questo è un meccanismo più complesso, poiché entrambe le classi, supertipo e sottotipo, contengono metodi con un corpo, 
 a differenza delle interfacce. La classe di partenza viene chiamata superclasse, o classe base o genitore. La classe definita per estensione da questa, viene chiamata classe estesa, 
-derivata, sottoclasse o figlia. 
+derivata, sottoclasse o figlia, quest'ultima può essere estesa creando una ``gerarchia'' di classi. 
 La classe derivata ``eredita'' tutto quello che offre la classe di partenza. Tramite l'annotazione \verb|@Override| è possibile modificare un metodo con corpo della superclasse, 
 all'interno della classe derivata. 
 Per indicare la definizione di una classe come estensione di una classe si usa la stessa parola chiave \verb|extends <nome-classe>|. Queste classi derivata possono dichiarare 
-metodi e membri aggiuntivi, e modificare tramite annotazioni metodi preesistenti. La classe base viene considerata un supertipo della classe estesa. Poiché rappresenta una classe 
-esterna, non può accedere a parametri privati, interni alla classe base. Per accedere a queste variabili è possibile utilizzare i metodi getter e setter offerti dalla classe b
+metodi e campi aggiuntivi, e modificare tramite annotazioni metodi preesistenti. La classe base viene considerata un supertipo della classe estesa. Poiché rappresenta una classe 
+esterna, non può accedere a parametri privati, interni alla classe base. Per accedere a queste variabili è possibile utilizzare i metodi getter e setter offerti dalla classe 
 base, applicati sulla classe derivata. 
 Come per le interfacce, non è possibile invocare i metodi privati, di una classe estesa, applicato sulla sua superclasse. 
-Il meccanismo di modifica un metodo presente nella classe base si chiama ``overriding'', tramite annotazioni, come descritto precedentemente. Ma bisogna considerare che non 
+Il meccanismo di modifica di un metodo presente nella classe base si chiama ``overriding'', tramite annotazioni, come descritto precedentemente. Ma bisogna considerare che non 
 può accedere a parti private della superclasse. 
 
-%% TODO 15/4: ppt. 
+Per cui se dentro la sottoclasse si vuole accedere ai campi della superclasse bisogna utilizzare l'interfaccia pubblica di quest'ultima, come ogni altra classe esterna. 
+Un'istanza della classe estesa può essere usata al posto di un'istanza della classe base, manifestando il polimorfismo, quindi la scelta dell'implementazione dei metodi avviene sempre 
+a tempo dinamico. 
+
 
 Per creare un'istanza della sottoclasse è necessario invocare la superclasse corrispondente. Il costruttore di una classe estesa deve quindi inizializzare i propri campi, ed i 
 campi propri della superclasse, ma un metodo di una sottoclasse non può accedere a parti private della sua superclasse. In java questo viene risolto delegando questo metodo, 
@@ -568,21 +626,22 @@ quest'ordine sintattico.
 Se la superclasse non ha costruttori, il compilatore ne crea uno automaticamente senza argomenti, quindi è possibile che aggiungendo un costruttore della superclasse, si 
 genera un errore di compilazione su un costruttore della sua sottoclasse, poiché utilizza il costruttore creato automaticamente dal compilatore ``no-arg''. 
 
-\subsection{Classe Object e Overriding}
-
 Ogni oggetto Java direttamente o indirettamente deve essere un sottotipo della classe \verb|Object|, chiamato anche la radice della gerarchia dei tipi Java.
 Tutte le classi estendono automaticamente questa classe predefinita, contiene quindi alcuni metodi disponibili ad ogni classe. 
 Alcuni di questi metodi sono \verb|toString()| e \verb|equals(Object o)|, tutte le classi ereditano questa implementazione, oltre la loro segnatura, possono quindi ridefinire 
-l'implementazione, rispettando la segnatura. Il metodo \verb|toString()| di default stampa l'indirizzo di memoria dell'oggetto su cui viene applicato il metodo. 
-Quasi sempre quindi conviene ridefinire questi metodi sulla base dello specificità della classe definita. 
-Essendo tutte le classi estensioni di questa classe predefinita, ogni costruttore contiene implicitamente una chiamata al costruttore alla classe \verb|Object|. 
+l'implementazione, rispettando la segnatura. Il metodo \verb|toString()| di default stampa l'indirizzo di memoria dell'oggetto su cui viene applicato il metodo, mentre il metodo \verb|equals()| 
+verifica l'uguaglianza dei riferimenti dell'oggetto corrente e del riferimento all'oggetto passato come parametro. 
+Quasi sempre quindi conviene ridefinire questi metodi sulla base dello specificità della classe definita, rispettando la segnatura. 
+Poiché nel metodo \verb|equals()| la segnatura è di tipo \verb|Object|, bisogna effettuare un downcast quando si vuole ridefinire il metodo, altrimenti non sarebbe possibile invocare 
+i metodi propri della classe, poiché il compilatore può controllare solamente il tipo statico. Non è possibile cambiare la segnatura poiché non sarebbe una sovrascrittura del metodo, ma una 
+sovraccarico. 
 Generalmente quando si ridefinisce un metodo fornito dalla classe \verb|Object| bisogna effettuare un downcast al tipo della classe necessaria nel metodo. 
-
-%% TODO 17/4 estensione studio di caso
+Essendo tutte le classi estensioni di questa classe predefinita, ogni costruttore contiene implicitamente una chiamata al costruttore alla classe \verb|Object|. 
 
 La parola chiave \verb|super| è in grado di effettuare una chiamata ad un metodo presente nella superclasse, all'interno di una classe avente lo stesso nome nella 
 sottoclasse. Impedendo di avere un invocazione ricorsiva dello stesso metodo fino all'esaurimento dello stack. 
 
+\subsection{Modificatori di Accesso}
 
 In Java esiste un altro modificatore di accesso di livello intermedio tra \verb|public| e \verb|private|, chiamato \verb|protected|, permette ad una superclasse aventi 
 membri protetti di essere visibili a tutte le sue sottoclassi, indipendentemente dai pacchetti di appartenenza. 
@@ -593,36 +652,59 @@ L'utilizzo più opportuno è nella progettazione di framework, librerie che perm
 Il livello di visibilità ottenuto senza inserire un modificatore di accesso viene chiamato anche \verb|package-private|. Questo livello di visibilità è il meno permissivo 
 dopo il modificatore \verb|private|. 
 
-%% TODO matrice dei livelli di accesso
+\begin{center}
+    \begin{tabular}{|c||c|c|c|c|}
+        \hline
+        Modificatori & Classe & Pacchetto & Sottoclasse & Globale\\
+        \hline\hline
+        \verb|public| & Sì & Sì & Sì & Sì \\
+        \hline
+        \verb|protected| & Sì & Sì & Sì & No\\
+        \hline
+        & Sì & Sì & No & No\\
+        \hline
+        \verb|private| & Sì & No & No & No \\
+        \hline        
+    \end{tabular}
+\end{center}
 
-In ordine di visibilità si ha quindi in ordine decrescente \verb|public|, \verb|protected|, \verb|package-private| e \verb|private|. 
+In ordine di visibilità decrescente si ha quindi \verb|public|, \verb|protected|, \verb|package-private| e \verb|private|. 
 
-%% TODO metodi sovrascritti
 
+Solo i metodi visibili alle sottoclassi possono quindi essere sovrascritti, altrimenti se se viene sovrascritto un metodo privato della superclasse, quello nella sottoclasse nasconde 
+l'omonimo della superclasse, ma non lo sovrascrive. Inoltre è possibile sovrascrivere la visibilità di un metodo, solamente mantenendo la stessa o ampliandola, rispettando quindi 
+l'analogo del principio di sostituzione per la visibilità. 
 Sovrascrivendo un metodo è possibile modificare la sua visibilità, rendendolo più visibile, ma non è possibile diminuire la visibilità di uno metodo da una sottoclasse. 
-
-
 Il metodo di una sottoclasse può modificare un metodo, ereditato dalla superclasse, di identica segnatura ma di tipo restituito più generale. Questa caratteristica si chiama 
 covarianza. 
 Mentre si può effettuare un procedimento analogo con parametri polimorfi, dove bisogna posizionare nel supertipo il parametro più specifico mentre nel sottotipo il parametro 
 più generico. Questa caratteristica si chiama controvarianza. 
+Entrambi tendono a generalizzasi o specializzarsi salendo o scendendo nella gerarchia delle classi. 
 Per cui il parametro passato è controvariante, mentre il parametro restituito è covariante; scendendo nella gerarchia dei tipi, i parametro passati devono essere sempre 
 più generali, mentre i parametri restituiti sempre più specifici. 
 
-Poiché in Java due metodi aventi lo stesso tipo rappresentano un sovraccarico, quindi questo tipo di overload viene risolto a tempo statico, ma secondo il paradigma orientato 
+Poiché in Java due metodi aventi lo stesso tipo rappresentano un sovraccarico, questo tipo di overload viene risolto a tempo statico, ma secondo il paradigma orientato 
 agli oggetti questo rappresenta una sovrascrittura, nonostante siano due metodi che prendono due parametri distinti polimorfi. Quindi utilizzando la parola chiave \verb|@Override| 
-viene generato un eccezione a tempo di compilazione. 
+viene generata un eccezione a tempo di compilazione. 
+Senza quest'annotazione, la sottoclasse dispone di due metodi distinti e sovraccarichi, la cui invocazione dipende dal tipo statico del parametro passato. 
 
-In Java la gerarchia delle classi ha una radice definita, la radice di Object è quindi \verb|java.lang.Object|, e rappresenta la radice predefinita della gerarchia delle classi. 
-Al contrario di altri linguaggi di programmazione in Java, al contrario di C++, non è possibile avere una derivazione multipla tra classi, una class può estendere al più una 
+La visibilità ed il tipo di parametro sono controvarianti, mentre il tipo restituito è covariante con la gerarchia delle classi. 
+
+
+In Java la gerarchia delle classi ha una radice definita, è quindi \verb|java.lang.Object|, e rappresenta la radice predefinita della gerarchia delle classi. 
+Al contrario di altri linguaggi di programmazione, come C++, in Java, non è possibile avere una derivazione multipla tra classi, una classe può quindi estendere al più una 
 sola altra classe, e può avere zero o più sottoclassi. 
-%% TODO problema del fro/go/sauro
+
+
+Nei linguaggi con derivazione multipla, se in due classi base un metodo viene definito, nella sottoclasse, non è definito quale delle due implementazioni da ereditare, se non entrambe. 
+Questo problema viene risolto nei linguaggi di programmazione dove è presente la gerarchia multipla, ma la sua utilità è limitata a pochi casi. 
+
 In Scala questo problema viene risolto creando un'ordine totale, tramite un processo di linearizzazione della gerarchia in base a quale tipo viene prima all'interno. 
 Se un membro è definito in entrambi le classi base, la classe estesa da queste due mischia le due implementazioni. Quando le due classi non presentano membri che 
 si sovrappongono tra di loro è possibile unire le due classi poiché non si presentano conflitti. 
 
 In Java invece è possibile effettuare una derivazione multipla tra interfacce, la stessa classe \verb|String| implementa tre interfacce. Questo è possibile poiché non è 
-possibile mischiare il corpo dei metodi forniti dalle interfacce, poiché vengono implementati all'interno della classe che le estende. 
+possibile mischiare il corpo dei metodi forniti dalle interfacce, dato che vengono implementati all'interno della classe che le estende. 
 La gerarchia dei tipi non è più lineare, poiché comprende anche le interfacce, che possono estendere zero o più interfacce, mentre le classi possono implementare zero o più 
 interfacce. 
 La gerarchia delle classi è lineare, mentre la gerarchia delle interfacce non è lineare. In Java 8 vennero introdotti i metodi default, che permettono una derivazione multipla 
@@ -635,7 +717,7 @@ La scelta dei corretti tipi da definire in un programma è un delicato esercizio
 Il sovraccarico di un metodo viene risolto a tempo di compilazione in Java, sulla base dei tipi statici, ma è possibile ottenere un effetto simile ad un sovraccarico sulla base 
 di tipi dinamici, utilizzando una chiamata polimorfa ed il late-binding. 
 
-% barba-trucco  ovverriding for overloading
+%% TODO barba-trucco  ovverriding for overloading
 Si considera una gerarchia di tipi, avente come radice una interfaccia vuota non modificabile, e si considera un metodo che vuole essere implementato sull'interfaccia. 
 Si potrebbe creare quindi una classe contenente metodi sovraccarichi per quante sono le classi che implementano tale interfaccia. Ma questo è possibile solamente quando si 
 coincide il tipo statico con il tipo dinamico delle variabili locali delle classi, passati ai metodi sovraccarichi. Altrimenti non sarebbe possibile utilizzare questa tecnica, 
@@ -815,7 +897,7 @@ alla collezione, prima di effettuare un overflow, e ritornare al valore iniziale
 
 \subsection{Liste}
 
-Le liste sono strutture dati astratte, con agginunta in coda, tramite il metodo \verb|add()|. Gli elementi vengono salvati sequenzialmente, e vengono indicizzati a partire
+Le liste sono strutture dati astratte, con aggiunta in coda, tramite il metodo \verb|add()|. Gli elementi vengono salvati sequenzialmente, e vengono indicizzati a partire
 da zero, come per gli array. Si può accedere ad un elemento specifico per indice, e cercare l'indice tramite metodi presenti. 
 
 Il package \verb|java.util| offre due implementazioni dell'interfaccia \verb|List<E>|:
