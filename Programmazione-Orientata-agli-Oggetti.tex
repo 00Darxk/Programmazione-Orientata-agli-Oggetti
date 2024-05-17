@@ -1050,11 +1050,107 @@ Se invece il nome della classe è sbagliato, o la classe non esiste, l'API di qu
 
 
 
-
 La definizione di un criterio di equivalenza è complicato quando appartengono ad una gerarchia di tipi. Per risolvere questo problema viene utilizzata la riflessione 
 per codificare semplicemente controlli sul tipo dinamico di un oggetto. 
 
 %% TODO studio di caso criterio di equivalenza
 
+
+Molto spesso inserire un criterio di equivalenza non reca danni, anzi se viene usato in futuro rappresenta un investimento. Ma comporta anche un certo costo, per cui la scelta 
+della scrittura dei criteri di equivalenza per una classe dipende da vari fattori, quali il suo utilizzo attuale, e potenziale futuro. 
+
+\clearpage
+
+\section{Gestione delle Eccezioni}
+
+Da Java in poi ogni linguaggio di programmazione presenta una gestione degli errori molto diversa rispetto ai linguaggi antecedenti. 
+In ogni linguaggio di programmazione la gestione delle eccezioni è necessario, poiché si presentano costantemente anomalie nel codice di produzione.  
+Gli errori più frequenti sono causati da un'implementazione scorretta o a causa di un errore logico. Alcune di queste anomalie possono essere talmente resilienti da mantenersi 
+in ogni versione del codice. 
+
+A causa di queste anomalie è possibile trovarsi in uno stato inconsistente, ovvero non più rappresentativo delle istanze nel dominio che si intende modellare. 
+
+Per cui a seguito dell'installazione di un software, è sempre richiesto un aggiornamento per risolvere questi ``bug'', rilevati dopo la commercializzazione del servizio. 
+
+Alcuni di questi errori possono essere causati dall'ambiente esterno al programma, anche molto diversi tra di loro, la loro gestione rappresenta uno dei più grandi problemi 
+nella produzione di un software. Le gestioni presenti in Java rappresentano un metodo molto utile e efficace per gestire la complessità di questo problema. 
+
+Le eccezioni sono uno strumento supportato da alcuni linguaggi, per gestire questo tipo di anomalie, poiché sono appunto non catalogabili per definizione, non è possibile 
+gestirle in modo elegante, e Java produce una distinzione efficace tra l'esecuzione normale ed i casi ``eccezionali''. 
+
+I programmi si possono descrivere come interazioni tra gli oggetti ``client'', che invocano i servizi, ed oggetti ``server'', che offrono i servizi. 
+
+In Java sono necessari meccanismi per ``sollevare'' e ``catturare'' le eccezioni, dal lato server, la gestione delle eccezioni ricade al lato client. 
+Tutte le eccezioni sono oggetti estensioni della classe \verb|Throwable|, e possono essere lanciati o sollevati, utilizzando l'istruzione \verb|throw|, a cui succede un 
+sottotipo di \verb|Throwable|. Queste eccezioni possono decorate da altri messaggi e riferimenti ad altre eccezioni che l'hanno causato. %% TODO metodi Throwable (costruttore) per stack tracing
+In questo modo si crea uno ``stack trace'', una traccia di tutte le chiamate che hanno portato all'eccezione. 
+
+
+Ogni eccezione essendo un oggetto viene creata dall'operatore \verb|new|, poi l'oggetto lanciato con l'istruzione, inserendo nel costruttore dell'eccezione un messaggio diagnostico. 
+La clausola \verb|throws| viene utilizzata per marcare i metodi che possono sollevare le eccezioni, seguito dal nome dell'eccezione che può sollevare. 
+Quando viene sollevata un'eccezione, il metodo che l'ha lanciata termina l'esecuzione, senza eseguire il \verb|return|, senza restituire alcun valore, e viene restituito il 
+controllo al metodo invocante. Rappresenta un comportamento molto distruttivo, interrompendo ed abbandonando una normale esecuzione. 
+Queste eccezioni ``bucano'' lo stack, causano una terminazione del metodo che le lanciano, e viene restituito il controllo al metodo invocante, che può esercitare vari metodi, 
+se in tutto lo stack non viene catturata l'eccezione, questa risale lo stack iterativamente fino al metodo \verb|main()| dove la JVM termina l'esecuzione e stampa lo stack trace 
+catturando l'eccezione. 
+Per catturare l'eccezione senza che arrivi al livello superiore sono possibili due tipi di gestioni alternative. Se il client si prende il compito di catturare l'eccezione, 
+oppure non prova a gestire l'eccezione e lascia che siano i metodi di livello superiore a catturarla. 
+
+Per catturare un'eccezione e gestirla specificatamente bisogna inserire il corpo che potrebbe sollevare l'eccezione dentro \verb|try|, e se si vuole gestire l'eccezione, 
+se viene catturata e conservata nella variabile locale \verb|e| e gestita dal blocco \verb|catch|:
+\begin{minted}{java}
+try{
+    // codice che può sollevare un'eccezione
+}catch (<tipo-errore> e){
+    // codice che gestisce l'eccezione
+}   
+\end{minted}
+
+Questa gestione è molto più macchinosa rispetto ad una gestione senza cattura dell'errore. All'aumentare della complessità del programma risulta necessario includere 
+codice per la gestione di eccezioni. 
+Alcune eccezioni devono essere corrette a livello logico, senza catturarle come le \verb|NullPointerException|, che vengono sollevate automaticamente a tempo di esecuzione, 
+complicando lo stack trace, sprecando risorse ed offuscando la comprensione dell'origine vera del problema. 
+
+%% TODO Studio di caso eccezione in FabbricaDiComandi 
+
+Utilizzando un null object, si ha il vantaggio di mantenere una gestione uniforme degli errori come per l'esecuzione normale del codice, invece di utilizzare \verb|null|, 
+infatti per versioni di Java moderne sono esistono modi per evitare completamente l'uso di \verb|null|, ritenuto ormai poco elegante. 
+
+Bucare lo stack è utile, quando si vogliono gestire le eccezioni al livello giusto, senza provare a catturarle ad ogni livello. Questo tipo di propagazione è opportuna 
+quando non è stato fornito un input opportuno, per cui si risale fino al livello che ha fornito questo input per gestire l'errore. 
+Quindi è parte integrante delle attività di progettazione la definizione di nuove eccezioni per gestire tipi di errori propri al programma. 
+
+
+Esistono due diversi tipi di eccezioni, tutte estensioni \verb|Throwable|, le eccezioni \verb|Exception| e gli errori \verb|Error| che per loro natura non possono essere 
+catturati e recuperati. 
+Le eccezioni si dividono in due categorie quelle ``controllate'' \verb|Checked| e quelle incontrollate, a tempo di esecuzione \verb|Unchecked|. Le eccezioni controllate richiedono 
+una gestione esplicita da parte del compilatore in uno dei due modi descritti precedentemente, altrimenti non viene compilato il file. 
+Questa rappresenta una forte imposizione da parte del compilatore. 
+Mentre le eccezioni non controllate, 
+non richiedono una gestione esplicita da parte del client, per cui vengono sollevate a tempo di esecuzione e non costringono codice aggiuntivo per gestirle. 
+I metodi che generano un'eccezione non controllata possono gestire l'eccezione, ma non è dichiarato esplicitamente, mentre semanticamente quelle controllate sono parte 
+integrante della segnatura poiché appartengono ai parametri di un metodo. Mentre le eccezioni non controllate non modificando la segnatura dei metodi la loro 
+gestione non è necessaria. 
+
+Nei linguaggi successivi a Java sono presenti solo eccezioni non controllate, poiché vengono viste come troppo invasive. Per cui anche in Java esistono dei metodi che 
+effettuano la stessa operazione di altri metodi, senza sollevare eccezioni controllate. 
+
+Il blocco \verb|try-catch| può gestire più di un'eccezione con più \verb|catch| diverse e separate. 
+
+Il metodo \verb|Class.forName| solleva un'eccezione quando il costruttore della classe non ha un costruttore, non è pubblico, oppure se non trova il \verb|.class|. 
+Poiché la catena di \verb|catch| viene eseguita dall'alto verso il basso, la prima che cattura l'eccezione, oscura le successive eccezioni sollevate nel codice. 
+Per cui è sempre favorito ordinare le clausole della \verb|catch| dalla più specifica in poi. 
+
+%% TODO try with resources 
+
+Da Java 7 venne introdotta una clausola per abbreviare la complessità di questo  
+metodo, per effettuare una disgiunzione delle possibili eccezioni, con un'unica variabile locale per raccogliere l'eccezione ed un codice comune per la loro gestione. 
+Quindi il tipo statico di questa variabile è il tipo statico del primo supertipo comune tra di loro, poiché in Java invece di C non esiste l'unione. 
+Inoltre è stato introdotto un modo per gestire le risorse in tre fasi più abbreviato. Una risorsa rappresenta un qualsiasi oggetto con protocollo di utilizzo che prevede 
+un metodo di rilascio esplicito. Questo viene gestito dalla clausola \verb|try-with-resources|, al posto di scrivere esplicitamente il metodo per chiudere la risorsa, o 
+terminare il suo uso, per renderlo disponibile al resto del programma, tramite la clausola \verb|finally|. 
+Questo blocco di codice rappresenta ciò che viene sempre eseguito dopo il corpo di \verb|try|. 
+
+%% TODO eccezioni e testing
 
 \end{document}
