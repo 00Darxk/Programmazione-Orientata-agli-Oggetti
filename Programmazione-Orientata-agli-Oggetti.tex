@@ -1235,4 +1235,102 @@ Questo blocco di codice rappresenta ciò che viene sempre eseguito dopo il corpo
 
 %% TODO eccezioni e testing
 
+\clearpage
+
+\section{Classi Astratte e Costanti Enumerative}
+
+L'estensione è uno strumento utile per riusare il codice. Si possono estendere classi ``concrete'', dotato di un corpo, ereditato dalle 
+classi estese, che possono sovrascrivere i metodi offerti dalla classe base. 
+Questo può essere effettuato tramite interfacce, ma queste non possiedono corpo e tutte le sue implementazioni devono definire ogni metodo segnato nell'interfaccia, anche 
+se classi estese presentano una medesima implementazione tra di loro. 
+
+Si può utilizzare quindi una classe astratta, come intermedio tra interfaccia e classe concreta, infatti contiene implementazione di alcuni metodi, mentre altri metodi 
+vengono solo dichiarati. Quindi tutte le classi che la estendono condividono l'implementazione della classe astratta, e possono implementare i metodi astratti. 
+La classe astratta non può essere inizializzata direttamente, come le interfacce, poiché non presenta tutte le implementazioni dei metodi, deve essere quindi estesa da altre 
+classi per costruzione. 
+
+
+
+Convenzionalmente il nome di una classe astratta viene preceduto dal prefisso ``Abstract''. Le classi astratte non possono essere quindi inizializzate. 
+
+%% TODO caso di studio
+
+Nella classe astratta viene inserito tutto ciò che deve essere comune alle sue classi estese, per condividere le implementazioni di alcuni metodi definiti nella classe 
+astratta. Nel caso di progetti semplici è consigliabile l'utilizzo di interfacce, poiché utilizzare classi astratte aumenta notevolmente l'accoppiamento tra le classi. 
+
+Per indicare che una classe o un metodo è astratta viene utilizzata la parola chiave \verb|abstract|. 
+Per una classe può essere omessa questa marcatura, ma ogni metodo che manca di corpo deve essere specificato sia astratto. 
+
+Talvolta viene definita astratta una classe che presenta tutte le implementazioni, ma non vuole essere istanziata. 
+Se non vengono implementati i metodi astratti con un \verb|@Override|, il compilatore produce un errore, specificando che i metodi vanno implementati oppure la classe 
+deve essere resa astratta. 
+La presenza di anche un solo metodo astratto necessita della dichiarazione dell'intera classe come astratta. 
+Le sottoclassi quindi per essere concrete ed istanziabili devono fornire un'implementazione di tutti i metodi astratti forniti dalla superclasse. 
+
+
+Servono a definire implementazioni parziali, utilizzate nella creazione dei framework per permettere l'implementazione da altri programmatori. 
+
+Spesso si preferiscono le interfacce alle classi astratte poiché sono meno vincolanti. 
+
+%% TODO classi astratte
+
+
+Metodi e classi possono essere marcati come finali tramite la parola chiave \verb|final| che impedisce alle classi di essere estese, oppure di sovrascrivere i metodi 
+segnati come finali, impedendo al metodo di essere ridefinito. Il motivo principale per cui esistono questi metodi finali è rappresentato da problemi di sicurezza, 
+analizzati alla creazione di Java e alla sua seguente diffusione sul web, per impedire a chiunque di poter ridefinire metodi. 
+
+
+
+Un'uso opportuno delle classi astratte sono le classi enumerative, introdotte in Java 5, in breve chiamati Java Enum. Utilizzati per permettere di modellare in modo 
+conveniente. 
+I Java Enum sono un modo molto concreto per utilizzare le classi astratte e finali appena descritte. Sono molto utili quando si vuole realizzare collezioni molto stabili 
+nel tempo, di alta specificità. 
+
+Per creare queste collezioni stabili prima di Java 5, si utilizzavano controlli a tempo statico stringenti, per evitare una tipizzazione lasca delle variabili, tramite una 
+classe finale. Oppure si può realizzare tramite un'interfaccia contenente come variabile finali costanti i valori della collezione, ma questo non permette di controllare la 
+correttezza dei suoi valori tramite una tipizzazione lasca. 
+Per evitare questo problema quindi vengono utilizzati costruttori privati, poiché gli elementi sono noti a priori e stabili nel tempo, per evitare all'utilizzatore di creare 
+o modificare questi elementi noti. 
+
+%% TODO java enum
+
+Da Java 5 venne introdotta la parola chiave \verb|enum| per realizzare questa collezioni:
+\begin{minted}{java}
+public enum <nome-enum>{
+    <nome-1>, ... , <nome-n>;
+}
+\end{minted}
+
+Crea quindi $n-1$ classi, tutte con metodi condivisibili da tutte le classi enumerative. Inoltre il compilatore aggiunge metodi statici che ritiene utili. 
+Quando sono presenti metodi polimorfi bisogna definirli nel corpo della classe, seguiti dalla definizione del metodo astratto:
+\begin{minted}{java}
+public enum <nome-enum>{
+    <nome-1>(){
+        @Override public <tipo> <nome-metodo>() { }
+    },
+    ...
+    <nome-n>(){
+        @Override public <tipo> <nome-metodo>() { }
+    };
+    public abstract <tipo> <nome-metodo>();
+}
+\end{minted}
+
+Ogni classe enum \verb|<nome-enum>| presenta come sottoclassi tutte le $n$ \verb|<nome-1>| definiti dentro al corpo della dichiarazione dell'enum. Ognuna di queste classi 
+numerata, partendo da zero, e può essere restituito dal metodo \verb|ordinal()|. 
+
+%% TODO testing enum
+
+Gli enum possono essere utilizzati insieme al comando \verb|switch|, anche se dopo Java 11 vennero introdotti costrutti che ne ampliarono notevolmente l'uso, sulla base del 
+successo che hanno avuto linguaggi funzionali. 
+
+
+I costrutti enum vengono utilizzati quando bisogna modellare collezioni di elementi noti, finiti e stabili, è molto difficile che cambieranno. Inoltre questi elementi sono conosciuti 
+per nome. Possono anche avere uno stato ma questo deve essere immutabili. 
+
+I tipi enumerativi quando vengono usati nelle mappe hanno codici di hash perfetti, che permettono di avere accessi sempre a tempo costante, paragonabili quindi ad un 
+array. 
+
+
+
 \end{document}
