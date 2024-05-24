@@ -1331,6 +1331,51 @@ per nome. Possono anche avere uno stato ma questo deve essere immutabili.
 I tipi enumerativi quando vengono usati nelle mappe hanno codici di hash perfetti, che permettono di avere accessi sempre a tempo costante, paragonabili quindi ad un 
 array. 
 
+\subsection{Classi Nidificate}
 
+Le classi nidificate furono introdotte prestissimo, in Java 1.1, l'unica grande novità di quest'aggiornamento. 
+Il vero motivo per cui si ebbe questa necessità fu il supporto per scrivere interfacce grafiche. 
+Da Java 8 vennero introdotti meccanismi che ebbero più successo per risolvere questo problema. 
+
+Questo meccanismo venne introdotto nel linguaggio Java, ma non venne introdotto nella macchina virtuale. Per cui ormai la macchina virtuale di Java viene usata anche per 
+altri linguaggi di programmazione poiché è fortemente disaccoppiata dal linguaggio stesso. Quindi la macchina virtuale anch'essa ha avuto un enorme successo. 
+%% TODO differenza tra tipi 
+Una classe nidificata è una classe scritta all'interno di un'altra classe, per cui si individua una classe ``interna'', ed una classe ``esterna'', la classe interna è un 
+membro contenuto nella classe esterna, quindi essenzialmente è un membro privato. 
+Esistono quattro diverse varianti di una classe nidificata, una classe interna di cui si interessa solamente il tipo. 
+Classi locali vengono dichiarate all'interno di un blocco di codice, ad uso e consumo di un metodo. 
+Classi anonime sono classi di cui non serve un nome. 
+Infine le classi statiche. 
+
+La grossa differenza tra le classi non statiche e le non statiche consiste nella creazione che è legato fortemente all'istanza della classe esterna a partire dal quale è stato 
+creato. Ogni istanza della classe interna deve mantenere un riferimento alla classe che l'ha istanziata, così come la classe esterna mantiene un riferimento all'istanza 
+della classe interna che ha istanziato.  
+
+QUando viene creata un'istanza della classe interna rimane collegato all'istanza della classe esterna, senza questo legame l'oggetto istanza della classe interna non può 
+esistere, questo legame è reciproco. 
+Inoltre ogni istanza di una classe interna è associata a solo un'istanza di una classe esterna.  
+
+Poiché la classe interna è un membro della classe esterna, può accedere agli elementi privati della classe esterna, inoltre se la classe interna è pubblica, può essere istanziata 
+dall'esterno, e possono essere invocati i suoi metodi, che potrebbero utilizzare membri della classe esterna. 
+
+Per cui solamente attraverso la classe esterna è possibile invocare un riferimento alla classe interna. 
+La sintassi per la creazione di una classe interna quindi riflette questo legame:
+\begin{minted}{java}
+Outer outer = new Outer();       // costruttore classe esterna
+Outer.inner = outer.new Inner(); // costruttore classe interna 
+\end{minted}
+
+Dal punto di vista dei tipi non appartengono alla stessa gerarchia. 
+
+Dentro la classe interna è possibile introdurre variabili omonime a variabili di istanza della classe esterna, per evitare confusione e accedere bisogna qualificare 
+completamente il nome con la sintassi:
+\begin{minted}{java}
+<nome_Outer>.this.<nome_variabile>
+\end{minted}
+
+
+Un iteratore rappresenta una classe nidificata interna, alle collezione che lo comprendono. 
+
+%% TODO classi nidificate
 
 \end{document}
