@@ -1378,4 +1378,122 @@ Un iteratore rappresenta una classe nidificata interna, alle collezione che lo c
 
 %% TODO classi nidificate
 
+\clearpage
+
+\section{IO Stream}
+
+Oltre allo sviluppatore esistono altri ruoli per modificare il codice prima di spedirlo al cliente. 
+
+La gestione dell'IO viene effettuata tramite il pacchetto \verb|java.io.*|, primo pacchetto per la gestione dell'IO, per cui è datato, ma tuttora popolare. 
+Una delle astrazioni più importanti fornite da questo pacchetto è il flusso o ``stream'', una collezione di dati a cui è possibile accedere solamente sequenzialmente. 
+Usato in Java 8 per descrivere un modo alternativo per gestire un flusso di dati. 
+Si parlerà solamente di stream nell'ambito della gestione del flusso di dati da dispositivi di IO. 
+
+Un flusso viene definito da una sorgente o destinazione, ed un programma. Se si tratta di un flusso di input, permette di leggere i dati prodotti da una sorgente, mentre se si tratta di un 
+flusso di output, permette di scrivere dati diretti ad una destinazione. 
+I flussi ben prima dell'avvento del paradigma orientato agli oggetti viene la necessità di astrarre la gestione di IO su diversi dispositivi diversi tra di loro, già presenti 
+all'avvento di Java nei sistemi Unix. 
+
+Uno stream può essere di caratteri o di byte. UUno stream di caratteri fa riferimento ad un certo linguaggio naturale, e quindi deve decifrare quei byte rispetto ad un alfabeto, 
+un encoding, come l'ASCII. Ma avendo solamente 256 caratteri disponibili, essendo diffuso su internet, Java ebbe la necessità di supportare linguaggi diversi. Utilizzo una classe 
+per codificare 60000 caratteri diversi, abbastanza per tutti gli alfabeti di lingue usate. Java odierno permette la codifica di tutti gli alfabeti noti, e non più usati, oltre 
+a quelli già citati. 
+
+Esistono due stream di caratteri i \verb|Reader| e \verb|Writer| rappresentati da classe astratte, aventi sottotipi per molti tipi di sorgenti di destinazioni, per stringhe 
+\verb|StringReader| e \verb|StringWriter|. 
+
+La gerarchia per la gestione dell'IO ha come radice queste due classi astratte, interpellando i byte letti come caratteri attraverso un meccanismo di encoding di uno o più byte, 
+da un insieme di possibili caratteri ``charset''. 
+La codifica Java ha avuto esigenze di andare ben oltre la codifica ASCII, per cui utilizza una variante della codifica UTF-16 per il charset ``Unicode'', per permettere di 
+coprire gli alfabeti più diffusi, composta da una codifica a 16 bit. 
+Altre codifiche supportate presentano 4 byte, per lingue occidentali contenenti alfabeti molto più ampi. 
+
+%% TODO img gerarchia InputStream e OutputStream
+
+Storicamente vi era la necessità di comunicare con hard disk a blocchi, per cui in Java sono presenti astrazioni per leggere a blocchi gli stream \verb|Buffer|. 
+
+La classe \verb|InputStreamReader| prende una stream di caratteri ed una specifica di una codifica, da Java 18 viene utilizzata come default la codifica UTF-8, utilizzata 
+anche da molti sistemi operativi, poiché è retrocompatibile con la codifica ASCII. In Java 18 hanno effettuato un cambiamento non retrocompatibile, usando sempre l'encoding 
+UTF-8, indipendentemente dalla preferenza del sistema operativo. Per questo si lavora con stream di caratteri, senza specificare la codifica usata. 
+
+Il costruttore di \verb|InputStreamReader| necessità della codifica specificata come stringa, altrimenti viene utilizzata la codifica di default, prima di Java 18 quella del sistema 
+operante. 
+I principali metodi sono pochi e primitivi per leggere caratteri su ogni tipo di dispositivo. Per cui sono metodi di basso livello come \verb|read()| e \verb|writer()| 
+entrambi sovraccarichi, pre cui tendenzialmente vengono usate altre classi che utilizzano questi metodi internamente. 
+
+Nel pacchetto \verb|java.io| sono presenti funzionalità di decorazione, che utilizzano un riferimento ad un \verb|Reader| o \verb|Writer| e ne adornano le funzionalità. 
+Il design pattern di decorazione consiste che siano tutti sottotipi di \verb|Reader|, ma presentano un riferimento ad un altro \verb|Reader| iniettato nel loro costruttore, di cui 
+offrono una versione arricchita. 
+
+Questo modo di decorare l'interfaccia ha un vantaggio chiaro, permette di comporre le funzionalità all'atto di instanziamento dell'oggetto, senza dover creare una nuova classe 
+per ogni nuova combinazione di funzionalità richiesta. 
+
+Gli stream rappresentano risorse, rispettano quindi una fase di utilizzo ed una fase esplicita di rilascio per rendere in condizione il sistema operativo di condividere la 
+risorsa con altri programmi. 
+Ciò non vale con ogni risorsa, ma alcune necessitano di un meccanismo di rilascio esplicito, altrimenti il S.O. non permette di rilasciare la risorsa ad altri programmi. 
+Per cui il protocollo di utilizzo degli stream, e di altre risorse simili, necessita di un'esplicita richiesta alla risorsa, il suo utilizzo, ed un'esplicito rilascio 
+della risorsa. 
+Per cui nell'uso di basso livello viene utilizzata la sintassi \verb|try-catch-finally| per assicurarsi di rilasciare le risorse utilizzate alla fine dell'esecuzione, 
+indipendentemente se vengono sollevate eccezioni a tempo di esecuzione. 
+
+Questo pacchetto contiene delle scelte datate e discutibili come la classe \verb|java.io.File| che confonde l'indirizzo nel S.O. del file dal file stesso, per cui in Java 4 
+venne introdotta un pacchetto per introdurre la classe \verb|Path| per risolvere il problema descrivendo l'indirizzo del file. 
+Ora sono disponibili singoli metodi di utilità nella classe \verb|java.nio.file.Files| per risolvere il problema introdotta da \verb|java.io.File|. Questo, insieme a librerie 
+esterne, permette di rendere molto più semplice la gestione di lettura e scrittura su file. 
+
+%% TODO studio di caso dati necessari alla creazione del labirinto in un file esterno al programma 
+
+Possono essere quindi usate classi \verb|Builder| per realizzare un'oggetto leggendo i parametri e le variabili da istanziare da un file, tramite una classe \verb|Parser| per 
+leggere il contenuto del file. 
+
+Per cui oltre allo sviluppatore, è necessario il lavoro di definire e costruire i livelli associati a diversi file, che verranno letti dal programma realizzato dallo 
+sviluppatore. Viene necessario quindi un amministratore in grado di gestire il sistema e configurarlo, prima di consegnarlo all'utente finale. 
+
+Per cui il codice deve essere predisposto all'accesso da questi amministratori senza necessità di conoscere il linguaggio Java. Per cui è spesso opportuno spostare le informazioni 
+sul programma all'esterno del codice sorgente. 
+
+Poiché il programma non viene utilizzato in un ambiente di sviluppo, ma viene semplicemente eseguito dall'utente finale. 
+Questo meccanismo di ``esternalizzazione'' delle costanti permette all'amministratore di configurare le necessarie informazioni per rendere il programma utilizzabile dall'utente 
+finale. 
+Sono disponibili a livello industriale framework standardizzati per realizzare queste attività, in modo molto semplice ed efficiente. 
+
+Questi parametri configurazione possono essere rimossi dal codice tramite meccanismi artigianali, per evitare anche di ricompilare il codice dopo aver cambiato il valore di 
+alcune costanti. 
+
+
+Per conservare dentro file testuali valori di configurazione è possibile utilizzare file che permettono la lettura ed il salvataggio di oggetti tramite il pacchetto \verb|java.util.Properties|, 
+sottotipo di \verb|Map| da Java 2 in poi. Rappresenta una mappa di coppie chiave-valore, di tipo stringhe. La chiave rappresenta il nome della ``properties'', mentre il valore 
+rappresenta il suo valore. 
+Un formato che va per la maggiore è il formato \verb|.json| per scrivere file contente oggetti, reso famoso da Javascript, tanto che sono presenti tante librerie dentro 
+Java per leggere e scrivere in formato Json. 
+Questi file testuali sono editabili da non programmatori Java. 
+La classe \verb|Properties| presenta dei metodi semplici, che permettono di realizzare una proprietà copiandola da un'altra proprietà, inoltre è possibile conservare il valore 
+da una stream all'interno di una proprietà, attraverso i metodi \verb|store()|, i metodi \verb|storeToXML()| permettono di conservare queste proprietà all'interno di un file 
+di formato \verb|.xml|, ma ormai è stato molto ridimensionato l'utilizzo di file di tipo XML. 
+I file di tipo XML sono una generalizzazione del formato HTML, dove i tag sono scelti arbitrariamente dallo sviluppatore. 
+
+Bisogna evitare di specificare all'interno del codice la direzione assoluta del file proprietà, poiché cabla nel codice un'indirizzo che molto probabilmente funzionerà 
+solamente per il singolo sviluppatore che lo ha specificato. Il codice deve quindi poter eseguire nell'ambiente di esecuzione finale, ormai all'interno del cloud. Il rilascio 
+su queste piattaforme deve quindi evitare di includere errori del genere. 
+Per utilizzare una risorsa senza utilizzare l'indirizzo logico completo vengono utilizzate due classi \verb|Class| e \verb|ClassLoader|, per poter leggere le risorse e le classi. 
+Entrambe le classi offrono due metodi \verb|getResource()| che prende il nome della risorsa come stringa, e restituisce un tipo URL, mentre il metodo \verb|getResourceAsStream()| che 
+prende lo stesso nome come input e restituisce una stream dalla lettura della risorsa specificata, in modo da caricarla in modo più efficiente. Anche se presentano la 
+stessa segnatura, hanno una semantica diversa, che rappresenta una scelta progettistica discutibile, ma effettivamente effettuano lo stesso lavoro. 
+
+Per la risoluzione dei nomi logici delle risorse, viene effettuato allo stesso modo della risoluzione del nome completamente qualificato delle classi, nella posizione del 
+corrispondente file \verb|.class|. 
+Questo meccanismo di risoluzione viene copiato analogamente per le risorse per rendere il loro indirizzo noto alla JVM a tempo di esecuzione. 
+Bisogna rendere noto nel ``buildpath'' l'indirizzo di due altre cartelle, ormai solo una, chiamata \verb|Resources| da dove parte la risoluzione del nome logico delle risorse, 
+tramite le classi precedentemente specificate. I nomi relativi non cominciano per `/', mentre i percorsi assoluti cominciano per `/' e dipendono dalla locazione della cartella 
+dove comincia l'esecuzione del programma, per cui è preferibile utilizzare un indirizzo relativo. 
+%% TODO fix Class/ClassLoader
+La classe \verb|Class| risolve i percorsi relativi partendo dalla posizione del file \verb|.class| associato all'oggetto corrispondente associato. 
+Mentre la classe \verb|ClassLoader| lavora solamente tramite percorsi relativi, partendo dal classpath. 
+
+Quando viene impacchettato un progetto creando un file \verb|.jar| bisogna poter eseguire il codice, ma essendo impacchettato e compresso dentro un archivio, il file di 
+risorse non è accessibile come un file ordinario, quindi invece di utilizzare il metodo \verb|getResource()| che restituisce un indirizzo logico per accedere alla risorsa come 
+ad ogni altro file nel file-system, bisogna utilizzare il metodo che restituisce una stream che permette il caricamento delle risorse partendo da un archivio dove le risorse sono 
+compresse. 
+Questo permette al programma di essere indipendente dall'ambiente di esecuzione. 
+
 \end{document}
