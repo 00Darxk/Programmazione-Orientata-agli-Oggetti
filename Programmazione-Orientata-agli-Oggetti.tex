@@ -59,7 +59,6 @@ Università degli Studi ``Roma Tre"}}
 
 %% TODO: fix order of contents / merge (sub)section
 %% TODO programma ppt. -> README
-%% TODO testi di riferimento
 
 
 \section{Introduzione al Linguaggio Java}
@@ -717,11 +716,11 @@ La scelta dei corretti tipi da definire in un programma è un delicato esercizio
 Il sovraccarico di un metodo viene risolto a tempo di compilazione in Java, sulla base dei tipi statici, ma è possibile ottenere un effetto simile ad un sovraccarico sulla base 
 di tipi dinamici, utilizzando una chiamata polimorfa ed il late-binding. 
 
-%% TODO barba-trucco  ovverriding for overloading
-Si considera una gerarchia di tipi, avente come radice una interfaccia vuota non modificabile, e si considera un metodo che vuole essere implementato sull'interfaccia. 
+
+Si considera una gerarchia di tipi, avente come radice un'interfaccia vuota non modificabile, e si considera un metodo che vuole essere implementato sull'interfaccia. 
 Si potrebbe creare quindi una classe contenente metodi sovraccarichi per quante sono le classi che implementano tale interfaccia. Ma questo è possibile solamente quando si 
 coincide il tipo statico con il tipo dinamico delle variabili locali delle classi, passati ai metodi sovraccarichi. Altrimenti non sarebbe possibile utilizzare questa tecnica, 
-spesso invece non è nota il tipo dinamico del parametro passato al metodo. 
+poiché spesso non è noto il tipo dinamico del parametro passato al metodo. 
 Per risolvere questo problema quindi bisogna trovare un modo per passare un tipo generico a questo metodo, basandosi solamente sul tipo statico. Si vuole risolvere il metodo 
 sovraccarico sulla base del tipo dinamico.  
 
@@ -729,13 +728,13 @@ In generale è sconsigliato determinare il tipo dinamico di un oggetto tramite i
 cui in questo caso non si considera questa tecnica. 
 
 Il vantaggio delle chiamate polimorfe è che permettono di scegliere quale metodo da invocare sulla base del tipo dinamico, per cui modificando la definizione di codice della 
-libreria che implementa l'interfaccia vuota, per ospitare un metodo che accetta una classe, contenente metodi sovraccarichi per ogni sottoclasse dell'interfaccia. 
-In seguito si inserisce in ogni sottoclasse un'implementazione di questo metodo come override che invoca questo metodo sovraccarico, passando sé stesso con la parola chiave 
-\verb|this|, tipo statico il tipo della classe o il suo sottotipo. In questo modo la chiamata polimorfa sovrascritta in una sottoclasse generica dell'interfaccia iniziale 
-invoca un metodo dove il tipo statico corrisponde al tipo dinamico. 
+libreria che implementa l'interfaccia vuota, per ospitare un metodo che accetta una classe, contenente metodi sovraccarichi per ogni sottoclasse dell'interfaccia. In generale dato che 
+le interfacce fornite da librerie esterne sono immutabili utilizzano metodi in grado di accettare un tipo generico. Questo tipo generico deve essere in grado di distinguere tutti i tipi 
+della gerarchia di tipi, quindi sovraccarichi.  
 
-%% TODO esempio pratico (forme_geometriche) / ppt. 
-
+Le implementazioni del metodo che prende questo tipo generico sono degli override, ed al loro interno viene chiamato il metodo sovraccarico di questo tipo generico, passando come parametro 
+sé stesso tramite \verb|this|, che ha come tipo statico il tipo della classe o suo sottotipo. In questo modo la chiamata polimorfa sovrascritta in una sottoclasse generica dell'interfaccia 
+iniziale invoca un metodo dove il tipo statico corrisponde al tipo dinamico. 
 Questa tecnica si chiama ``dispatching''. 
 
 \clearpage
@@ -743,7 +742,7 @@ Questa tecnica si chiama ``dispatching''.
 \section{Generics}
 
 I generics sono uno strumento per scrivere classi e metodi parametriche rispetto ad un tipo. Più che progettare classi generiche, si vuole utilizzare classi generiche, la loro 
-progettazione va oltre gli obiettivi del corso. Per classe generica si intende un tipo che dipende da un altro tipo. In questo corso si useranno classi generiche relative 
+progettazione va oltre gli obiettivi formativi del corso. Per classe generica si intende un tipo che dipende da un altro tipo. In questo corso si useranno classi generiche relative 
 alla gestione di collezioni di oggetti, in particolare con il pacchetto \verb|java.util|. 
 
 Senza utilizzare classi generiche per poter realizzare tipi parametrici, consiste nello sfruttare il polimorfismo, utilizzando la classe \verb|Object| ed utilizzando il 
@@ -754,49 +753,71 @@ Questo rappresenta solamente un'approssimazione del tipo desiderato.
 
 Introdotti in Java 5, i generics sono uno strumento per scrivere classi ed interfacce il cui tipo diventa parametrico rispetto ad uno o più tipi. Il tipo generico dipende 
 da un tipo chiamato formale, che deve essere istanziato affinché funzioni correttamente. I tipi formali in generale vengono chiamati con singole lettere maiuscole, 
-per indicare che una classe è un generics si utilizza la notazione accanto al tipo del nome della classe \verb|< >|, che racchiude il nome del tipo formale. 
-Questo tipo viene usato come una dichiarazione di tipo, quindi può essere usato all'interno della classe come instanziamento di tipo. Solo quando viene creato il tipo 
-bisogna assegnare un tipo al tipo formale, se non vengono forniti tutti i tipi formali il codice non compila. 
+per indicare che una classe è un generics si utilizza la notazione accanto al tipo del nome della classe \verb|<T, E>|, che racchiude il nome dei tipi formali \verb|T| e \verb|E|. 
+Questo tipo viene usato come una dichiarazione di tipo all'interno della classe. Per utilizzare una classe generica, tutti i tipi formali 
+devono essere istanziati e completamente definiti con un tipo attuale per renderlo utilizzabile. 
 
-Quando si uas una classe generica, bisogna istanziarne completamente i tipi fornendo i tipi attuali di tutti i tipi formali di cui fa uso, solo in questo modo può essere 
-utilizzata come un tipo. 
-
-Il concetto tra parametro attuale parametro formale è simile alla relazione tra tipo formale e tipo attuale. 
+La distinzione tra parametro attuale e parametro formale è simile alla relazione tra tipo formale e tipo attuale, ma solo superficialmente. A tempo di esecuzione, infatti, non esistono 
+tipi formali, esistono solo tipi attuali, poiché il compilatore scrive nel file \verb|.class| le relazioni tra i soli tipi statici, rimpiazzando tutti i tipi formali con 
+rispettivi tipi attuali. 
 
 Essendo Java un linguaggio ibrido sono presenti informazioni, non rappresentate come oggetti, per cui non è possibile utilizzare questi tipi come tipi formali di una classe 
 generica. Non è possibile istanziare i tipi di una classe, di una interfaccia o di un metodo generico con tipi primitivi. Per risolvere questo problema è possibile 
 rappresentare i tipi primitivi mediante le classi ``wrapper''. Per ogni tipo primitivo esiste una corrispondente classe wrapper che consente di esprimerlo tramite oggetto, 
-immutabile, costruendoci un oggetto attorno. 
+immutabile, costruendoci un oggetto attorno:
+\begin{minted}{java}
+    int     -> Integer
+    double  -> Double
+    float   -> Float
+    char    -> Character
+    boolean -> Boolean
+\end{minted}
 
-Le classi wrapper sono definite nel pacchetto \verb|jav.lang|, per cui non è necessario importarle, esplicitamente. Per ovviare a questa eccessiva verbosità, da 
+Le classi wrapper sono definite nel pacchetto \verb|java.lang|, per cui non è necessario importarle, esplicitamente. Le classi wrapper essendo oggetti devono essere istanziati mediante 
+\verb|new|, e per ottenere il valore primitivo contenuto dovranno essere usati opportuni metodi getter:
+\begin{minted}{java}
+    int i;
+    Integer iWrapped = new Integer(i);
+    int j = iWrapped.intValue();
+\end{minted}
+Altri metodi comunemente usati sono \verb|valueOf()|, \verb|parseInt()|, che dipende da quale wrapper di tipo primitivo si sta usando, e \verb|equals()|. 
+Per ovviare a questa eccessiva verbosità, da 
 Java 4, la gestione degli oggetti wrapper venne semplificata tramite tecniche di ``boxing'' e ``unboxing''. Che permettono di effettuare dichiarazioni, inizializzazioni e 
-conversioni dirette tra tipi primitivi ad oggetti wrapper. 
+conversioni dirette tra tipi primitivi ad oggetti wrapper. Questa tecnica di conversione automatica da tipi primitivi ad oggetti di tipo wrapper e viceversa è simile alla conversione di tipi 
+effettuata dal compilatore, ma è diversa poiché utilizza sia oggetti che tipi primitivi. Il compilatore automaticamente inserisce i metodi necessari per effettuare l'unboxing o il 
+boxing tra tipi wrapper e primitivi. 
+Questa semplificazione della conversione di tipo nasconde la differenza tra i due tipi, e potrebbe portare ad errori logici, poiché alcune operazioni permesse sui tipi primitivi non 
+sono permesse sui tipi wrapper e viceversa, e non necessariamente verranno identificati correttamente a tempo di compilazione o esecuzione dall'IDE. 
 
 
-%% TODO 24/4: wildcard ppt. 
-
-
+Poiché collezioni generiche di tipo formale \verb|T| possono accogliere oggetti dello stesso tipo, non possono essere presenti oggetti di tipo \verb|T|, e contemporaneamente di un suo 
+sottotipo. Per risolvere questo problema bisogna indicare al compilatore, che il tipo formale può essere anche un suo sottotipo, senza fornire il tipo specifico, poiché non può 
+includere ogni sottotipo della gerarchia. Per indicare un tipo qualsiasi si utilizza una ``wildcard''. 
 La sintassi di questa wildcard viene rappresentata da \verb|?|, per indicare che si può accettare un parametro di tipo \verb|T| o sottotipo di \verb|T| si usa quindi la 
 segnatura \verb|<? extends T>|. 
 Il compilatore decide a tempo di compilazione il tipo attuale dei tipi formali della classe generica. Questo uso uso di wildcard rappresenta un ``limite'' superiore 
 rispetto alla gerarchia dei tipi, per definire quali tipi sono accettabili dalla classe. 
 
-Delle classi non generiche possono ospitare metodi statici generici, inserendo il tipo formale subito prima del tipo restituito. Questo metodo può essere evocato 
-come per le classi generiche solo se il tipo formale è perfettamente definito. 
+Delle classi non generiche possono ospitare metodi statici generici, inserendo il tipo formale subito prima del tipo restituito:
+\begin{minted}{java}
+public static <T> tipoRestituito nomeMetodo(T e);
+\end{minted}
+Questo metodo può essere evocato come per le classi generiche solo se il tipo formale è perfettamente definito.  
 
 Analogamente si può indicare un limite superiore tramite la segnatura \verb|<? super T>|, in questo modo si può accettare un parametro di tipo \verb|T| o di un suo 
 supertipo. 
 
-Per determinare quale tipo attuale rappresenta il tipo formale si considera la regola PECS, %% TODO convenzione PECS
+Per determinare il tipo dei parametri formali nelle segnature, si può utilizzare la regola mnemonica PECS: ``Produce Extends Consumer Super''. Per parametri che producono elementi 
+si utilizza il sottotipo \verb|<? extends T>|, mentre per parametri che consumano elementi si utilizza il supertipo \verb|<? super T>|. 
+Inoltre possono essere utilizzati entrambi per limitare il tipo del parametro ulteriormente. 
 
-I tipi generici si usano per lavorare con le collezioni, presenti in \verb|java.util.Collection|. 
-Quando non è strettamente necessario dare un nome al tipo formale si utilizza la sintassi \verb|<?>|. 
-
+I tipi generici si usano per lavorare con le collezioni, presenti in \verb|java.util.Collection|. Quando non è strettamente necessario dare un nome al tipo formale si utilizza la 
+sintassi \verb|<?>|. 
 
 \subsection{Collezioni}
 
 Il linguaggio offre delle librerie native, utilizzate per implementare collezioni come liste, mappe, tabelle di hash, etc. 
-Tutti queste collezioni appartengono al ``Collection Framework''. 
+Tutti queste collezioni appartengono al ``Java Collection Framework''. 
 
 
 Molte applicazioni richiedono di gestire collezioni di oggetti, gli array, usati dall'inizio del corso sono un strumento di basso livello. La dimensione di una collezione 
@@ -804,18 +825,18 @@ generalmente non è nota a priori, e gli array non permettono di variare la sua 
 evitare un overflow. 
 
 Inizialmente venne introdotto in Java 2, ma venne esteso in Java 5, con l'introduzione dei Generics, introdotti appunto per generalizzare il loro uso nelle collezioni 
-preesistenti. 
+preesistenti, e successivamente aggiornato nelle versioni successive per introdurre importanti aggiunte. 
 Viene contenuto nel pacchetto \verb|java.util|, contiene collezioni non specialistiche, tra le più utilizzate in assoluto. 
 
-Il Java Collection Framework (JCF), contiene implementazioni interfacce, come le liste e le mappe. Collezioni utilizzate in tutti i linguaggi di programmazione moderni, 
+Il Java Collection Framework (JCF), contiene interfacce ed implementazioni, come le liste e le mappe. Collezioni utilizzate in tutti i linguaggi di programmazione moderni, 
 generiche, dipendenti le liste da un tipo formale, mentre le mappe, dizionari, array associativi dipendono da due tipi formali, una chiave ed il valore. 
 Altre interfacce permettono di enumerare la collezione indipendentemente dal tipo della stessa. 
 
 L'interfaccia \verb|Collection<E>| dichiara una generica collezione, generalizzata sia su \verb|List<E>| che su \verb|Set<E>|. Nelle liste gli elementi sono salvati sequenzialmente 
-e possiedono una posizione, senza gestire i duplicati; mentre negli insiemi, non ammettono duplicati e gli elementi non possiedono una posizione. 
+e possiedono una posizione, senza gestire i duplicati, mentre gli insiemi non ammettono duplicati e gli elementi non possiedono una posizione. 
 
-Dentro questa interfaccia sono presenti quindi tutti i metodi utili da applicare a collezioni di elementi, che essi siano liste o insiemi. Questi metodi effettuano operazioni 
-come l'aggiunta e la rimozione di elemento, verificare la dimensione o se è vuota, aggiungere tutti gli elementi ad un'altra collezione, ed ottenere un iteratore con cui 
+Dentro questa interfaccia sono presenti tutti i metodi utili da applicare a collezioni di elementi, che essi siano liste o insiemi. Questi metodi effettuano operazioni 
+come l'aggiunta e la rimozione di elemento, verifica della dimensione, aggiungere tutti gli elementi ad un'altra collezione, ed ottenere un iteratore con cui 
 è possibile scandire la collezione. 
 
 
@@ -824,81 +845,130 @@ L'interfaccia \verb|Set<E>| estende \verb|Collection<E>|, è una collezione che 
 Poiché non ammettono duplicati, è necessario definire un criterio di equivalenza tra due elementi dell'insieme, in modo da utilizzarlo come criterio per rifiutare aggiunte 
 all'insieme. 
 
-L'interfaccia \verb|List<E>| estende \verb|Collection<E>| corrisponde ad una sequenza ordinata di elementi. Ogni elemento può quindi essere identificato dalla sua posizione. 
+L'interfaccia \verb|List<E>| estende \verb|Collection<E>|, corrisponde ad una sequenza ordinata di elementi. Ogni elemento può quindi essere identificato dalla sua posizione. Quindi 
+permette accesso posizionale e la ricerca della posizione di uno specifico elemento. 
 
-L'interfaccia \verb|Map<K,V>| offre le operazioni di una mappa, o dizionario; è una collezione di coppie chiave-valore. 
+L'interfaccia \verb|Map<K,V>| offre le operazioni di una mappa, o dizionario; è una collezione di coppie chiave-valore. Permette l'accesso per chiave, ed la creazione di una collezione 
+contenente tutte le chiavi o valori. 
 
-La classe \verb|java.util.Collections|, offre un vasto insieme di metodi statici generici, %% TODO metodi offerti dalla classe Collections
+
+La classe \verb|java.util.Collections|, offre un vasto insieme di metodi statici generici, per manipolare le collezioni come l'ordinamento, se la collezione lo permette, la ricerca del massimo 
+e del minimo, etc. 
 
 
 I metodi offerti dall'interfaccia \verb|Collection<E>| vengono usati per una collezione generica, permettono di svolgere tre categorie di operazione:
 \begin{itemize}
-    \item Manipolazione di base;
-    \item Bulk;
+    \item Manipolazione di base: Coinvolgono un singolo elemento, oppure verificano proprietà della collezione;
+    \item Bulk: Coinvolgono tutti gli elementi della collezione;
     \item Conversione di/ad un array. 
 \end{itemize}
 
-Tutti i metodi che producono un effetto scontato, o non producono alcun effetto collaterale vengono implementati utilizzando il tipo \verb|Object| per il tipo passato. 
+Tutti i metodi che producono un effetto scontato, o non producono alcun effetto collaterale vengono implementati utilizzando il tipo \verb|Object| come parametro. 
 Mentre metodi che necessitano di un tipo specifico, altrimenti si provocano effetti indesiderati, vengono tipati utilizzando il tipo specifico per il tipo passato, come per il 
-tipo \verb|add|.
-Il metodo \verb|add| restituisce un booleano, vero se e solo se l'aggiunta ha generato una modifica della collezione. 
-
+tipo \verb|add()|. I metodi di aggiunta o rimozione restituiscono un booleano, vero solo se l'aggiunta o rimozione ha causato una modifica della collezione.   
+\begin{minted}{java}
+// Manipolazione di Base:
+    int size();
+    boolean isEmpty();
+    boolean contains(Object e);
+    boolean add(E e);
+    boolean remove(Object e);
+    Iterator<E> iterator();
+\end{minted}
 
 I metodi con la variante di suffisso \verb|All| permettono di effettuare addizioni rimozioni a ``lotto''. Hanno una segnatura strettamente collegata ai metodi basici, 
-prendono come parametro il tipo \verb|Collections<?>|. Tutti questi i metodi sono lascamente tipati, eccetto \verb|addAll|, che richiede una collezione di tipo \verb|<E>| o di 
-un suo sottotipo. 
+prendono come parametro il tipo \verb|Collection<?>|. Tutti questi i metodi sono lascamente tipati, eccetto \verb|addAll()|, che richiede una collezione di tipo \verb|<E>| o di 
+un suo sottotipo, affinché sia possibile contenerla nella collezione di arrivo. 
+\begin{minted}{java}
+// Operazioni di Bulk
+    boolean containsAll(Collection<?> c);
+    boolean addAll(Collection<? extends E> c);
+    boolean removeAll(Collection<?> c);
+    boolean retainAll(collection<?> c);
+    void clear;
+\end{minted}
 
 La conversione ad un array viene tipata come un array di oggetti \verb|Object[]|, mentre è possibile effettuare la stessa ad un metodo parametrico \verb|toArray(T[] a)|, che 
-prende un array dichiarato esternamente da riempire, e ne prende il tipo. 
+prende un array dichiarato esternamente da riempire, e ne prende il tipo:
+\begin{minted}{java}
+// Operazioni su Array
+    Object[] toArray();
+    <T> T[] toArray(T[] a);
+\end{minted}
 Uno dei motivi per la presenza di questi metodi, consiste nella creazione di questo pacchetto precedentemente ai Generics in Java 5. Inoltre la seconda versione, che costringe di 
 specificare il tipo, permette al compilatore di effettuare un'analisi statica dei tipi più stretta, senza che sia il compilatore a cercare il tipo dalla collezione, poiché 
 per motivi di retrocompatibilità non è possibile realizzare array generici in Java, appunto per l'introduzione tardiva dei Generics. Poiché i Generics vengono utilizzati a 
-tempo di compilazione, e non è possibile identificare a tempo di esecuzione quale metodo o classe sia generica o meno. 
+tempo di compilazione e non è possibile identificare a tempo di esecuzione quale metodo o classe sia generica o meno. 
 
 Per utilizzare il secondo tipo per generare un array generico, si può passare come parametro un array lungo zero, in modo da passare il tipo, ed è il metodo a creare un array 
 dello stesso tipo, di lunghezza sufficiente per ospitare tutta la collezione. 
 
 \subsection{Iteratori}
 
-Storicamente ogni collezione diversa richiedeva un modo diverso per scandire la collezione, per ogni collezione si generava un modo di enumerare gli elementi della collezione. 
+Storicamente ogni collezione diversa richiedeva un modo diverso per scandire la collezione, basato su metodi di enumerazione indipendenti tra di loro. 
 Il codice per enumerare gli elementi dipendeva fortemente dalla collezione stesa. Gli iteratori rappresentano uno stesso modo per poter enumerare elementi di collezioni diverse 
 tra di loro. 
-Si è quindi oggettificato il concetto di enumerazione di una collezione, indipendentemente dal tipo della collezione ospitante di questi elementi. Gli iteratori 
-sono creati invocando il metodo \verb|iterator()| sulla collezione. 
+Si è quindi oggettificato il concetto di enumerazione di una collezione, indipendentemente dal tipo della collezione ospitante di questi elementi. Gli iteratori \verb|Iterator<E>| 
+sono creati invocando il metodo \verb|iterator()| sulla collezione, munito dei metodi:
+\begin{minted}{java}
+    boolean hasNext();
+    E next();
+    void remove();
+\end{minted}
 
 In pratica è un cursore che scandisce la collezione sottostante ricordando la sua posizione nella scansione. Una posizione lecita si trova subito prima o subito dopo di un 
 elemento della collezione su cui si sta iterando, non si trova mai sopra un elemento. 
 
 I metodi verificano se l'elemento corrente ha un successivo, ed il metodo che restituisce il riferimento a quest'elemento con \verb|hasNext()| ed \verb|next()|. 
 Rappresenta un'enumerazione con stato, poiché deve salvare il suo stato attuale. Se si arriva alla fine della collezione, chiamando il metodo \verb|next()| viene 
-sollevata un'eccezione. 
-
-% per imparare il comportamento di iteratore tramite test di iteratori. 
+sollevata un'eccezione. Per cui convenzionalmente si chiama il metodo \verb|hasNext()| per verifica l'esistenza dell'elemento successivo, prima di iterare avanti. 
 
 Da Java 7 in poi, data una variabile che può ospitare una collezione rispetto ad una classe formale, nella dichiarazione della collezione si può omettere il tipo formale, e 
 lasciare \verb|<>| vuoto. 
 
-%% TODO esercizio iterazione, scansione di list con for-each
+L'utilizzo degli iteratori è ripetitivo, poiché utilizza le stesse operazioni per iterare su ogni elemento della collezione:
+\begin{minted}{java}
+    Iterator<E> itr = nomeCollezione.iterator();
+    while(itr.hasNext()){
+        E e = itr.next();
+        // operazioni
+    }
+\end{minted}
 
+Per cui è stata definita una forma sintetica per esprimere questo processo, utilizzando la forma ``for-each'', questa interfaccia offre una notevole semplificazione, ma non 
+è possibile accedere all'indice di iterazione:
+\begin{minted}{java}
+    for(E e : itr)
+        // operazioni su e
+\end{minted}
+Dove l'iteratore \verb|itr| è un sottotipo dell'interfaccia \verb|java.lang.Iterable<E>|. Il compilatore traduce questa sintassi nella sintassi descritta precedentemente. 
+Grazie all'intervento del compilatore è possibile utilizzare questa sintassi su ogni classe che implementi \verb|Iterable<E>|; inoltre permette il suo uso anche sugli array, 
+nonostante non la implementino. 
 
 Un iteratore per effettuare il suo lavoro deve conservare un rifermento alla collezione che lo ha creato su cui vuole iterare, successivamente alla sua creazione. 
 La presenza di un metodo \verb|remove()| rende più evidente la natura di questo legame. Rimuove l'ultimo elemento restituito dalla chiamata \verb|next()|, l'ultimo 
 elemento restituito dalla collezione. Viene introdotto questo metodo per permettere all'iteratore di conoscere lo stato della collezione dopo la rimozione, poiché è 
 passata attraverso l'iteratore. 
-Ovviamente chiamate successive a questo metodo senza ulteriori chiamate a \verb|next()| producono un errore. Invece se viene chiamato il metodo \verb|remove()| sulla 
-collezione, il comportamento dell'iteratore non è scontato. 
-Alcuni iteratori conservano la collezione precedente, altri si aggiornano, altri ancora forniscono un errore. 
+Ovviamente chiamate successive a questo metodo senza ulteriori chiamate a \verb|next()| producono un errore, poiché non è più presente nella collezione. Invece se viene chiamato il metodo 
+\verb|remove()| sulla collezione, il comportamento dell'iteratore non è scontato. 
+
+Alcuni iteratori conservano la collezione precedente, altri si aggiornano, altri ancora producono un errore. 
 La documentazione dell'interfaccia specifica che il suo comportamento non è specificato se la collezione viene modificata quando l'iteratore sta ancora iterando sulla collezione. 
 Generalmente applica la strategia del ``fail fast'', ed alla prima chiamata al metodo dell'iteratore dopo una modifica alla collezione solleva un'eccezione \verb|ComponentModificationException|
 Per verificare se la collezione è stata cambiata, la collezione genetrice crea un oggetto che salva la versione corrente della collezione, aggiornata ad ogni modifica 
 della collezione. Questo oggetto viene quindi controllato dall'iteratore per verificare che la collezione non è stata modificata. 
 Nella documentazione viene sconsigliato l'affidamento su questo oggetto, poiché conserva la versione in un intero, che può contenere al massimo quattro miliardi di modifiche 
-alla collezione, prima di effettuare un overflow, e ritornare al valore iniziale. 
+alla collezione, prima di effettuare un overflow, e ritornare al valore iniziale; quindi in casi improbabili è possibile che vengano effettuata abbastanza operazioni per creare un overflow, 
+modificando la collezione senza che l'iteratore sia in grado di rilevarlo. 
 
 \subsection{Liste}
 
 Le liste sono strutture dati astratte, con aggiunta in coda, tramite il metodo \verb|add()|. Gli elementi vengono salvati sequenzialmente, e vengono indicizzati a partire
-da zero, come per gli array. Si può accedere ad un elemento specifico per indice, e cercare l'indice tramite metodi presenti. 
+da zero, come per gli array. Si può accedere ad un elemento specifico per indice, e cercare l'indice tramite metodi presenti:
+\begin{minted}{java}
+    E get(int index);
+    int indexOf(Object o);
+\end{minted}
 
 Il package \verb|java.util| offre due implementazioni dell'interfaccia \verb|List<E>|:
 \begin{itemize}
@@ -912,22 +982,35 @@ Per cui le sue prestazioni sono strettamente dipendenti dalla dimensione attuale
 
 In generale la rappresentazione \verb|LinkedList<E>|, di liste concatenate, ad una o due sentinelle, permettono una dimensione variabile, ma gli accessi 
 avvengono sequenzialmente, per cui hanno un tempo lineare, al contrario degli \verb|ArrayList<E>|, in tempo costante eccetto il trabocco. 
+Nella pratica la complessità delle JVM moderne rende queste differenze impercettibili. 
 
-
-I costruttori di queste due implementazioni sono sovraccarichi. Entrambi hanno un costruttore vuoto, ed un costruttore che prende come parametro una collezione di un sottotipo 
+I costruttori di queste due implementazioni sono sovraccarichi. Entrambi hanno un costruttore vuoto, ed un costruttore che prende come parametro una collezione di sottotipo 
 del tipo formale \verb|E|: \verb|Collections<? extends E>|, permettendo di convertire un'intera collezione in una lista. Viene inserito il sottotipo poiché le collezioni 
-non sono covarianti con il tipo della stessa. 
+non sono covarianti con il tipo della stessa. Inoltre per le liste tramite array, esiste un costruttore che specifica la dimensione iniziale. 
+Per una lista concatenata sono presenti dei metodi di accesso in testa e coda, poiché avviene in tempo costante, tramite riferimenti alla testa ed alla coda:
+\begin{minted}{java}
+    boolean addFirst();
+    boolean addLast();
+    E getFirst();
+    E getLast();
+    E removeFirst();
+    E removeLast();
+\end{minted}
+Tuttavia utilizzare questi metodi specifici rende le due implementazioni meno intercambiabili. 
+Inoltre per le liste concatenate esiste un metodo \verb|listIterator()| per realizzare un iteratore specifico per le liste di tipo \verb|ListIterator<E>|, che estende \verb|Iterator<E>|. 
 
 
-Per \verb|LinkedList| sono presenti dei metodi per accesso in testa e coda, poiché avviene in tempo costante, tramite riferimenti alla testa ed alla coda. 
-
-
-Nella classe \verb|Collections| sono presenti vari metodi efficienti per ordinare la lista, per effettuare una ricerca binaria, cercare il massimo o minimo nella lista. 
+Nella classe \verb|Collections| sono presenti vari metodi efficienti per ordinare liste, effettuare una ricerca binaria, cercare il massimo o minimo nella lista, etc.  
 Queste operazioni sono possibili solamente se esiste una relazione d'ordine tra gli elementi presenti nella collezione. 
-Quest'operazione viene affidata all'apposita interfaccia \verb|java.lang.Comparable<E>|, naturale o interno, oppure ad una classe esterna agli oggetti contenuti tramite 
-l'interfaccia \verb|java.util.Comparator<T>|. 
-La prima interfaccia consiste nell'unico metodo \verb|public int compareTo(T that)|, e restituisce un valore minore maggiore o uguale a zero a seconda che l'oggetto 
-\verb|this| su cui viene applicato il metodo sia rispettivamente minore, maggiore o uguale al riferimento all'oggetto ricevuto come parametro. 
+Quest'operazione viene affidata all'apposita interfaccia \verb|java.lang.Comparable<E>|, per un ordinamento naturale o interno; oppure ad una classe esterna agli oggetti contenuti tramite 
+l'interfaccia \verb|java.util.Comparator<T>|, per un ordinamento esterno. 
+
+La prima interfaccia consiste di un unico metodo:
+\begin{minted}{java}
+    public int compareTo(T that); 
+\end{minted}    
+Restituisce un valore minore maggiore o uguale a zero a seconda che l'oggetto \verb|this| su cui viene applicato il metodo sia rispettivamente minore, maggiore o uguale al riferimento 
+all'oggetto ricevuto come parametro. 
 
 Molte librerie standard già implementano quest'interfaccia, adottando una semantica scontata. Viene eventualmente delegato quindi ad una di queste implementazioni, quando si vuole 
 implementare l'interfaccia su un altra classe. 
@@ -939,25 +1022,29 @@ criterio di ordinamento. La segnatura per l'ordinamento naturale corrisponde a:
 \begin{minted}{java}
     public static <T extends Comparable<? super T>> void sort(List<T> list)
 \end{minted}
-Affinché qualcosa sia ordinabile, deve implementare un criterio di ordinamento. Questo criterio di ordinamento deve essere in grado di ordinare un tipo o un suo supertipo. 
+Affinché qualcosa sia ordinabile, deve implementare un criterio di ordinamento. Questo criterio di ordinamento deve essere in grado di ordinare lo stesso tipo o un suo supertipo, che 
+può essere contenuto nella stessa collezione, per il criterio di sostituzione.  
 
 Per ottenere un minimo o un massimo da una lista \verb|List<T>|, i cui elementi implementano l'interfaccia \verb|Comparable<T>|, può essere calcolato mediante i metodi offerti 
-da \verb|Collections|:
+da \verb|Collections|, di segnatura
 \begin{minted}{java}
-public static <T extends Object & Comparable<? Super T>> T min/max(Collections<? extends T> c)
+    public static <T extends Object & Comparable<? Super T>> T min(Collections<? extends T> c)
+    public static <T extends Object & Comparable<? Super T>> T max(Collections<? extends T> c)
 \end{minted}
 Per gli stessi motivi del precedente metodo. Semplificato in:
 \begin{minted}{java}
-    public static <T extends Comparable<? Super T>> T min/max(Collections<? extends T> c)
+    public static <T extends Comparable<? Super T>> T min(Collections<? extends T> c)
+    public static <T extends Comparable<? Super T>> T max(Collections<? extends T> c)
 \end{minted}
-Questo metodo non compila, se i metodi statici non risultano avere i metodi necessari per comparare, a tempo di compilazione, e quindi rappresenta un'enorme vantaggio 
-di Java. L'analisi dei tipi è uno strumento in grado di individuare errori anche a tempo di compilazione. 
+Questo metodo non compila se i metodi statici non risultano avere i metodi necessari per comparare, a tempo di compilazione, e quindi rappresenta un'enorme vantaggio 
+di Java. L'analisi dei tipi è uno strumento in grado di individuare errori anche a tempo di compilazione, per impedire la creazione di errori a tempo di esecuzione. 
 
-Se si ha una gerarchia dei tipi, è possibile implementare l'interfaccia \verb|Comparable<T>| solamente su un unico tipo, poiché a tempo di compilazione vengono utilizzati, e 
+Se si ha una gerarchia dei tipi, è possibile implementare l'interfaccia \verb|Comparable<T>| solamente su un unico tipo. A tempo di compilazione vengono utilizzati e 
 rimpiazzati con tipi attuali a tempo di esecuzione, per la necessità di mantenere la retrocompatibilità di Java. Per questo un'unica gerarchia può avere un'unica 
 implementazione di un'interfaccia. Si rifiuta di considerare due instanziamenti dello stesso tipo generico con due tipi attuali diversi, poiché nel file \verb|.class| si avrebbero 
-due \verb|Comparable| che riferiscono a due tipi diversi, creando confusione. 
-Per lo stesso motivo non è possibile generare un array generico in Java. 
+due \verb|Comparable<T>| che riferiscono a due tipi diversi, che la JVM non è in grado di gestire. Infatti a tempo di esecuzione ogni tipo dinamico deve essere sempre distinguibile anche 
+se vengono eliminati i riferimenti ad i tipi attuali utilizzati nella definizione dei tipi generici. 
+Per lo stesso motivo non è possibile creare un array generico in Java. 
 
 Per questi motivi si preferisce mantenere un ordinamento naturale per tipi semplici, e si evita di utilizzarlo su una gerarchia per non ``sprecare'' il suo utilizzo. Per cui 
 risulta ben motivato l'utilizzo di classi esterne per implementare l'ordinamento. 
@@ -966,25 +1053,24 @@ risulta ben motivato l'utilizzo di classi esterne per implementare l'ordinamento
 
 L'ordinamento esterno viene consiste nell'utilizzo dell'interfaccia \verb|java.util.Comparator<T>|, composta da un'unico metodo:
 \begin{minted}{java}
-public int compare(T o1, T o2)
+    public int compare(T o1, T o2)
 \end{minted}
 Che deve restituire un valore minore, maggiore o uguale, a seconda se l'oggetto riferito da \verb|o1| sia minore, maggiore o uguale all'oggetto riferito da \verb|o2|. 
 
 In \verb|Collections| esistono metodi per il calcolo del massimo e del minimo, secondo l'ordinamento esterno:
 \begin{minted}{java}
-static <T> T min/max(Collections<? extends T> c, Comparator <? super T> comp)
+    static <T> T min(Collections<? extends T> c, Comparator <? super T> cmp)
+    static <T> T max(Collections<? extends T> c, Comparator <? super T> cmp)
 \end{minted}
 
 \subsection{Insieme}
-
-%% TODO 6/5: Insiemi
 
 L'interfaccia \verb|Set<E>| rappresenta un insieme, le due classi più famosi che lo implementano sono \verb|HashSet<E>| e \verb|TreeSet<E>|, un insieme ``ordinato''. 
 
 Gli insiemi sono collezioni che non contengono duplicati. Offre tutti e soli i metodi dell'interfaccia \verb|Collection<E>| con la restrizione che le classi che la 
 implementano non contengono duplicati. 
 Per poter riconoscere duplicati, bisogna definire un criterio di equivalenza tra gli elementi, basato sul dominio di utilizzo. 
-Per stabilire il criterio di equivalenza si può utilizzare il metodo \verb|equals()|, ed anche il metodo \verb|hashCode()|, per la classe \verb|HashSet<E>|. 
+Per stabilire il criterio di equivalenza si può utilizzare il metodo \verb|equals()|, ed anche il metodo \verb|hashCode()| per la classe \verb|HashSet<E>|. 
 Questi due metodi gemelli sono entrambi necessari per verificare ed evitare la presenza di duplicati nell'insieme. 
 
 Nel caso di \verb|TreeSet<E>|, ed in generale di insiemi ordinati, è necessario un criterio di ordinamento, naturale tramite \verb|Comparable<E>|, oppure passando al 
@@ -1002,7 +1088,7 @@ viene copiato in una array di lunghezza doppia.
 Per risolvere il problema delle collisioni viene realizzato come un array di liste di conflitto, dove ogni elemento rappresenta una lista a tutti gli elementi ospitati 
 nella tabella di hash aventi lo stesso codice di hash. 
 
-Se la funzione è bene definita, le operazioni di appartenenza, rimozione ed inserimento avvengono in tempo costante. 
+Se la funzione è ben definita, le operazioni di appartenenza, rimozione ed inserimento avvengono in tempo costante. 
 
 Le implementazioni degli insiemi e delle mappe si basano interamente sulle tavole hash. 
 Quando si vuole implementare un \verb|HashSet<E>|, tutti gli oggetti della collezione, di tipo formale \verb|E|, devono avere sia il metodo \verb|hashCode()| che il metodo 
@@ -1012,46 +1098,61 @@ confronta gli indirizzi di memoria.
 
 Il metodo \verb|equals()| definito deve rispettare le proprietà riflessiva, transitiva e transitiva, inoltre deve restituire falso quando gli viene passato un riferimento nullo, 
 mentre quando confronta lo stesso oggetto, deve restituire vero. L'unica asimmetria consiste nel chiamare il metodo su un riferimento nullo, genera infatti una 
-\verb|NullPointerException|. Una volta definito questo metodo, il metodo \verb|hashCode()| insiste sugli stessi campi del metodo precedente. 
+\verb|NullPointerException|. Una volta definito questo metodo, il metodo \verb|hashCode()| insiste sugli stessi campi del metodo precedente, e può essere realizzato come una 
+semplice combinazione lineare.  
 L'equivalenza di un metodo primitivo, non viene delegata al metodo \verb|equals()| come per i metodi non primitivi, ma viene verificato tramite la sintassi \verb|==|, questa 
 rappresenta una piccola ineleganza del linguaggio Java, nella sua gestione dei metodi primitivi. 
 
-Appena viene aggiunto un nuovo elemento alla collezione, questa chiama li metodo \verb|hashCode()| per verificare se non è presente alcun numero di stesso codice hash, 
+
+Appena viene aggiunto un nuovo elemento alla collezione, questa chiama il metodo \verb|hashCode()| per verificare se non è presente alcun elemento di stesso codice hash, 
 altrimenti invoca il metodo \verb|equals()| su ogni elemento della lista di collisione. 
 Questi due metodi sono assolutamente indipendenti l'uno dall'altro, e permettono facilmente di realizzare implementazioni molto efficienti. 
 Per ottenere implementazioni più efficienti, i calcoli effettuati dal metodo \verb|hashCode()| devono essere molto meno onerosi del metodo \verb|equals()|, poiché il primo 
 metodo viene invocato sempre, mentre il secondo solo in caso di collisioni. 
+Tuttavia utilizzare funzioni di hash troppo semplici potrebbe portare ad una maggiore probabilità di collisione, rendendo l'implementazione meno efficiente. 
 
-Se non venisse implementato il metodo \verb|hashCode()|, si erediterebbe quello definito da \verb|java.lang.Object|. 
+Se non venisse implementato il metodo \verb|hashCode()|, si erediterebbe quello definito da \verb|java.lang.Object|. Se non venisse implementato si potrebbero riscontrare errori logici, 
+poiché il metodo \verb|equals()| considererebbe uguali due oggetti distinti, ma aventi codice hash differenti, un risultato paradossale. 
 
-%% TODO ppt. sui metodi hashCode e equals
+In generale per entrambi i metodi si invocano a loro volta gli stessi metodi definiti sulle variabili di istanza, invece di definire criteri di equivalenza tra di loro. La funzione di hash 
+restituirà quindi una combinazione lineare dei codici hash delle variabili di istanza, mentre il metodo \verb|equals()| confronterà le variabili di istanza dei due oggetti confrontati. 
 
 \subsubsection{TreeSet}
 
-L'implementazione più popolare degli alberi ordinati, viene realizzato tramite alberi ordinati, attraverso i metodi di ordinamento naturali ed esterni, definiti precedentemente 
-per le liste ordinate. 
+L'implementazione più popolare degli alberi ordinati, viene realizzato tramite alberi binari di ricerca, i criteri di equivalenza si basano sui metodi definiti per l'ordinamento 
+interno ed esterno sulle liste. 
 
 Tutto quello trattato sulle liste vale allo stesso metodo per gli insiemi ordinati. 
 Garantisce che gli elementi siano posizionati secondo un dato ordinamento. 
 Se gli elementi non implementano \verb|Comparable<E>|, o non viene passato in fase di costruzione un oggetto \verb|Comparator<E>|, si può sollevare un errore a tempo di 
 esecuzione. 
-Vengono implementati tramite alberi di ricerca binari, per uci è necessario che gli elementi possano essere confrontati ed ordinati. Per motivi di retrocompatibilità, 
-è possibile realizzare un \verb|TreeSet| di oggetti non ordinabili, ma alla prima occasione, a tempo di occasione, verrà sollevato un eccezione, poiché gli elementi non possono 
-essere ordinati. 
+Vengono implementati tramite alberi di ricerca binari, per cui è necessario che gli elementi possano essere confrontati ed ordinati. Per motivi di retrocompatibilità, 
+è possibile realizzare un \verb|TreeSet| di oggetti non ordinabili, ma alla prima occasione, a tempo di esecuzione, verrà sollevata un eccezione, poiché gli elementi non possono 
+essere ordinati di tipo \verb|ClassCastException|. 
 
-%% TODO caratteristiche TreeSet
+Essendo realizzati tramite alberi, ogni elemento corrisponde ad un nodo dell'albero e può avere al massimo due figli, di cui conserva il loro riferimento. Negli alberi binari di ricerca tutti 
+i discendenti di sinistra di qualunque nodo sono inferiori al valore del dato in quel nodo, mentre tutti i discendenti di destra sono maggiori. 
 
-Se viene definito un criterio di ordinamento, implicitamente viene definito un criterio di equivalenza. Si definiscono i metodi di ordinamento in accordo con i metodi 
-\verb|hashCode()| e \verb|equals()|. 
-%% Il principio di sostituzione è valido se
+Se viene definito un criterio di ordinamento interno con \verb|compareTo()|, implicitamente viene definito un criterio di equivalenza. Quindi bisogna definire i metodi di ordinamento in 
+accordo con i metodi di equivalenza \verb|hashCode()| e \verb|equals()|, e viceversa.  
+Poiché deve mantenere la collezione ordinata dopo ogni aggiornamento, questi risultano meno efficienti rispetto ad un insieme non ordinato. 
 
-%% TODO 8/5: Mappe
+\subsubsection{NavigableSet}
 
-Da Java 6 in poi furono introdotte nuove implementazioni di un insieme, specializzata di \verb|SortedSet<E>|, l'interfaccia \verb|NavigableSet<E>|, contenente i metodi per poter 
-accedere all'elemento in cima o in coda all'insieme, e per poter accedere agli elementi in ordine invertito. 
-\verb|TreeSet<E>| infatti implementa entrambe queste interfacce. Per la retrocompatibilità è stato necessario inserire un metodo sovraccarico \verb|headSet| che restituisce 
+Da Java 6 in poi furono introdotte nuove implementazioni di un insieme specializzata di \verb|SortedSet<E>|, l'interfaccia \verb|NavigableSet<E>|, contenente i metodi per poter 
+accedere all'elemento in cima o in coda all'insieme, e per poter accedere agli elementi in ordine invertito:
+\begin{minted}{java}
+    E pollFirst();
+    E pollLast();
+    NavigableSet<E> descendingSet();
+\end{minted}
+Altri metodi come \verb|headSet()|, \verb|tailSet()| e \verb|subSet()| restituiscono delle ``viste attive'' ovvero dei sottoinsiemi dell'insiemi originale, ed i cambiamenti 
+effettuati sulla vista si riflettono sull'insieme originale. Per evitare questo comportamento è sufficiente utilizzare la vista in un costruttore di un'altra collezione.  
+
+\verb|TreeSet<E>| infatti implementa entrambe queste interfacce. 
+Per la retrocompatibilità è stato necessario inserire un metodo sovraccarico \verb|headSet()| che restituisce 
 un \verb|SortedSet<E>|, con una segnatura asimmetrica rispetto all'originale \verb|headSet()|, poiché restituisce un \verb|NavigableSet<E>| e richiede un valore booleano per 
-definire il criterio di uguaglianza. 
+definire il criterio di uguaglianza. Questa rappresenta una scelta discutibile, anche se è stata necessaria ai fini di mantenere la retrocompatibilità del linguaggio. 
 
 \subsection{Mappe}
 
@@ -1109,12 +1210,12 @@ creando il tipo dell'oggetto a tempo dinamico. Viene utilizzato il metodo \verb|
 oggetto a tempo dinamico: 
 \begin{minted}{java}
     Class<tipoDiObj> classeDiObj = tipoDiObj.class;
-    superTipoDiObj nomeObj = classeDiObj.newIstanze(); 
+    superTipoDiObj nomeObj = classeDiObj.newIstance(); 
 \end{minted}
 In questo modo si crea un oggetto senza invocare il costruttore, assegnando ad una variabile una nuova istanza di un suo sottotipo. 
 
 Un altro metodo di questo oggetto è il metodo \verb|forName()| che prende una stringa, e permette di caricare una classe fornendo il suo nome tipato all'interno di una stringa, 
-e restituisce un riferimento ad un oggetto \verb|Class<?>|, su cui può essere applicato il metodo \verb|newIstanza()| per creare un'istanza di una classe, se la macchina virtuale 
+e restituisce un riferimento ad un oggetto \verb|Class<?>|, su cui può essere applicato il metodo \verb|newIstance()| per creare un'istanza di una classe, se la macchina virtuale 
 è in grado di identificare nel build path il file \verb|.class| associato a questa classe che si vuole istanziare, altrimenti solleva un'eccezione, poiché non viene specificato il 
 tipo attuale restituito con \verb|Class<?>|. 
 
