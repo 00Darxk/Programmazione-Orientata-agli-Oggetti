@@ -1242,18 +1242,26 @@ In questo modo si crea un oggetto senza invocare il costruttore, assegnando ad u
 
 Un altro metodo di questo oggetto è il metodo \verb|forName()| che prende una stringa, e permette di caricare una classe fornendo il suo nome tipato all'interno di una stringa, 
 e restituisce un riferimento ad un oggetto \verb|Class<?>|, su cui può essere applicato il metodo \verb|newIstance()| per creare un'istanza di una classe, se la macchina virtuale 
-è in grado di identificare nel build path il file \verb|.class| associato a questa classe che si vuole istanziare, altrimenti solleva un'eccezione, poiché non viene specificato il 
+è in grado di identificare nel build path il file \verb|.class| associato a questa classe che si vuole istanziare; altrimenti solleva un'eccezione, poiché non viene specificato il 
 tipo attuale restituito con \verb|Class<?>|. 
 
-%% TODO ex ^ 
+In questo modo è possibile istanziare un oggetto di tipo scelto a tempo dinamico. Poicé restituisce un oggetto classe, di tipo generico sconosciuto, è 
+necessario effettuare un downcast al tipo voluto, a tempo di compilaziove viene sollevato un'avvertenza ``Unchecked Cast Warning'', poiché il 
+compilatore non è in grado di definire chiaramente il funzionamento del codice. 
 
-Altrimenti a tempo di compilazione viene sollevato un'avvertenza ``Unchecked Cast Warning''. 
+Questi avvertimenti sono dovuti alla lasca tipizzazione, e alla tardiva impelmentazione dei generics nel linguaggio. Per cui il compilatore deve mantenere 
+la retrocompatibilità e deve emettere avvertimenti legati ai tipi, poiché non sono presenza garanzie sui tipi. A tempo di compilazione quindi non è 
+possibile determinare se il codice solleverà un'eccezione, solo a tempo di esecuzione è possibile venga sollevata un'eccezione \verb|ClassCastException|. 
+L'avvertimento emesso dal compilatore indica quindi che l'uso dei tipi non abbastanza stringente da permettergli di offrire garanzie a tempo statico. 
 
-%% TODO analisi studio di caso 
+La retrocompatibilità infatti costringe le versioni pre-generics delle classi a convivere con e versioni propriamente generiche. 
 
-Ora non è più necessario utilizzare un costruttore vuoto quando viene istanziato un nuovo oggetto utilizzando introspezione, ma per Java 7 viene utilizzato sempre un 
-costruttore vuoto. 
-Per cui se il codice è scritto considera che a tempo di esecuzione sia presente il tipo giusto, è possibile utilizzare la sintassi \verb|throws Exception|, per ignorare 
+
+Quando viene creato un nuovo oggetto utilizzando il metodo \verb|newIstance()|, viene invocato un costruttore vuoto della classe, che quindi deve 
+essere visibile, ma esistono anche meccanismi per invocare costruttori con parametri. Ma da Java 7 in poi non è più necessario che sia definito 
+esplicitamente un costruttore vuoto. 
+
+Se il codice è scritto considerando che a tempo di esecuzione sia presente il tipo giusto, è possibile utilizzare la sintassi \verb|throws Exception|, per ignorare 
 le avvertenze sollevate a tempo di compilazione. 
 Se invece il nome della classe è sbagliato, o la classe non esiste, l'API di questi due metodi considera una serie di possibili eccezioni. 
 
@@ -1262,7 +1270,36 @@ Se invece il nome della classe è sbagliato, o la classe non esiste, l'API di qu
 La definizione di un criterio di equivalenza è complicato quando appartengono ad una gerarchia di tipi. Per risolvere questo problema viene utilizzata la riflessione 
 per codificare semplicemente controlli sul tipo dinamico di un oggetto. 
 
-%% TODO studio di caso criterio di equivalenza
+Questo può essere necessario quando si utilizzano collezioni che mischiano gerachia di tipi diverse tra di loro, quindi all'interno del metodo \verb|equals()| 
+si può introdurre un controllo sul tipo dell'oggetto passato come guardia:
+\begin{minted}{java}
+    @Override
+    public boolean equals(Object o){
+        if(o == null || o.getClass() != this.getClass()) return false;
+        // resto del metodo 
+    }
+\end{minted}
+Per cui è opportuno includere anche la classe nella funzione di hash, avente una suo funzione di hash di defulat che è possibile utilizzare:
+\begin{minted}{java}
+    @Override
+    public int hashCode(){
+        return this.getClass().hashCode() + /* ... */;
+    }
+\end{minted}
+
+In questo modo due oggetti di tipi diversi sono sicuramente diversi. 
+In questo modo si possono realizzare gerarchie totali e disgiuntive, dove non vengono mai istanziati oggetti che non sono sottotipi della radice, poiché estensioni della stessa. 
+Allo stesso modo di possono realizzare gerarchie parziali, dove esistono oggetti istanziati dalla superclasse, ma non dalla sottoclasse. Questi oggetti 
+avranno campi nulli, e per definire una funzione di hash bisogna affidarsi al metodo \verb|java.util.Objects.hash()| che può gestire riferimenti 
+nulli. 
+Ma utilizzando questo metodo questi campi sono cablati nei metodi di equivalenza della superclasse, e non può essere sovrascritto da altre classi della 
+stessa gerarchia. 
+La definizione di un criterio di equivalenza deve quindi tenere conto dell'intera gerarchia dei tipi. Questo però rappresnta un forte ed 
+intrinseco accoppiamento tra porzioni distinte di codice. 
+Inoltre non esiste un modo automatico per definire criteri di equivalenza di tipi polimorfi. 
+In generale si preferiscono soluzioni semplici, infatti scegliere criteri di equivalenza complessi e molteplici per una stessa gerarchia rappresenta un 
+problema di modellazione di tipi. Quindi il criterio del controllo del tipo dinamico va utilizzato solamente se ritenuto adatto nel dominio. 
+La definizione di un opportuno criterio di qeuivalenza rappresenta un importante problema di modellazione. 
 
 
 Molto spesso inserire un criterio di equivalenza non reca danni, anzi se viene usato in futuro rappresenta un investimento. Ma comporta anche un certo costo, per cui la scelta 
@@ -1320,12 +1357,16 @@ codice per la gestione di eccezioni.
 Alcune eccezioni devono essere corrette a livello logico, senza catturarle come le \verb|NullPointerException|, che vengono sollevate automaticamente a tempo di esecuzione, 
 complicando lo stack trace, sprecando risorse ed offuscando la comprensione dell'origine vera del problema. 
 
-%% TODO Studio di caso eccezione in FabbricaDiComandi 
+Quando viene catturato l'errore si può creare un oggetto dedicato al caso in cui si sia verificato un errore, per gestirlo. Specialmente nelle applicazioni 
+dove vengono creati oggetti in modo riflessivo, quando viene generata un'eccezione di tipo \verb|ClassCastException|, o simili nel corpo del \verb|catch{}| 
+viene istanziato questo oggetto, per restituire un valore che non sia un riferimento nullo. In generale viene usato un null object nei metodi che 
+restituiscono oggetti quando viene sollevata un'eccezione. 
 
-Utilizzando un null object, si ha il vantaggio di mantenere una gestione uniforme degli errori come per l'esecuzione normale del codice, invece di utilizzare \verb|null|, 
-infatti per versioni di Java moderne sono esistono modi per evitare completamente l'uso di \verb|null|, ritenuto ormai poco elegante. 
+In questo modo si ha il vantaggio di mantenere una gestione uniforme degli errori come per l'esecuzione normale del codice, invece di utilizzare \verb|null|, 
+infatti per versioni di Java moderne esistono modi per evitare completamente l'uso di \verb|null|, ritenuto ormai poco elegante. 
+Questo consiste in un metodo di gestione diretta dell'errore, altrimenti viene propagato al chiamante ``bucando'' lo stack 
 
-Bucare lo stack è utile, quando si vogliono gestire le eccezioni al livello giusto, senza provare a catturarle ad ogni livello. Questo tipo di propagazione è opportuna 
+Bucare lo stack è utile quando si vogliono gestire le eccezioni al livello giusto, senza provare a catturarle ad ogni livello. Questo tipo di propagazione è opportuna 
 quando non è stato fornito un input opportuno, per cui si risale fino al livello che ha fornito questo input per gestire l'errore. 
 Quindi è parte integrante delle attività di progettazione la definizione di nuove eccezioni per gestire tipi di errori propri al programma. 
 
@@ -1350,17 +1391,22 @@ Il metodo \verb|Class.forName| solleva un'eccezione quando il costruttore della 
 Poiché la catena di \verb|catch| viene eseguita dall'alto verso il basso, la prima che cattura l'eccezione, oscura le successive eccezioni sollevate nel codice. 
 Per cui è sempre favorito ordinare le clausole della \verb|catch| dalla più specifica in poi. 
 
-%% TODO try with resources 
-
 Da Java 7 venne introdotta una clausola per abbreviare la complessità di questo  
 metodo, per effettuare una disgiunzione delle possibili eccezioni, con un'unica variabile locale per raccogliere l'eccezione ed un codice comune per la loro gestione. 
 Quindi il tipo statico di questa variabile è il tipo statico del primo supertipo comune tra di loro, poiché in Java invece di C non esiste l'unione. 
 Inoltre è stato introdotto un modo per gestire le risorse in tre fasi più abbreviato. Una risorsa rappresenta un qualsiasi oggetto con protocollo di utilizzo che prevede 
 un metodo di rilascio esplicito. Questo viene gestito dalla clausola \verb|try-with-resources|, al posto di scrivere esplicitamente il metodo per chiudere la risorsa, o 
 terminare il suo uso, per renderlo disponibile al resto del programma, tramite la clausola \verb|finally|. 
+Come risorsa si intende qualsiasi oggetto con un protocollo di utilizzo che richiede un rilascio esplicito. 
 Questo blocco di codice rappresenta ciò che viene sempre eseguito dopo il corpo di \verb|try|. 
 
-%% TODO eccezioni e testing
+
+In generale si solleva un'eccezione quando si incontra una condizione anomala, o il client ha inviato argomenti errati. Si evita di utilizzare eccezioni 
+solo per fornice risultati. Se un metodo non rispetta il contratto allora è opportuno sollevi un'eccezione, se l'anomali che è stata lanciata si ritiene debba essere gestita dal client, si lancia una checked. 
+Per ogni distinta condizione anomala che si potrebbe incontrare si definisce una nuvoa eccezione o si riutilizza un'eccezione già presente. 
+
+Da JUnit quattro in poi si possono controllare le eccezioni sollevate a tempo di esecuzione, e si possono testare. In questo modo si può controllare il 
+comportamento corretto del codice anche in caso di situazioni anomale.
 
 \clearpage
 
