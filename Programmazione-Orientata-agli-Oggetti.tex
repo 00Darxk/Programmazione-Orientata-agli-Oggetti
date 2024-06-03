@@ -1159,47 +1159,73 @@ definire il criterio di uguaglianza. Questa rappresenta una scelta discutibile, 
 Una mappa o dizionario o array associativo rappresenta un insieme di elementi formati da coppie di due tipi formali \verb|<K,V>|, dove \verb|K| rappresenta la chiave ``Key'', 
 e \verb|V| rappresenta il valore ``Value'', dove gli accessi sono particolarmente efficienti se vengono effettuati per chiave. 
 
-Ad ogni chiave può essere associato un unico valore. 
+Ad ogni chiave può essere associato un unico valore, ed ogni chiave è univoca. 
 
-I metodi base per accedere, aggiungere e rimuovere elementi sono \verb|put()| che richiede una chiave ed un valore di tipo \verb|K| e \verb|V| rispettivamente, oppure 
-aggiorna il vecchio valore e lo restituisce, se la chiave era già usata. 
+I metodi base per accedere, aggiungere, rimuovere e verificare l'esistenza coppie chiave-valore sono:
+\begin{minted}{java}
+    V put(K k, V v);
+    V get(Object k);
+    V remove(Object k);
+    boolean containsKey(Object k);
+\end{minted}
+Se una chiave è già presente nella mappa, quando viene inserita una nuova coppia, viene sovrascritto il vecchio valore, e viene restituito. 
 Il metodo \verb|get()| richiede un oggetto di tipo \verb|Object|, per cui è lascamente tipato, sia per mantenere la retrocompatibilità sia per offrire una risposta istantanea 
 in caso il tipo non corrisponda al tipo formale \verb|V|. 
 
-%% TODO metodi di base ppt. 
-
-I metodi bulk oltre a \verb|putAll()| e \verb|clear()| usati per aggiungere o eliminare tutte le coppie in una mappa, mentre per ottenere un insieme delle chiavi, si utilizza 
+I metodi bulk offerti e viste di mappe sono:
+\begin{minted}{java}
+    void putAll(Map<K, V>, m);
+    void clear();
+    Set<K> keySet();
+    Collection<V> values();
+\end{minted}
+Per ottenere un insieme delle chiavi, si utilizza 
 \verb|keySet()|, poiché tutte le chiavi sono uniche nell'intera mappa; mentre se si vuole restituire l'insieme di valori, questi possono essere duplicati quindi il tipo 
-di ritorno è lascamente tipato come una qualsiasi collezione del tipo formale \verb|V|, offerto dal tipo \verb|values()|. 
+di ritorno è lascamente tipato come una qualsiasi collezione del tipo formale \verb|V|. 
 
 Le mappe e gli insiemi si basano su concetti molto simili, infatti in realtà l'implementazione di \verb|HashSet<K>| si basa su un'istanza di \verb|HashMap<K,?>|. 
-%% TODO ppt. 
+Sono presenti diverse implementazioni dell'interfaccia mappa: \verb|HashMap<K, V>| e \verb|TreeMap<K, V>|. 
 
-Per definire il criterio di equivalenza sulle chiavi 
-%% TODO implementazioni criterio di equivalenza chiavi in HashMap
+I criteri di equivalenza vengono definiti allo stesso modo degli insiemi, visti precedentemente. 
+Per l'implementazione di mappa \verb|HashMap<K, V>| è necessario definire i due metodi \verb|equals()| e \verb|hashCode()|, della classe delle chiavi. Mentre per 
+utilizzare \verb|TreeSet<K, V>| è necessario un ordinamento interno o esterno. 
+
+Le mappe risultano, spesso, più comode delle liste ed insiemi, poiché non è possibile accedere ad un elemento di un insieme senza un suo duplicato. 
+
+In Java 6 venne introdotta l'implementazione \verb|NavigableMap<K, V>|, che introduce metodi per le viste attive delle mappe, ed altri metodi utili, allo stesso modo 
+per gli insiemi. Infatti sono presenti le stesse scelte discutibili, per mantenere la retrocompatibilità, come il metodo sovraccarico \verb|headMap()| che restituisce 
+un \verb|SortedMap<K>|, invece se viene passato un valore boolean insieme alla chiave restituisce un \verb|NavigableMap<K>|:
+\begin{minted}{java}
+    SortedMap<K> headMap(K toKey);
+    NavigableMap<K> headMap(K toKey, boolean inclusive);
+\end{minted}
+
+Nonostante la loro enorme utilità rispetto alle altre collezioni, bisogna distribuire le responsabilità adeguatamente tra le varie classi, attraverso uno studio di 
+dominio accurato, per non ricadere nella creazione di mappe nidificate contenenti altre mappe e così via. L'uso esclusivo di mappe per raggruppare in una singola collezioni 
+più elementi distinti del progetto è un segno per la ridistribuzione delle responsabilità tra le varie classi. In questo modo si diminuiscono i livelli di nidificazione 
+della mappa, agevolando la scrittura di test e l'utilizzo da parte di chi non è familiare con il progetto. 
 
 \clearpage
 
 \section{Introspezione}
 
-In Java esiste una classe \verb|java.lang.Class<T>|, classe di tipo classe. Questa classe viene usata tramite introspezione. 
-In questo modo è possibile scrivere metodi \verb|equals()| ed \verb|HashCode()| tra oggetti di una gerarchia di tipi. 
-
 La riflessione o introspezione è una particolare caratteristica del linguaggio Java, raramente presente in linguaggi antecedenti, ormai diffusa sui linguaggi moderni. 
 Permette di scrivere codice ed analizzare o modificare il codice compilato, nello stesso linguaggio. Un'esempio è appunto l'IDE Eclipse, scritto in Java per programmare in 
 Java, approfitta quindi di un massiccio uso dell'introspezione. 
-JUnit è un altro programma che utilizza la riflessione per individuare nel progetto per conoscere tutti i metodi annotati tramite \verb|@Test|, e le classi. Prima delle 
-riflessioni, il runner di JUnit richiedeva tutti i nomi dei metodi e considerava come test tutti i metodi preceduti dal termine ``test''. 
+JUnit è un altro programma che utilizza la riflessione per individuare nel progetto tutti i metodi annotati tramite \verb|@Test|, e le classi. Prima delle 
+riflessioni, il runner di JUnit richiedeva tutti i nomi dei metodi di test preceduti dal termine ``test''. 
 
+In Java esiste una classe \verb|java.lang.Class<T>|,  per ogni tipo \verb|T|, esiste quindi a tempo di esecuzione un oggetto che ne descrive il suo tipo stesso. 
+In questo modo è possibile scrivere metodi \verb|equals()| ed \verb|HashCode()| tra oggetti di una gerarchia di tipi. 
 
 La classe \verb|Class<<T>| di tipo generico \verb|T| viene generata ogni volta che viene definito il tipo \verb|T| da un programma Java, per descriverne il suo tipo, e quindi 
 descrive anche il contenuto del corrispondente file \verb|.class|. 
 Quest'istanza permette di utilizzare i metodi per poter analizzare la classe \verb|T|. 
 Questa classe è un oggetto garantito, esisterà sempre e solo un unico oggetto associato ad una classe, creato automaticamente a livello della JVM, anche a livello di sicurezza, 
 per cui non è gestibile dal programmatore. 
+Alcune ottimizzazioni invece istanziano questi oggetti a tempi diversi dell'esecuzione per migliorare le prestazioni. 
 
-
-Tutti i tipi possiedono una variabile statica pubblica chiamata \verb|class|, corrispondente all'oggetto di tipo \verb|java.lang.Class|. 
+Tutti i tipi possiedono una variabile statica pubblica chiamata \verb|class|, corrispondente all'oggetto di tipo \verb|java.lang.Class<T>|. 
 Questo oggetto può essere usato per ottenere le proprietà del tipo \verb|T|. 
 
 
