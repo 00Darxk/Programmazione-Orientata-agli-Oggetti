@@ -1079,7 +1079,7 @@ momento della costruzione un oggetto \verb|Comparator<E>| esterno.
 \subsubsection{HashSet}
 
 Una funzione hash è una funzione che calcola un numero intero, detto codice hash, a partire da un oggetto, in grado di verificare se due oggetti sono diversi o uguali, 
-poiché due oggetti aventi lo stesso codice hash saranno certamente equivalenti, mentre molto probabilmente due oggetti non equivalenti possiedono codici hash diversi. 
+poiché due oggetti equivalenti avranno sicuramente lo stesso codice hash, mentre molto probabilmente due oggetti non equivalenti possiedono codici hash diversi. 
 Quando due oggetti non equivalenti hanno lo stesso codice hash, è necessario interrogare il metodo \verb|equals()|, questo fenomeno si chiama collisione; in generale 
 si prediligono funzioni di hash che minimizzano le collisioni. 
 
@@ -1245,11 +1245,11 @@ e restituisce un riferimento ad un oggetto \verb|Class<?>|, su cui può essere a
 è in grado di identificare nel build path il file \verb|.class| associato a questa classe che si vuole istanziare; altrimenti solleva un'eccezione, poiché non viene specificato il 
 tipo attuale restituito con \verb|Class<?>|. 
 
-In questo modo è possibile istanziare un oggetto di tipo scelto a tempo dinamico. Poicé restituisce un oggetto classe, di tipo generico sconosciuto, è 
-necessario effettuare un downcast al tipo voluto, a tempo di compilaziove viene sollevato un'avvertenza ``Unchecked Cast Warning'', poiché il 
+In questo modo è possibile istanziare un oggetto di tipo scelto a tempo dinamico. Poiché restituisce un oggetto classe, di tipo generico sconosciuto, è 
+necessario effettuare un downcast al tipo voluto, a tempo di compilazione viene sollevato un'avvertenza ``Unchecked Cast Warning'', poiché il 
 compilatore non è in grado di definire chiaramente il funzionamento del codice. 
 
-Questi avvertimenti sono dovuti alla lasca tipizzazione, e alla tardiva impelmentazione dei generics nel linguaggio. Per cui il compilatore deve mantenere 
+Questi avvertimenti sono dovuti alla lasca tipizzazione, e alla tardiva implementazione dei generics nel linguaggio. Per cui il compilatore deve mantenere 
 la retrocompatibilità e deve emettere avvertimenti legati ai tipi, poiché non sono presenza garanzie sui tipi. A tempo di compilazione quindi non è 
 possibile determinare se il codice solleverà un'eccezione, solo a tempo di esecuzione è possibile venga sollevata un'eccezione \verb|ClassCastException|. 
 L'avvertimento emesso dal compilatore indica quindi che l'uso dei tipi non abbastanza stringente da permettergli di offrire garanzie a tempo statico. 
@@ -1270,7 +1270,7 @@ Se invece il nome della classe è sbagliato, o la classe non esiste, l'API di qu
 La definizione di un criterio di equivalenza è complicato quando appartengono ad una gerarchia di tipi. Per risolvere questo problema viene utilizzata la riflessione 
 per codificare semplicemente controlli sul tipo dinamico di un oggetto. 
 
-Questo può essere necessario quando si utilizzano collezioni che mischiano gerachia di tipi diverse tra di loro, quindi all'interno del metodo \verb|equals()| 
+Questo può essere necessario quando si utilizzano collezioni che mischiano gerarchia di tipi diverse tra di loro, quindi all'interno del metodo \verb|equals()| 
 si può introdurre un controllo sul tipo dell'oggetto passato come guardia:
 \begin{minted}{java}
     @Override
@@ -1279,7 +1279,7 @@ si può introdurre un controllo sul tipo dell'oggetto passato come guardia:
         // resto del metodo 
     }
 \end{minted}
-Per cui è opportuno includere anche la classe nella funzione di hash, avente una suo funzione di hash di defulat che è possibile utilizzare:
+Per cui è opportuno includere anche la classe nella funzione di hash, avente una suo funzione di hash di default che è possibile utilizzare:
 \begin{minted}{java}
     @Override
     public int hashCode(){
@@ -1294,12 +1294,12 @@ avranno campi nulli, e per definire una funzione di hash bisogna affidarsi al me
 nulli. 
 Ma utilizzando questo metodo questi campi sono cablati nei metodi di equivalenza della superclasse, e non può essere sovrascritto da altre classi della 
 stessa gerarchia. 
-La definizione di un criterio di equivalenza deve quindi tenere conto dell'intera gerarchia dei tipi. Questo però rappresnta un forte ed 
+La definizione di un criterio di equivalenza deve quindi tenere conto dell'intera gerarchia dei tipi. Questo però rappresenta un forte ed 
 intrinseco accoppiamento tra porzioni distinte di codice. 
 Inoltre non esiste un modo automatico per definire criteri di equivalenza di tipi polimorfi. 
 In generale si preferiscono soluzioni semplici, infatti scegliere criteri di equivalenza complessi e molteplici per una stessa gerarchia rappresenta un 
 problema di modellazione di tipi. Quindi il criterio del controllo del tipo dinamico va utilizzato solamente se ritenuto adatto nel dominio. 
-La definizione di un opportuno criterio di qeuivalenza rappresenta un importante problema di modellazione. 
+La definizione di un opportuno criterio di equivalenza rappresenta un importante problema di modellazione. 
 
 
 Molto spesso inserire un criterio di equivalenza non reca danni, anzi se viene usato in futuro rappresenta un investimento. Ma comporta anche un certo costo, per cui la scelta 
@@ -1668,5 +1668,103 @@ risorse non è accessibile come un file ordinario, quindi invece di utilizzare i
 ad ogni altro file nel file-system, bisogna utilizzare il metodo che restituisce una stream che permette il caricamento delle risorse partendo da un archivio dove le risorse sono 
 compresse. 
 Questo permette al programma di essere indipendente dall'ambiente di esecuzione. 
+
+\clearpage
+
+\section{Java Thread}
+
+La programmazione concorrente è un argomento che necessita di un intero corso per la sua complessità, molto elevata rispetto agli altri argomenti presenti nei corsi 
+introduttivi di programmazione, ma sono conoscenze strettamente necessarie nell'ambito informatico. 
+
+Utilizzando la programmazione concorrente è possibile aumentare le prestazioni di un programma, tramite calcolatori a più core, ormai anche in ambito mobile, per utilizzare al 
+meglio l'intero processore. 
+
+Sotto ogni applicazioni grafica esiste un modello di concorrenza per la loro notevole complessità algoritmica, anche se non si programmano più applicazioni 
+grafiche in Java. 
+
+Java venne introdotto come un sistema compatto per sistemi real-time, quindi offriva un supporto per la programmazione concorrente, anche se durante gli anni venne 
+riscritto parecchie volte per essere ristrutturato ai bisogni del tempo. 
+Il supporto del linguaggio a questo approccio esiste dagli anni '90, e venne esteso da varie librerie, di cui quattro tra le più diffuse verranno analizzate. 
+
+Il flusso di istruzioni generato da un programma sequenziale aspetta il termine di un'istruzione prima di eseguire la successiva, mentre nella programmazione 
+concorrente le istruzioni vengono eseguite parallelamente.  
+Questo viene effettuato utilizzando i ``thread'', un meccanismo di parallelismo interno alle architetture multiscalari. 
+
+Esistono dei metodi in Java per controllare le caratteristiche dell'architettura come il numero dei core disponibili, oppure il doppio dove ogni core abilita l'``hyperthreading'' 
+che permette un flusso di esecuzione doppio per ogni core, nei processori Intel e AMD di fascia alta moderni. 
+
+Chi scrive software ha sempre bisogno di prestazioni migliori, e chi realizza hardware viene richiesto di realizzare calcolatori di prestazioni migliori. Per cui 
+questi due ambiti si rincorrono l'uno all'altro, ma ormai non è più possibili aumentare la frequenza di clock dei calcolatori per migliorare le prestazioni semplicemente. 
+Inoltre ogni nuovo processore include un numero sempre maggiore di transistor, seguendo un andamento pressoché lineare, descritto dalla legge di Moore, anche se anche sotto 
+questo ambito si sta riscontrando un limite tecnologico. Per migliorare le prestazioni non bisogna solamente aumentare le prestazioni del calcolatore, ma anche degli altri 
+componenti di un calcolatore come la memoria. 
+
+
+A fine anni '90 le prestazioni del linguaggio Java erano minori rispetto ad altri linguaggi come C e C++, ma si capì che ben presto le prestazioni dei processori avrebbero 
+reso questa differenza superflua. 
+
+
+Ma anche se sono presenti architetture multiscalari, non è sempre immediato aumentare le prestazioni del codice o dividere il lavoro sui diversi processori logici. Infatti 
+se non viene specificato, quando vengono eseguiti programmi di calcolo intensivi, tutto il carico viene affidato generalmente ad un singolo core. 
+
+Per ottenere il meglio da un'architettura multi-core bisogna decomporre un problema in modo che sia eseguibile in parallelo. Questo problema di decomposizione è molto semplice 
+per alcuni problemi, come per le applicazioni grafiche, mentre per altre applicazioni è pressoché impossibile realizzarlo. 
+La decomposizione parallela si ottiene scomponendo un problema in tanti sotto-problemi, i cui risultati parziali possono essere ottenuti indipendentemente e possono essere 
+combinati o ricomposti per ottenere il risultato al problema iniziale. 
+
+
+Da Java 1.0 esistono supporti per la programmazione parallela, tramite i java ``Thread'', un flusso di esecuzione che si prende l'incarico di mandare in esecuzione il 
+codice, e condivide la memoria con altri flussi di esecuzione. Il thread creato per eseguire il metodo main viene anch'esso chiamato Main. In teoria la JVM supporta la 
+possibilità di creare più thread, oltre al Thread Main. 
+
+Il numero di thread generati all'esecuzione di main aumenta all'aumentare della versione di Java %% TODO java thread a main 
+
+Due o più thread utilizzano stack di attivazione diversi, e sono in grado di condividere memoria con gli altri, avendo accesso agli stessi oggetti, basta che tutti abbiano 
+un riferimento comune. 
+
+
+Si gestiscono utilizzando una classe \verb|java.lang.Thread|, un oggetto che viene istanziato, ma non coincide con il flusso di esecuzione. Questo oggetto rappresenta uno 
+strumento di comunicazione tra il programmatore e la JVM, in grado di generare un thread chiamando in metodo nativo \verb|start()|. Verrà invocato il prima possibile dopo 
+l'invocazione del metodo \verb|start()|. La classe inoltre specifica il codice da eseguire sul thread e aspettare che un flusso di esecuzione termini. 
+La JVM è un intermediario tra il programmatore ed il sistema operativo. 
+
+Il metodo \verb|run()| che non prende alcun argomento dall'interfaccia \verb|Runnable|, in modo da poter scrivere cosa bisogna eseguire in modo concorrente. Quindi la classe 
+i cui metodi devono essere eseguiti in modo concorrente bisogna che implementi questa interfaccia. 
+
+Un nuovo thread creato deve avere il riferimento all'oggetto \verb|Runnable| per eseguire il codice all'interno del metodo \verb|run()| ed eseguire il flusso delle 
+esecuzioni. 
+Quindi senza passare un riferimento al \verb|Runnable| non è possibile realizzare un flusso di esecuzione parallela. Inoltre il thread così generato deve invocare un 
+flusso di esecuzione tramite il metodo \verb|start()|. 
+\begin{minted}{java}
+class NewThread{
+    @Override 
+    public void run(){
+        /* operazioni nuovo thread */
+    }
+}
+
+public class MainThread{
+    public static void main(String[] args){
+        Thread t = new Thread(new NewThread());
+        t.start();
+        /* codice thread main */
+    }
+}
+\end{minted}
+
+La chiamata al flusso di esecuzione \verb|start()| termina immediatamente e passa il controllo all'istruzione seguente nel metodo che ha chiamato \verb|start()|. 
+Sotto carico è possibile che il nuovo thread venga eseguito prima del Thread Main, per cui sotto carico il comportamento del codice parallelo non è deterministico, poiché 
+dipende dal sistema operativo, in ordine imprevedibile. 
+Si tratta quindi di un programma multithread anche se utilizza solo due thread. 
+
+Si dice assunzione di progresso finito la non prevedibilità di quale thread venga eseguito prima degli altri. Quando il metodo \verb|run()| termina, il thread viene segnato 
+come terminato, e verrà in seguito deallocato. 
+
+
+Per aspettare le soluzioni parziali da parte dei thread invece si utilizza il metodo \verb|join()|. Ha una semantica complementare al metodo \verb|start()|, il metodo che 
+lo invoca attende che il thread su cui è stato invocato termina la sua esecuzione prima di continuare la sua stessa esecuzione. 
+Questi thread pongono la soluzione parziale nella memoria condivisa, e per assicurare che tutte le soluzioni parziali siano state calcolate si posizionano tutti i metodi 
+\verb|join| e \verb|start| in un altro thread dedicato alla raccolta di questi risultati parziali. 
+
 
 \end{document}
