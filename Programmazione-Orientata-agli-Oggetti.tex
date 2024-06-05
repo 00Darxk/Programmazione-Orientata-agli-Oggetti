@@ -1715,7 +1715,10 @@ combinati o ricomposti per ottenere il risultato al problema iniziale.
 
 Da Java 1.0 esistono supporti per la programmazione parallela, tramite i java ``Thread'', un flusso di esecuzione che si prende l'incarico di mandare in esecuzione il 
 codice, e condivide la memoria con altri flussi di esecuzione. Il thread creato per eseguire il metodo main viene anch'esso chiamato Main. In teoria la JVM supporta la 
-possibilità di creare più thread, oltre al Thread Main. 
+possibilità di creare più thread, oltre al Thread Main. I thread sono contrapposti ai processi, un'unità di esecuzione 
+autonoma delle risorse, che non condivide la memoria con gli altri processi. La loro capacità di condividere memoria, se non viene gestita efficientemente potrebbe 
+rappresentare un collo di bottiglia. Infatti la memoria è il limite superiore alle prestazioni, per la programmazione parallela; ogni thread richiede una sua 
+allocazione di memoria per poter definire uno stack. 
 
 Il numero di thread generati all'esecuzione di main aumenta all'aumentare della versione di Java %% TODO java thread a main 
 
@@ -1736,7 +1739,7 @@ esecuzioni.
 Quindi senza passare un riferimento al \verb|Runnable| non è possibile realizzare un flusso di esecuzione parallela. Inoltre il thread così generato deve invocare un 
 flusso di esecuzione tramite il metodo \verb|start()|. 
 \begin{minted}{java}
-class NewThread{
+class NewThread implements Runnable{
     @Override 
     public void run(){
         /* operazioni nuovo thread */
@@ -1761,10 +1764,45 @@ Si dice assunzione di progresso finito la non prevedibilità di quale thread ven
 come terminato, e verrà in seguito deallocato. 
 
 
-Per aspettare le soluzioni parziali da parte dei thread invece si utilizza il metodo \verb|join()|. Ha una semantica complementare al metodo \verb|start()|, il metodo che 
-lo invoca attende che il thread su cui è stato invocato termina la sua esecuzione prima di continuare la sua stessa esecuzione. 
+Per aspettare le soluzioni parziali da parte dei thread invece si utilizza il metodo \verb|join()|. Ha una semantica complementare al metodo \verb|start()|, il thread 
+invocante aspetta il termine dell'esecuzione del thread su cui è stato chiamato il metodo prima di continuare la sua esecuzione. 
 Questi thread pongono la soluzione parziale nella memoria condivisa, e per assicurare che tutte le soluzioni parziali siano state calcolate si posizionano tutti i metodi 
-\verb|join| e \verb|start| in un altro thread dedicato alla raccolta di questi risultati parziali. 
+\verb|join()| e \verb|start()| in un altro thread dedicato alla raccolta di questi risultati parziali. 
+Poiché potrebbe essere chiamato un \verb|join()| su un thread già eseguito, la macchina virtuale deve tenere traccia anche di thread già ``morti''. Questo metodo deve 
+essere poter onorato indipendentemente dal fatto che il thread è già terminato o meno. Quindi si distinguono i thread normali da thread su cui non può essere chiamata la \verb|join()|, 
+per cui possono essere rimossi dopo aver terminato la loro esecuzione. 
+Per cui paradossalmente è la \verb|join()| che termina la traccia di un thread, invece che il termine dell'esecuzione dello stesso. 
 
+La decomposizione parallela prevede tre passi generale, per il primo si creano tanti thread quanti sono i core disponibili, il problema iniziale viene diviso in 
+tanti sotto-problemi ed ognuno viene assegnato ad un thread distinto, che ne calcoli il suo risultato parziale. Infine i risultati parziali sono collezionati per 
+formare il risultato globale. 
+
+Le schede grafiche moderne, contengono anche migliaia di core distinti, per cui si prestano particolarmente a problemi di decomposizione parallela. Ma nel caso di GPU 
+di alte prestazioni, il collo di bottiglia sono i bus che lo connettono alla CPU ed alla memoria, poiché anche se sono in grado di eseguire molte operazioni contemporaneamente, 
+il tempo di trasferimento dei dati dalla memoria rappresenta il tempo maggiore speso durante la risoluzione del problema. 
+
+In generale ogni problema di decomposizione parallela prevede un overhead per generare ed inizializzare i vari thread, e dividere i dati iniziali, codice la cui esecuzione 
+rimane seriale. 
+
+I problemi su array si prestano alla decomposizione parallela, poiché sono una struttura dati la cui scomposizione è estremamente efficiente, e molti problemi di ordinamento 
+e ricerca possono essere divisi in sotto-problemi semplicemente. Se l'array non può essere diviso equamente tra tutti i thread, lo sfrido viene distribuito tra i primi 
+thread. 
+Ogni thread risolve il sotto-problema e ne calcola la sua soluzione relativa. 
+
+
+Se questa divisione non viene effettuata correttamente, è possibile che i vari thread sovrascrivano valori tra di loro, poiché condividono la stessa memoria. 
+
+In caso un thread venga fermato a tempo di esecuzione, allora viene sollevata un'eccezione \verb|InterruptedException| che deve essere gestita altrimenti il codice non 
+compila. 
+
+I problemi di decomposizione parallela si possono dividere due categorie, i problemi dove i dati di input sono di ordine di grandezza molto elevati, e problemi i quali 
+per ogni elemento in input è richiesto un elevato capacità di calcolo. 
+
+In generale lo ``speed up'' è un fattore che descrive quante volte il programma parallelo diminuisce il tempo di esecuzione rispetto al programma seriale, sullo stesso problema. 
+Questo fattore non necessariamente corrisponde esattamente al numero di core disponibili. 
+L'andamento di questo fattore è asintotico, si avvicina al numero di core disponibili all'aumentare del peso computazionale del problema. 
+
+Inoltre è possibile estendere direttamente \verb|Thread|, anche se viene sconsigliato, poiché tende ad unire i compiti di \verb|Thread| e \verb|Runnable|, questo quindi 
+aumenta l'accoppiamento del codice.  
 
 \end{document}
