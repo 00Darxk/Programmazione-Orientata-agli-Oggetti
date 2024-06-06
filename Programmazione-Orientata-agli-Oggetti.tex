@@ -1328,7 +1328,7 @@ I programmi si possono descrivere come interazioni tra gli oggetti ``client'', c
 
 In Java sono necessari meccanismi per ``sollevare'' e ``catturare'' le eccezioni, dal lato server, la gestione delle eccezioni ricade al lato client. 
 Tutte le eccezioni sono oggetti estensioni della classe \verb|Throwable|, e possono essere lanciati o sollevati, utilizzando l'istruzione \verb|throw|, a cui succede un 
-sottotipo di \verb|Throwable|. Queste eccezioni possono decorate da altri messaggi e riferimenti ad altre eccezioni che l'hanno causato. %% TODO metodi Throwable (costruttore) per stack tracing
+sottotipo di \verb|Throwable|. Queste eccezioni possono essere decorate da altri messaggi e riferimenti ad altre eccezioni che l'hanno causato, inseriti nel costruttore dell'eccezione. 
 In questo modo si crea uno ``stack trace'', una traccia di tutte le chiamate che hanno portato all'eccezione. 
 
 
@@ -1403,14 +1403,14 @@ Questo blocco di codice rappresenta ciò che viene sempre eseguito dopo il corpo
 
 In generale si solleva un'eccezione quando si incontra una condizione anomala, o il client ha inviato argomenti errati. Si evita di utilizzare eccezioni 
 solo per fornice risultati. Se un metodo non rispetta il contratto allora è opportuno sollevi un'eccezione, se l'anomali che è stata lanciata si ritiene debba essere gestita dal client, si lancia una checked. 
-Per ogni distinta condizione anomala che si potrebbe incontrare si definisce una nuvoa eccezione o si riutilizza un'eccezione già presente. 
+Per ogni distinta condizione anomala che si potrebbe incontrare si definisce una nuova eccezione o si riutilizza un'eccezione già presente. 
 
 Da JUnit quattro in poi si possono controllare le eccezioni sollevate a tempo di esecuzione, e si possono testare. In questo modo si può controllare il 
 comportamento corretto del codice anche in caso di situazioni anomale.
 
 \clearpage
 
-\section{Classi Astratte e Costanti Enumerative}
+\section{Classi Astratte}
 
 L'estensione è uno strumento utile per riusare il codice. Si possono estendere classi ``concrete'', dotato di un corpo, ereditato dalle 
 classi estese, che possono sovrascrivere i metodi offerti dalla classe base. 
@@ -1423,10 +1423,7 @@ La classe astratta non può essere inizializzata direttamente, come le interfacc
 classi per costruzione. 
 
 
-
 Convenzionalmente il nome di una classe astratta viene preceduto dal prefisso ``Abstract''. Le classi astratte non possono essere quindi inizializzate. 
-
-%% TODO caso di studio
 
 Nella classe astratta viene inserito tutto ciò che deve essere comune alle sue classi estese, per condividere le implementazioni di alcuni metodi definiti nella classe 
 astratta. Nel caso di progetti semplici è consigliabile l'utilizzo di interfacce, poiché utilizzare classi astratte aumenta notevolmente l'accoppiamento tra le classi. 
@@ -1440,19 +1437,16 @@ deve essere resa astratta.
 La presenza di anche un solo metodo astratto necessita della dichiarazione dell'intera classe come astratta. 
 Le sottoclassi quindi per essere concrete ed istanziabili devono fornire un'implementazione di tutti i metodi astratti forniti dalla superclasse. 
 
-
 Servono a definire implementazioni parziali, utilizzate nella creazione dei framework per permettere l'implementazione da altri programmatori. 
-
 Spesso si preferiscono le interfacce alle classi astratte poiché sono meno vincolanti. 
-
-%% TODO classi astratte
+Spesso conviene definire un'estensione concreta di una classe astratta solo ai fini di testing, utilizzando un'implementazione minimale dei metodi astratti, testando solamente i metodi concreti della superclasse.  
 
 
 Metodi e classi possono essere marcati come finali tramite la parola chiave \verb|final| che impedisce alle classi di essere estese, oppure di sovrascrivere i metodi 
 segnati come finali, impedendo al metodo di essere ridefinito. Il motivo principale per cui esistono questi metodi finali è rappresentato da problemi di sicurezza, 
 analizzati alla creazione di Java e alla sua seguente diffusione sul web, per impedire a chiunque di poter ridefinire metodi. 
 
-
+\subsection{Costanti Enumerative}
 
 Un'uso opportuno delle classi astratte sono le classi enumerative, introdotte in Java 5, in breve chiamati Java Enum. Utilizzati per permettere di modellare in modo 
 conveniente. 
@@ -1465,16 +1459,83 @@ correttezza dei suoi valori tramite una tipizzazione lasca.
 Per evitare questo problema quindi vengono utilizzati costruttori privati, poiché gli elementi sono noti a priori e stabili nel tempo, per evitare all'utilizzatore di creare 
 o modificare questi elementi noti. 
 
-%% TODO java enum
 
-Da Java 5 venne introdotta la parola chiave \verb|enum| per realizzare questa collezioni:
+Prima di Java 5 la modellazione di costanti enumerative consisteva spesso di gerarchia di costanti di tipo lasco. Queste implementazioni erano semplici, ma l'uso di una tipizzazione 
+può causare problemi a tempo di compilazione ed esecuzione, inoltre può rendere le segnature di certi metodi di difficile interpretazione. 
+Per realizzare costanti enumerative di questo tipo si utilizzavano membri statici segnati come \verb|final|, si considera un esempio di un'implementazione delle direzioni cardinali:
+\begin{minted}{java}
+public interface Direzione{
+    static final public int NORD = 0;
+    static final public int OVEST = 1;
+    static final public int SUD = 2;
+    static final public int EST = 3;
+}    
+\end{minted}
+
+Per risolvere questi problemi è richiesto come minimo creare un tipo dedicato, per poter effettuare dei controllo a tempo statico sulla tipizzazione. Questo veniva effettuato utilizzando costruttori 
+privati e classi \verb|final|. Si considera allora l'esempio precedente sulle direzioni cardinali implementando queste modiche:
+\begin{minted}{java}
+public final class Direzione{
+    private int ordinal;
+    private Direzione(int Index) { this.ordinal = index; }
+    static public final Direzione NORD  = new Direzione(0);
+    static public final Direzione OVEST = new Direzione(1);
+    static public final Direzione SUD   = new Direzione(2);
+    static public final Direzione EST   = new Direzione(3);
+    static private final Direzione[] cardinali = { NORD, EST, SUD, OVEST};
+    static public DIrezione[] values() { return this.cardinali; }
+}   
+\end{minted}
+
+Inoltre avendo un elenco di tutti gli elementi di questo insieme è possibile effettuare cicli \verb|for-each|, affiancando metodi polimorfi alle costanti, ma questo necessita di creare un sottotipo 
+per ogni costante della stessa enumerazione. Un possibile metodo polimorfo, da applicare sulle direzione cardinali è il metodo che restituisce la direzione opposta. Dall'implementazione precedente 
+bisogna definire una serie di sottoclassi contenenti questo metodo polimorfo, tipicizzando la classe \verb|Direzione| come astratta, per permettere di definire questi metodi. Si realizzano come classi 
+interne in grado di utilizzare il metodo privato definito precedentemente:
+\begin{minted}{java}
+    public abstract class Direzione{
+        private int ordinal;
+        private Direzione(int Index) { this.ordinal = index; }
+        public int getOrdinal() { return this.ordinal; }
+        abstract public Direzione Opposta();
+        static public final Direzione NORD  = new NORD();
+        static public final Direzione OVEST = new OVEST();
+        static public final Direzione SUD   = new SUD();
+        static public final Direzione EST   = new EST();
+        static private final Direzione[] cardinali = { NORD, EST, SUD, OVEST};
+        static public DIrezione[] values() { return this.cardinali; }
+        static final class NORD extends Direzione { 
+            private NORD() { super(0); }
+            @Override public Direzione opposta() { return SUD; }
+        }
+        static final class NORD extends Direzione { 
+            private OVEST() { super(1); }
+            @Override public Direzione opposta() { return EST; }
+        }
+        static final class NORD extends Direzione { 
+            private SUD() { super(2); }
+            @Override public Direzione opposta() { return NORD; }
+        }
+        static final class NORD extends Direzione { 
+            private EST() { super(3); }
+            @Override public Direzione opposta() { return OVEST; }
+        }
+    }   
+\end{minted}
+
+Da Java 5 venne introdotta la parola chiave \verb|enum| per realizzare queste collezioni:
 \begin{minted}{java}
 public enum <nome-enum>{
     <nome-1>, ... , <nome-n>;
 }
 \end{minted}
+Si può realizzare quindi l'insieme di direzioni cardinali, facilmente utilizzando questa sintassi:
+\begin{minted}{java}
+public enum Direzione{
+    NORD, OVEST, SUD, EST;
+}
+\end{minted}
 
-Crea quindi $n-1$ classi, tutte con metodi condivisibili da tutte le classi enumerative. Inoltre il compilatore aggiunge metodi statici che ritiene utili. 
+Crea quindi $n-1$ classi, tutte con metodi condivisibili da tutte le classi enumerative. Inoltre il compilatore aggiunge metodi statici che ritiene utili, come \verb|ordinal()|. 
 Quando sono presenti metodi polimorfi bisogna definirli nel corpo della classe, seguiti dalla definizione del metodo astratto:
 \begin{minted}{java}
 public enum <nome-enum>{
@@ -1488,21 +1549,46 @@ public enum <nome-enum>{
     public abstract <tipo> <nome-metodo>();
 }
 \end{minted}
+Si può implementare quindi un metodo per la direzione opposta delle funzioni cardinali come:
+\begin{minted}{java}
+public enum Direzione{
+    NORD()  { @Override public Direzione opposta() { return SUD;  }  }
+    OVEST() { @Override public Direzione opposta() { return EST;  }  }
+    SUD()   { @Override public Direzione opposta() { return NORD; }  }
+    EST()   { @Override public Direzione opposta() { return OVEST; } };
+    public abstract Direzione opposta();
+}
+\end{minted}
 
-Ogni classe enum \verb|<nome-enum>| presenta come sottoclassi tutte le $n$ \verb|<nome-1>| definiti dentro al corpo della dichiarazione dell'enum. Ognuna di queste classi 
-numerata, partendo da zero, e può essere restituito dal metodo \verb|ordinal()|. 
+Ogni classe enum \verb|<nome-enum>| presenta come sottoclassi tutte le $n$ \verb|<nome-1>| definiti dentro al corpo della dichiarazione dell'enum: 
+\begin{minted}{java}
+public abstract class Enum<E extends Enum<E>> implements Comparable<E> { }
+\end{minted}
 
-%% TODO testing enum
+Ognuna di queste classi viene numerata, partendo da zero, e può essere restituito dal metodo \verb|ordinal()|. Il compilatore utilizza un unico costruttore per realizzare le costanti enumerative:
+\begin{minted}{java}
+Enum protected Enum(String name, int ordinal);
+\end{minted}
+
+I valori costanti possono avere uno stato, immutabile, ed uno o più costruttori privati, dichiarati solo nel corpo del tipo enumerativo. 
+Le costanti ricordano la classe del loro supertipo mediante il metodo:
+\begin{minted}{java}
+Class<E> getDeclaringClass()
+\end{minted}
+
+Inoltre ad ogni valore costante viene associato un singolo oggetto, equivalente solo a sé stesso e nessuno degli altri. Il criterio di equivalenza realizzato tramite \verb|equals()| corrisponde all'operatore 
+\verb|==| solo per le costanti enumerative. Mentre la funzione di hash restituisce \verb|ordinal()|, e rappresenta una funzione di hash ``perfetta'', poiché riesce ad ottenere le migliori prestazioni, non 
+avendo conflitti. I tipi enumerativi quindi permettono di avere accessi a tempo costante sulle mappe, paragonabili ad un array. 
+Per cui si possono realizzare collezioni di caratteristiche particolari utilizzando tipi enumerative, più compatte ed efficienti, come \verb|java.util.EnumSet| e \verb|java.util.EnumMap|. 
 
 Gli enum possono essere utilizzati insieme al comando \verb|switch|, anche se dopo Java 11 vennero introdotti costrutti che ne ampliarono notevolmente l'uso, sulla base del 
 successo che hanno avuto linguaggi funzionali. 
 
-
 I costrutti enum vengono utilizzati quando bisogna modellare collezioni di elementi noti, finiti e stabili, è molto difficile che cambieranno. Inoltre questi elementi sono conosciuti 
 per nome. Possono anche avere uno stato ma questo deve essere immutabili. 
 
-I tipi enumerativi quando vengono usati nelle mappe hanno codici di hash perfetti, che permettono di avere accessi sempre a tempo costante, paragonabili quindi ad un 
-array. 
+Alcuni metodi definiti per i tipi enumerativi non hanno un codice sorgente, come i metodi statici \verb|values()| ed \verb|valueOf()|, poiché il compilatore li genera automaticamente per il tipo 
+enumerativo e per tutte classi che estendono \verb|java.lang.Enum|. 
 
 \subsection{Classi Nidificate}
 
