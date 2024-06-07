@@ -57,7 +57,6 @@ Università degli Studi ``Roma Tre"}}
 
 \pagenumbering{arabic}
 
-%% TODO: fix order of contents / merge (sub)section
 %% TODO programma ppt. -> README
 
 
@@ -1598,7 +1597,8 @@ Da Java 8 vennero introdotti meccanismi che ebbero più successo per risolvere q
 
 Questo meccanismo venne introdotto nel linguaggio Java, ma non venne introdotto nella macchina virtuale. Per cui ormai la macchina virtuale di Java viene usata anche per 
 altri linguaggi di programmazione poiché è fortemente disaccoppiata dal linguaggio stesso. Quindi la macchina virtuale anch'essa ha avuto un enorme successo. 
-%% TODO differenza tra tipi 
+
+L'utilizzo delle classi nidificate rappresentano un ulteriore strumento per la dichiarazione dei tipi. 
 Una classe nidificata è una classe scritta all'interno di un'altra classe, per cui si individua una classe ``interna'', ed una classe ``esterna'', la classe interna è un 
 membro contenuto nella classe esterna, quindi essenzialmente è un membro privato. 
 Esistono quattro diverse varianti di una classe nidificata, una classe interna di cui si interessa solamente il tipo. 
@@ -1623,6 +1623,10 @@ La sintassi per la creazione di una classe interna quindi riflette questo legame
 Outer outer = new Outer();       // costruttore classe esterna
 Outer.inner = outer.new Inner(); // costruttore classe interna 
 \end{minted}
+All'interno di una classe possono essere istanziate classi nidificate come ogni altra classe:
+\begin{minted}{java}
+Inner inner = new Inner();    
+\end{minted}
 
 Dal punto di vista dei tipi non appartengono alla stessa gerarchia. 
 
@@ -1632,10 +1636,102 @@ completamente il nome con la sintassi:
 <nome_Outer>.this.<nome_variabile>
 \end{minted}
 
+Un iteratore rappresenta una classe nidificata interna, alle collezione che lo comprendono. Per poter accedere agli elementi di una collezione, essendo privati, 
+l'iteratore deve essere interno alla classe che definisce per poterli numerare. 
 
-Un iteratore rappresenta una classe nidificata interna, alle collezione che lo comprendono. 
+Collezioni che utilizzano internamente array, utilizzano array di \verb|Object|, tuttavia è sempre presente un downcast esplicito nei metodi getter. 
+Nella collezione \verb|ArrayList<E>|, viene implementata l'interfaccia \verb|Iterator<E>| nella classe privata \verb|Itr|. In questo modo non è necessario che esponga la 
+propria rappresentazione interna, e la specifica degli iteratori. Inoltre è utile per la distribuzione delle responsabilità poiché le collezioni e gli iteratori hanno 
+due ruoli ben distinti. In questo modo non è necessario conoscere il tipo dinamico degli iteratori delle collezioni, ma solo il suo supertipo astratto \verb|Iterator<E>|. 
 
-%% TODO classi nidificate
+L'utilizzo delle classi interne permette di raggruppare logicamente classi utilizzate assieme, favorendo l'incapsulamento. Inoltre favorisce la coesione tenendo la dichiarazione 
+di una classe interna vicina ai suoi unici utilizzi. 
+
+Una classe locale è una classe definita all'interno di un blocco di codice, generalmente il corpo di un metodo. Possiedono le stesse caratteristiche delle classi interne. Inoltre 
+non possono mai essere istanziate dall'esterno. 
+Spesso vengono usate come classi mono uso, per aumentare la leggibilità, ed evitare di creare un nuovo file contenente solo pochi metodi. Uno dei suoi più comuni 
+utilizzi è nella creazione di comparatori per realizzare un ordinamento esterno, senza dover creare ulteriori file. 
+Le classi locali possono accedere alle variabili locali del metodo, quando la classe locale si riferisce ad una variabile locale ne crea una copia del valore, e viene 
+catturata subito nel momento dell'istanziamento della classe, e potrà essere utilizzata anche successivamente, solo fino al termine del ciclo di vita della copia originale, 
+non può tuttavia modificare la copia originale. 
+
+Spesso non è conveniente definire un nome per questo tipo di classi locali, spesso infatti è eccessivo, questo permette di istanziare e definire una classe in un'unica espressione:
+\begin{minted}{java}
+Locale lcl = new Locale() {
+    // definizione della classe
+};
+\end{minted}
+Queste vengono definite sempre per estensioni o implementazioni di un supertipo già noto. La creazione di un'istanza di una classe anonima viene sempre preceduta da \verb|new| 
+seguito dal nome dell'interfaccia, aggiungendo nuovi membri, ed avviene contestualmente in un'unica espressione. 
+Queste classi possono riferire all'oggetto della classe esterna, dalla quale sono create, ed accedere ai suoi metodi ed alle suo variabili. Per istanziare una classe anonima 
+si invoca un costruttore della superclasse, non è possibile definire nuovi costruttori e contemporaneamente invocarli, ma possibile invocare tutti i costruttori visibili della 
+superclasse e catturare variabili locali segnate come \verb|final|. 
+
+Dopo la compilazione i file \verb|.class| associati alle classi nidificate risultano separati da quelli associati alle classi che li contengono, salvati in file del tipo 
+\verb|nomeOuter$nomeInner.class| per le classi interne, \verb|nomeOuter$1.class| per le classi anonime, con un numero progressivo; e \verb|nomeOuter$1nomeInner.class| per le 
+classi locali, che possono quindi essere omonime. 
+
+
+Un ulteriore tipo di classi nidificate statiche, utilizzando il modificatore \verb|static|. Queste non vengono create a partire da un oggetto della classe esterna, vengono 
+create come classe ordinarie. Possono essere private o pubbliche. 
+Si utilizzano quando non si ha la necessità di avere un riferimento ad un oggetto della classe esterna, dipendente solamente dal nome della classe esterna. 
+Le classe nidificate statiche vengono utilizzate nelle collezioni. Nella classe \verb|HashMap|, si 
+trova un tipo nidificato statico \verb|Entry<K,V>|, anche il nome di un'interfaccia nidificata dell'interfaccia \verb|Map<K,V>|. Per iterare sulle mappe si utilizza questa 
+classe per iterare sugli elementi e sulle coppie chiave-valore, senza dover conoscere il tipo dinamico concreto della mappa dove sono contenuto le coppie 
+effettive. 
+Vengono utilizzate due classi diverse poiché il concetto di mappa e le sue coppie contenute sono distinti, ma molto legati. 
+
+Le classi nidificate rappresentano l'ultimo meccanismo per poter realizzare nuovi tipi in Java. 
+
+\clearpage
+
+\section{Java Record e Tipi sigillati}
+
+I Java record vennero introdotti in Java 16, mentre i tipi sigillati in Java 17 e rappresentano un'ulteriore meccanismo di creazione di tipi in Java. 
+
+Insieme ai meccanismi precedenti questi rappresentano i principali meccanismi sulla creazione e la gestione dei tipi. Questi costrutti sono meccanismi già presenti in 
+linguaggi meno diffusi di Java, che hanno avuto relativo successo, e quindi sono stati inclusi anche in Java. 
+La macchina virtuale conosce solamente il concetto di classe, tutti i costrutti di creazione dei tipi sono artefatti utilizzati nella compilazione dei file \verb|.class|. 
+
+Introdotti in Java 14 e rilasciati in Java 16, i Java record permettono di limitare l'eccessiva verbosità di Java. Questi permettono di definire tipi immutabili, e 
+``scontati'', definiti da un numero specificato di proprietà. 
+Questi costrutti creano una struttura gerarchica simile alle costanti enumerative. In generale quindi si può creare una classe record con la seguente sintassi:
+\begin{minted}{java}
+public record nomeClasse(tipo1 nome1, ..., tipoN nomeN){}
+\end{minted}
+I metodi getter e setter hanno lo stesso nome delle variabili d'istanza. Mentre il metodo \verb|toString()| stampa il nome della classe, seguito da una lista tra parentesi 
+quadre delle variabili d'istanza con il loro valore \verb|nome = valore|. 
+
+Non è possibile aggiungere proprietà o metodi, statici, ai Java record. 
+
+Da anni esistono librerie capaci di creare automaticamente metodi tramite annotazioni, come la \verb|lombok|. Il vantaggio principale dei Java record permette di 
+creare tipi in modo semplice, riducendo di gran lunga la verbosità del costrutto, definendo tipi molto velocemente.
+
+L'estensione di classi è un meccanismo per estendere tipi aumenta l'accoppiamento dei tipi della gerarchia, e limita quante volte possono essere implementate interfacce o 
+sovrascritti metodi come \verb|equals()| e \verb|hashCode()|. Questo accoppiamento intrinseco può risultare dannoso quando si deve modificare un singolo metodo in tutte i 
+tipi della gerarchia, inoltre questa caratteristica è anche incompatibile con il principio di astrazione. 
+Questi accoppiamenti possono essere permanenti, per cui vi l'esigenza di introdurre un meccanismo per risolvere queste difficoltà, introdotte dalla gestione della 
+piattaforma Java sulla gestione dei tipi. 
+Questo bipolarismo introdotto dall'estensione di classi, poiché una classe può essere estesa da tutti se non marcata da \verb|final|, mentre non può essere estesa da nessun'altra 
+se viene marcata con \verb|final|. I tipi sigillati a partire da Java 17 rappresentano un meccanismo intermedio per controllare l'estensione dei tipi, e disaccoppiarli dai 
+meccanismi legati alla loro accessibilità. 
+L'accessibilità rappresenta la possibilità di estendere la classe, vedendone i contenuti, mentre l'estendibilità rappresenta un meccanismo per estendere l'implementazione di 
+una classe aggiungendo nuovi nuove elementi, aumentando lo scopo della classe. 
+
+La sintassi dei tipi sigillati permette di specificare quali sono i sottotipi che non potranno essere modificati:
+\begin{minted}{java}
+public sealed class nomeClasse permits nomeSottoTipo1, ... , nomeSottoTipoN{}
+\end{minted}
+Per ogni sottotipo esso può essere marcato come \verb|final| oppure può essere sigillato anch'esso, oppure di grado non sigillato. 
+
+%% TODO why si utilizzano classi sealed (conoscere tutti i sottotipi)
+
+In questo modo è possibile realizzare dei controlli molto forti sui tipi possibili da parte del compilatore, poiché bisogna definire tutti i tipi specificati dal tipo \verb|sealed|. 
+Si ha quindi garanzia della copertura di tutti i tipi della gerarchia. 
+Sia i tipi sigillati che i Java record rispondono ad una stessa esigenza, mentre i Java record riducono un'implementazione scontata, i tipi sigillati nascono dall'esigenza 
+di non nascondere troppo i sottotipi di un supertipo comune, poiché i clienti necessitano di conoscerli. 
+
+%% TODO ppt.
 
 \clearpage
 
@@ -1667,7 +1763,7 @@ La codifica Java ha avuto esigenze di andare ben oltre la codifica ASCII, per cu
 coprire gli alfabeti più diffusi, composta da una codifica a 16 bit. 
 Altre codifiche supportate presentano 4 byte, per lingue occidentali contenenti alfabeti molto più ampi. 
 
-%% TODO img gerarchia InputStream e OutputStream
+%% TODO gerarchia InputStream e OutputStream
 
 Storicamente vi era la necessità di comunicare con hard disk a blocchi, per cui in Java sono presenti astrazioni per leggere a blocchi gli stream \verb|Buffer|. 
 
