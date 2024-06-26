@@ -57,9 +57,6 @@ Università degli Studi ``Roma Tre"}}
 
 \pagenumbering{arabic}
 
-%% TODO programma ppt. -> README
-
-
 \section{Introduzione al Linguaggio Java}
 
 Java venne introdotto nel 1995, progettato per programmare dispositivi embedded, ma velocemente si utilizzò per scopi diversi da quelli descritti dai suoi 
@@ -1409,12 +1406,14 @@ comportamento corretto del codice anche in caso di situazioni anomale.
 
 \clearpage
 
-\section{Classi Astratte}
+\section{Definizione dei Tipi}
 
-L'estensione è uno strumento utile per riusare il codice. Si possono estendere classi ``concrete'', dotato di un corpo, ereditato dalle 
+\subsection{Classi Astratte}
+
+L'estensione è uno strumento utile per riusare il codice. Si possono estendere classi ``concrete'', dotate di un corpo, ereditato dalle 
 classi estese, che possono sovrascrivere i metodi offerti dalla classe base. 
-Questo può essere effettuato tramite interfacce, ma queste non possiedono corpo e tutte le sue implementazioni devono definire ogni metodo segnato nell'interfaccia, anche 
-se classi estese presentano una medesima implementazione tra di loro. 
+Questo può essere effettuato tramite interfacce, ma non possiedono corpo e tutte le loro implementazioni devono definire ogni metodo segnato nell'interfaccia, anche se è comune ad ogni 
+implementazione. 
 
 Si può utilizzare quindi una classe astratta, come intermedio tra interfaccia e classe concreta, infatti contiene implementazione di alcuni metodi, mentre altri metodi 
 vengono solo dichiarati. Quindi tutte le classi che la estendono condividono l'implementazione della classe astratta, e possono implementare i metodi astratti. 
@@ -1683,55 +1682,108 @@ Vengono utilizzate due classi diverse poiché il concetto di mappa e le sue copp
 
 Le classi nidificate rappresentano l'ultimo meccanismo per poter realizzare nuovi tipi in Java. 
 
-\clearpage
-
-\section{Java Record e Tipi sigillati}
+\subsection{Java Record e Tipi sigillati}
 
 I Java record vennero introdotti in Java 16, mentre i tipi sigillati in Java 17 e rappresentano un'ulteriore meccanismo di creazione di tipi in Java. 
 
 Insieme ai meccanismi precedenti questi rappresentano i principali meccanismi sulla creazione e la gestione dei tipi. Questi costrutti sono meccanismi già presenti in 
 linguaggi meno diffusi di Java, che hanno avuto relativo successo, e quindi sono stati inclusi anche in Java. 
-La macchina virtuale conosce solamente il concetto di classe, tutti i costrutti di creazione dei tipi sono artefatti utilizzati nella compilazione dei file \verb|.class|. 
+La macchina virtuale conosce solamente il concetto di classe ed interfacce, tutti i costrutti di creazione dei tipi sono artefatti utilizzati nella compilazione per realizzare i file \verb|.class|. 
 
 Introdotti in Java 14 e rilasciati in Java 16, i Java record permettono di limitare l'eccessiva verbosità di Java. Questi permettono di definire tipi immutabili, e 
 ``scontati'', definiti da un numero specificato di proprietà. 
-Questi costrutti creano una struttura gerarchica simile alle costanti enumerative. In generale quindi si può creare una classe record con la seguente sintassi:
+Questi costrutti creano una struttura gerarchica simile alle costanti enumerative. Le proprietà vengono specificate subito dopo il nome del tipo record secondo la seguente sintassi:
 \begin{minted}{java}
-public record nomeClasse(tipo1 nome1, ..., tipoN nomeN){}
+public record nomeClasse(tipo1 nome1, 
+                        ..., 
+                        tipoN nomeN){}
 \end{minted}
 I metodi getter e setter hanno lo stesso nome delle variabili d'istanza. Mentre il metodo \verb|toString()| stampa il nome della classe, seguito da una lista tra parentesi 
-quadre delle variabili d'istanza con il loro valore \verb|nome = valore|. 
+quadre delle variabili d'istanza con il loro valore \verb|nomeVariabile = valore|. 
 
-Non è possibile aggiungere proprietà o metodi, statici, ai Java record. 
+Non è possibile aggiungere proprietà o metodi, statici, ai Java record. Anche se è possibile realizzare un comportamento analogo con variabili \verb|final private| per ogni proprietà e vari costruttori, la 
+sintassi dei Java record è molto snellita. Le proprietà vengono salvate allo stesso modo, da variabili di istanza \verb|final| nei file \verb|.class| generati. 
+I costruttori vengono implicitamente generati a partire delle proprietà, così come i criteri di equivalenza. 
+I metodi generati prendono il nome della proprietà, al contrario della segnatura convenzionale dei metodi getter, quindi omette il prefisso \verb|get|. 
+
+Si possono dichiarare costruttori o aggiungere altri metodi, anche statici, esplicitamente per controllare la validità sui parametri ricevuti all'interno del corpo del tipo record:
+\begin{minted}{java}
+    public record nomeClasse(tipo1 nome1, 
+                            ..., 
+                            tipoN nomeN){
+        public nomeClasse() { /* corpo del costruttore */ }
+        public metodo() { /* corpo del metodo */ }                            
+}
+\end{minted}
+
+Tuttavia anche se è utile, l'aggiunta di metodi accessori in questo modo complica la definizione del Java record, e lo allontana dalla sua funzione originale. Per cui vengono spesso dichiarati solamente 
+metodi statici come factory method. 
+
+Il costrutto \verb|record| viene spesso utilizzato insieme ai tipi sigillati poiché entrambi espongono tutti i sottotipi di una gerarchia e le loro implementazioni, mentre i record si concentrano sull'esporre 
+l'implementazione, i tipi sigillati si concentrano sull'estendibilità. 
 
 Da anni esistono librerie capaci di creare automaticamente metodi tramite annotazioni, come la \verb|lombok|. Il vantaggio principale dei Java record permette di 
 creare tipi in modo semplice, riducendo di gran lunga la verbosità del costrutto, definendo tipi molto velocemente.
 
-L'estensione di classi è un meccanismo per estendere tipi aumenta l'accoppiamento dei tipi della gerarchia, e limita quante volte possono essere implementate interfacce o 
-sovrascritti metodi come \verb|equals()| e \verb|hashCode()|. Questo accoppiamento intrinseco può risultare dannoso quando si deve modificare un singolo metodo in tutte i 
+L'estensione di classi è un meccanismo utile in Java per realizzare nuovi tipi, ma aumenta l'accoppiamento dei tipi della gerarchia, e limita quante volte possono essere implementate interfacce o 
+sovrascritti metodi come \verb|equals()| e \verb|hashCode()|. Questo accoppiamento intrinseco può risultare dannoso quando si deve modificare un singolo metodo, essendo costretti a modificare l'intera gerarchia in tutte i 
 tipi della gerarchia, inoltre questa caratteristica è anche incompatibile con il principio di astrazione. 
-Questi accoppiamenti possono essere permanenti, per cui vi l'esigenza di introdurre un meccanismo per risolvere queste difficoltà, introdotte dalla gestione della 
-piattaforma Java sulla gestione dei tipi. 
-Questo bipolarismo introdotto dall'estensione di classi, poiché una classe può essere estesa da tutti se non marcata da \verb|final|, mentre non può essere estesa da nessun'altra 
-se viene marcata con \verb|final|. I tipi sigillati a partire da Java 17 rappresentano un meccanismo intermedio per controllare l'estensione dei tipi, e disaccoppiarli dai 
-meccanismi legati alla loro accessibilità. 
+Questi accoppiamenti possono essere permanenti, per cui vi è l'esigenza di introdurre un meccanismo per risolvere queste difficoltà, introdotte dalla gestione dei tipi della piattaforma Java. 
+Infatti il comportamento di Java può sembrare ``bipolare'', poiché è sufficiente marcare una classe con \verb|final| affinché non sia possibile estenderla, altrimenti può essere estesa da chiunque abbia accesso ad 
+essa. 
+I tipi sigillati a partire da Java 17 rappresentano un meccanismo intermedio per controllare l'estensione dei tipi, e disaccoppiare l'estendibilità dall'accessibilità. 
 L'accessibilità rappresenta la possibilità di estendere la classe, vedendone i contenuti, mentre l'estendibilità rappresenta un meccanismo per estendere l'implementazione di 
-una classe aggiungendo nuovi nuove elementi, aumentando lo scopo della classe. 
+una classe aggiungendo nuovi elementi, aumentandone lo scopo. 
 
 La sintassi dei tipi sigillati permette di specificare quali sono i sottotipi che non potranno essere modificati:
 \begin{minted}{java}
 public sealed class nomeClasse permits nomeSottoTipo1, ... , nomeSottoTipoN{}
 \end{minted}
-Per ogni sottotipo esso può essere marcato come \verb|final| oppure può essere sigillato anch'esso, oppure di grado non sigillato. 
+Per ogni sottotipo, esso può essere marcato come \verb|final| oppure può essere sigillato anch'esso, oppure di grado non sigillato. In questo modo è possibile limitare la gerarchia dei tipi senza diminuire la loro 
+visibilità. Questa scelta deve essere effettuata per ogni membro sottotipo di un tipo sigillato, altrimenti viene sollevato un errore di compilazione, utilizzando le parole chiavi:
+\begin{itemize}
+    \item \verb|final|;
+    \item \verb|sealed|;
+    \item \verb|not-sealed|.
+\end{itemize}
 
-%% TODO why si utilizzano classi sealed (conoscere tutti i sottotipi)
+Utilizzando tipi sigillati è possibile determinare e gestire tutte le possibili implementazioni del tipo, inoltre il compilatore è in grado di verificare la copertura completa dei costruttori della gerarchia, 
+utilizzando tutti i possibili sottotipi. 
+
+I tipi sigillati vengono spesso usati insieme ai Java record poiché entrambi vengono utilizzati per evitare di astrarre un sottotipo di una gerarchia e la sua implementazione dietro un supertipo comune che 
+nasconde la specificità e l'implementazione. Utilizzando un supertipo comune è possibile non conoscere affatto il nome del tipo concreto a tempo dinamico. 
+
+I supertipi sigillati invece devono esporre tutti i loro sottotipi in modo esaustivo, al contrario dell'astrazione, poiché fornisce tutti i suoi possibili sottotipi invece di nasconderli. 
+Si utilizzano quando è richiesto rendere noto agli utilizzatori la conoscenza di tutti e soli i sottotipi di una gerarchia, e la loro implementazione. Anche se rappresenta una sigillatura all'estensione, non 
+rappresenta un limite alla visibilità poiché per definizione il tipo sigillato deve fornire la conoscenza di tutti i suoi sottotipi. Allo stesso modo per le costanti enumerative. 
+
+Come per le costanti enumerativi si utilizzano tipi sigillati su domini semplici e o stabili nel tempo, per gerarchie di tipi giò noti. 
+Inoltre è conveniente utilizzare tipi sigillati quando l'astrazione del sottotipo porta a confusione oppure se vengono utilizzati solamente i sottotipi concreti senza utilizzare il supertipo, oppure quando 
+la gerarchia corrente non è predisposta ad implementazioni ed estensioni aggiuntive, quindi si sigilla per concentrarsi sulle implementazioni attuali. 
+Può essere conveniente utilizzare tipi sigillati quando la gerarchia di tipi è sufficientemente semplice nel suo complesso, quindi l'esposizione di tutti i suoi elementi non merita una modellazione con 
+classi aperte all'estensione. 
+Anche se i tipi enumerativi sono molto simili ai tipi sigillati, il loro svantaggio consiste nel non poter modellare molteplici istanze dello stesso tipo con uno stato immutabile. 
+
+Invece è sconveniente utilizzare tipi sigillati quando la gerarchia viene molto spesso estesa per l'aggiunta di nuove porzioni di codice, e deve essere possibile implementare nuovamente i tipi da ogni nuova 
+aggiunta. Come per la classe \verb|java.util.Iterator| per le collezioni, deve essere accessibile ed estendibile da ogni possibile collezione attuale, o futura. Questo tipo nasce aperto all'estensione, in modo 
+da poter elencare i tipi di una collezione in maniera uniforme rispetto a tutte le collezioni. 
+
+Non è possibile sigillare tipi marcati come finali, poiché non ammettono estensioni di alcun tipo, come i tipi enumerative o i java record, e non sarebbe possibile definire suoi sottotipi, anche se segnati 
+nella dichiarazione del tipo sigillato. 
 
 In questo modo è possibile realizzare dei controlli molto forti sui tipi possibili da parte del compilatore, poiché bisogna definire tutti i tipi specificati dal tipo \verb|sealed|. 
 Si ha quindi garanzia della copertura di tutti i tipi della gerarchia. 
 Sia i tipi sigillati che i Java record rispondono ad una stessa esigenza, mentre i Java record riducono un'implementazione scontata, i tipi sigillati nascono dall'esigenza 
 di non nascondere troppo i sottotipi di un supertipo comune, poiché i clienti necessitano di conoscerli. 
 
-%% TODO ppt.
+
+Entrambi questi meccanismi si utilizzano per lavorare sui sottotipi di una gerarchia, e spesso sono richiesti numerosi downcast, questo ha spinto all'introduzione dell'operatore \verb|istanceof| che evita la 
+sintassi verbosa del downcast a tempo di compilazione. L'operatore prende come operandi un riferimento ad un oggetto ed una dichiarazione di una variabile sottotipo, per verificare se si tratti di un sottotipo 
+ed eventualmente assegnare una variabile di tipo statico utile:
+\begin{minted}{java}
+nomeSuperObj istanceof nomeSottoTipo nomeSottoObj
+\end{minted}
+
 
 \clearpage
 
@@ -1754,8 +1806,8 @@ un encoding, come l'ASCII. Ma avendo solamente 256 caratteri disponibili, essend
 per codificare 60000 caratteri diversi, abbastanza per tutti gli alfabeti di lingue usate. Java odierno permette la codifica di tutti gli alfabeti noti, e non più usati, oltre 
 a quelli già citati. 
 
-Esistono due stream di caratteri i \verb|Reader| e \verb|Writer| rappresentati da classe astratte, aventi sottotipi per molti tipi di sorgenti di destinazioni, per stringhe 
-\verb|StringReader| e \verb|StringWriter|. 
+Esistono due stream di caratteri i \verb|Reader| e \verb|Writer| rappresentati da classe astratte, aventi sottotipi per diverse sorgente e destinazioni, per stringhe 
+\verb|StringReader| e \verb|StringWriter|, per file \verb|File|, per scrivere e leggere una riga intera con \verb|Buffered| o \verb|LineNumber|. 
 
 La gerarchia per la gestione dell'IO ha come radice queste due classi astratte, interpellando i byte letti come caratteri attraverso un meccanismo di encoding di uno o più byte, 
 da un insieme di possibili caratteri ``charset''. 
@@ -1763,7 +1815,10 @@ La codifica Java ha avuto esigenze di andare ben oltre la codifica ASCII, per cu
 coprire gli alfabeti più diffusi, composta da una codifica a 16 bit. 
 Altre codifiche supportate presentano 4 byte, per lingue occidentali contenenti alfabeti molto più ampi. 
 
-%% TODO gerarchia InputStream e OutputStream
+
+La radice della gerarchia delle stream sono le due classi astratte InputStream e OutputStream, per distinguere le varie stream disponibili si utilizza un prefisso diverso per indicare 
+quale risorsa la stream gestisce. Si può leggere o scrivere su file con stream di prefisso \verb|File|, si utilizza un'altra stream di prefisso \verb|Filter| supertipo 
+di altre stream utili come \verb|Buffered| che permette di leggere una linea intera alla volta, e \verb|LineNumber| che mantiene un riferimento al numero di linea letta.   
 
 Storicamente vi era la necessità di comunicare con hard disk a blocchi, per cui in Java sono presenti astrazioni per leggere a blocchi gli stream \verb|Buffer|. 
 
@@ -1791,12 +1846,12 @@ della risorsa.
 Per cui nell'uso di basso livello viene utilizzata la sintassi \verb|try-catch-finally| per assicurarsi di rilasciare le risorse utilizzate alla fine dell'esecuzione, 
 indipendentemente se vengono sollevate eccezioni a tempo di esecuzione. 
 
-Questo pacchetto contiene delle scelte datate e discutibili come la classe \verb|java.io.File| che confonde l'indirizzo nel S.O. del file dal file stesso, per cui in Java 4 
+Questo pacchetto contiene delle scelte datate e discutibili come la classe \verb|java.io.File| che confonde l'indirizzo nell'OS del file dal file stesso, per cui in Java 4 
 venne introdotta un pacchetto per introdurre la classe \verb|Path| per risolvere il problema descrivendo l'indirizzo del file. 
 Ora sono disponibili singoli metodi di utilità nella classe \verb|java.nio.file.Files| per risolvere il problema introdotta da \verb|java.io.File|. Questo, insieme a librerie 
 esterne, permette di rendere molto più semplice la gestione di lettura e scrittura su file. 
 
-%% TODO studio di caso dati necessari alla creazione del labirinto in un file esterno al programma 
+Spesso invece di mantenere le costanti all'interno del codice di produzione, si esternalizzano le costanti in risorse esterne accessibili dal codice utilizzando appositi \verb|Reader|.  
 
 Possono essere quindi usate classi \verb|Builder| per realizzare un'oggetto leggendo i parametri e le variabili da istanziare da un file, tramite una classe \verb|Parser| per 
 leggere il contenuto del file. 
@@ -1822,10 +1877,34 @@ rappresenta il suo valore.
 Un formato che va per la maggiore è il formato \verb|.json| per scrivere file contente oggetti, reso famoso da Javascript, tanto che sono presenti tante librerie dentro 
 Java per leggere e scrivere in formato Json. 
 Questi file testuali sono editabili da non programmatori Java. 
-La classe \verb|Properties| presenta dei metodi semplici, che permettono di realizzare una proprietà copiandola da un'altra proprietà, inoltre è possibile conservare il valore 
-da una stream all'interno di una proprietà, attraverso i metodi \verb|store()|, i metodi \verb|storeToXML()| permettono di conservare queste proprietà all'interno di un file 
-di formato \verb|.xml|, ma ormai è stato molto ridimensionato l'utilizzo di file di tipo XML. 
-I file di tipo XML sono una generalizzazione del formato HTML, dove i tag sono scelti arbitrariamente dallo sviluppatore. 
+Le proprietà e costanti presenti in questo file esterno vengono gestiti tramite la collezione \verb|java.util.Properties|, una mappa che gestisce una collezione di priorità, una coppia di 
+stringa nome ed il suo valore. Offre la possibilità di accedere alle proprietà per nome, gestire i valori di default delle date proprietà e leggere e scrivere da un file testuale o 
+di tipo XML. Gli stessi principi di gestione delle proprietà valgono anche per librerie moderne. 
+Per impostare o accedere alla proprietà si utilizzano i metodi:
+\begin{minted}{java}
+String getProperty(String key)
+Object setProperty(String key, String value)
+String getProperty(String key, String defaultValue)
+\end{minted}
+Quest'ultima versione sovraccarica permette di cercare una data proprietà da una lista di proprietà data, ed in caso dalla lista di default specificata. 
+La classe \verb|Properties| presenta vari costruttori sovraccarichi, il costruttore no-args permette di creare una lista senza valori di default per le proprietà, mentre se viene passata 
+una lista di proprietà, viene utilizzata come valore di default. 
+
+Per leggere o scrivere una data lista di proprietà da un file di testo o XML vengono utilizzati i seguenti metodi sovraccarichi:
+\begin{minted}{java}
+void load(InputStream inStream)
+void load(Reader reader)
+void loadFromXML(InputStream in)
+void store(OutputStream out, String comments)
+void store(Writer writer, String comments)
+void storeToXML(OutputStream os, String comment)
+void storeToXML(OutputStream os, String comment, String encoding)
+\end{minted}
+Il tipo di file di default per salvare le proprietà è quindi testuale, poiché è stato ridimensionato l'utilizzo di file XML. 
+
+
+Per accedere a queste risorse esterne bisogna evitare di rendere l'accesso dipendente dalla posizione esatta del file nel sistema operativo, poiché dipende dalla macchina dove il codice 
+viene eseguito. Si tende ad evitare sempre di utilizzare percorsi assoluti per indirizzare file o risorse.  
 
 Bisogna evitare di specificare all'interno del codice la direzione assoluta del file proprietà, poiché cabla nel codice un'indirizzo che molto probabilmente funzionerà 
 solamente per il singolo sviluppatore che lo ha specificato. Il codice deve quindi poter eseguire nell'ambiente di esecuzione finale, ormai all'interno del cloud. Il rilascio 
@@ -1841,9 +1920,9 @@ Questo meccanismo di risoluzione viene copiato analogamente per le risorse per r
 Bisogna rendere noto nel ``buildpath'' l'indirizzo di due altre cartelle, ormai solo una, chiamata \verb|Resources| da dove parte la risoluzione del nome logico delle risorse, 
 tramite le classi precedentemente specificate. I nomi relativi non cominciano per `/', mentre i percorsi assoluti cominciano per `/' e dipendono dalla locazione della cartella 
 dove comincia l'esecuzione del programma, per cui è preferibile utilizzare un indirizzo relativo. 
-%% TODO fix Class/ClassLoader
-La classe \verb|Class| risolve i percorsi relativi partendo dalla posizione del file \verb|.class| associato all'oggetto corrispondente associato. 
-Mentre la classe \verb|ClassLoader| lavora solamente tramite percorsi relativi, partendo dal classpath. 
+
+La classe \verb|Class| risolve i percorsi relativi partendo dalla posizione del file \verb|.class| associato all'oggetto corrispondente, mentre i percorsi assoluti a partire dal 
+classpath. Mentre la classe \verb|ClassLoader| lavora solamente tramite percorsi relativi partendo dal classpath, non può quindi risolvere percorsi assoluti.  
 
 Quando viene impacchettato un progetto creando un file \verb|.jar| bisogna poter eseguire il codice, ma essendo impacchettato e compresso dentro un archivio, il file di 
 risorse non è accessibile come un file ordinario, quindi invece di utilizzare il metodo \verb|getResource()| che restituisce un indirizzo logico per accedere alla risorsa come 
@@ -1902,7 +1981,8 @@ autonoma delle risorse, che non condivide la memoria con gli altri processi. La 
 rappresentare un collo di bottiglia. Infatti la memoria è il limite superiore alle prestazioni, per la programmazione parallela; ogni thread richiede una sua 
 allocazione di memoria per poter definire uno stack. 
 
-Il numero di thread generati all'esecuzione di main aumenta all'aumentare della versione di Java %% TODO java thread a main 
+Il numero di thread generati all'esecuzione di main aumenta all'aumentare della versione di Java, sono presenti infatti il Garbage Collector che impiega almeno un thread, le GUI che 
+usano thread separati per gestire gli eventi grafici, ed un pool di thread che possono essere usati a supporto di lavoro intensivo. 
 
 Due o più thread utilizzano stack di attivazione diversi, e sono in grado di condividere memoria con gli altri, avendo accesso agli stessi oggetti, basta che tutti abbiano 
 un riferimento comune. 

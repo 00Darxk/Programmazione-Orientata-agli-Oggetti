@@ -8,10 +8,11 @@ Appunti tratti dal corso di Programmazione Orientata agli Oggetti, Anno Accademi
 ## Materiale Aggiuntivo
  - [Gruppo Google del Corso](https://groups.google.com/g/roma3poo);
  - [Sito del Corso](https://sites.google.com/view/rm3-poo/home);
+ - [DiaDia](https://github.com/00Darxk/2024-HOMEWORK-589882-589383): Studio di caso, svolto relativo all'anno accademico 2023/24, a supporto del corso;
  - Manuale "ufficiale" del linguaggio: "Ken Arnold, James Gosling, David Holmes: "Il liguaggio Java: Manuale Ufficiale" - Addison Wesley";
  - [Eclipse](https://www.eclipse.org/downloads/packages/release/2022-03/r/eclipse-ide-java-developers), IDE utilizzato durante il corso;
  - [Notion](https://certain-sweater-2c3.notion.site/Programmazione-orientata-ad-oggetti-b9acbe726a6d4212868c6a409dd6bc40?pvs=25) relativo al corso di Programmazione Orientata agli Oggetti.  
 ##
 
 
-Per segnalare eventuali refusi, correzioni o integrazioni, contattatemi su [Telegram](https://t.me/von_Sturm), oppure aprite una [nuova issue](https://github.com/00Darxk/Programmazione-Orientata-agli-Oggetti/issues/new/choose) o [pull request](https://github.com/00Darxk/Programmazione-Orientata-agli-Oggetti/pulls), con le relative modifiche, nella repository.
+Per segnalare eventuali refusi, correzioni o integrazioni, contattatemi tramite una [nuova issue](https://github.com/00Darxk/Programmazione-Orientata-agli-Oggetti/issues/new/choose) o [pull request](https://github.com/00Darxk/Programmazione-Orientata-agli-Oggetti/pulls), con le relative modifiche, nella repository.
